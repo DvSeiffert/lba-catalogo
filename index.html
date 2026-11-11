@@ -84,12 +84,12 @@ img{display:block}
    derretem no fundo da página, então ela não termina num retângulo. */
 .hero{position:relative;isolation:isolate;overflow:hidden}
 .hero-photo{position:absolute;inset:0 0 0 auto;z-index:1;width:min(52%,880px);pointer-events:none}
-.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:54% 22%}
+.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 16%}
 .hero-photo::after{
   content:"";position:absolute;inset:0;
   background:
-    linear-gradient(to right, var(--paper) 0%, rgba(12,12,14,.78) 22%, rgba(12,12,14,0) 56%),
-    linear-gradient(to bottom, var(--paper) 0%, rgba(12,12,14,0) 20%, rgba(12,12,14,0) 74%, var(--paper) 100%);
+    linear-gradient(to right, var(--paper) 0%, rgba(12,12,14,.72) 14%, rgba(12,12,14,0) 42%),
+    linear-gradient(to bottom, var(--paper) 0%, rgba(12,12,14,0) 18%, rgba(12,12,14,0) 76%, var(--paper) 100%);
 }
 .hero-in{
   position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;
@@ -113,7 +113,7 @@ img{display:block}
 @media (max-width:1000px){
   .hero{display:flex;flex-direction:column}
   .hero-photo{position:relative;inset:auto;width:100%;aspect-ratio:4/5;max-height:62vh;order:-1}
-  .hero-photo img{object-position:54% 18%}
+  .hero-photo img{object-position:50% 14%}
   .hero-photo::after{
     background:linear-gradient(to bottom, rgba(12,12,14,.30) 0%, rgba(12,12,14,0) 26%, rgba(12,12,14,0) 50%, var(--paper) 93%);
   }
@@ -278,7 +278,7 @@ dialog::backdrop{background:color-mix(in srgb, var(--paper) 82%, transparent);ba
 <main>
   <section class="hero">
     <div class="hero-photo">
-      <img src="p/hero.jpg" alt="Modelo usando conjunto LBA preto, top e legging" fetchpriority="high" decoding="async">
+      <img src="p/hero.jpg" alt="Duas modelos usando o conjunto Lyon, da coleção França" fetchpriority="high" decoding="async">
     </div>
     <div class="wrap hero-in">
       <div class="hero-copy">

@@ -63,8 +63,8 @@ Render com `key: null` não tem estoque na loja: aparece só na aba
 ## Foto do hero
 
 `p/hero.jpg` é um recorte de
-`Fotos/Fotos Dia 4/Edit D4 LBA/LBA-Ronda-5.jpg` (4000×6000), cortado em
-4000×5400 e reduzido para 1300×1755.
+`Fotos/Fotos Dia 5 - Coleção 3/Edited-D5-C3/LBA-Lyon-18.jpg` (2496×3744),
+cortado em 2496×3328 e reduzido para 1300×1733.
 
 Para trocar a foto: exporte na mesma proporção (~3:4), salve por cima de
 `p/hero.jpg` e pronto. Se a modelo ficar mal enquadrada, ajuste o
