@@ -1,5 +1,7 @@
 # Catálogo LBA Fitwear
 
+**No ar:** https://dvseiffert.github.io/lba-catalogo/
+
 Site de catálogo estático. Uma pasta, sem build, sem dependências.
 
 ```
@@ -8,15 +10,24 @@ p/             78 renders 3D otimizados + o logo
 v/             os dois giros 360° (Bari e Valência) + posters
 ```
 
-## Como publicar
+## Como atualizar o site
 
-Arraste esta pasta inteira para um destes:
+Já está publicado no GitHub Pages, servido do branch `main` deste
+repositório. Para colocar qualquer mudança no ar:
 
-- **Netlify Drop** — netlify.com/drop (mais rápido, link na hora)
-- **Vercel** — `npx vercel --prod` dentro desta pasta
-- **GitHub Pages** — suba a pasta no repositório e ative Pages
+```bash
+git add -A && git commit -m "atualiza catálogo" && git push
+```
 
-Qualquer hospedagem de arquivo estático serve. Não precisa de servidor.
+O Pages reconstrói sozinho em 1 ou 2 minutos.
+
+Se um dia quiser trocar de hospedagem, qualquer serviço de arquivo
+estático serve (Netlify, Vercel, Cloudflare Pages) — é só apontar para
+esta pasta. Não precisa de servidor nem de etapa de build.
+
+Para usar um domínio próprio (ex.: catalogo.lbafitwear.com.br), aponte
+um CNAME para `dvseiffert.github.io` e cadastre o domínio em
+Settings → Pages no repositório.
 
 ## Estoque
 
