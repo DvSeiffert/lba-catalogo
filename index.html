@@ -182,6 +182,16 @@ img{display:block}
 }
 .sz.on{background:var(--ink);color:var(--paper)}
 .archive-tag{font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.apart{font-size:.58rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.apart-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.apart-item{
+  display:flex;flex-direction:column;gap:3px;min-width:106px;text-decoration:none;
+  border:1px solid var(--line);border-radius:7px;padding:10px 13px;
+  transition:background .18s ease,border-color .18s ease;
+}
+.apart-item:hover{background:var(--chip);border-color:var(--ink)}
+.apart-item b{font-family:var(--font-display);font-weight:600;font-size:.9rem;letter-spacing:-.01em}
+.apart-item span{font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums}
 
 .empty{padding:70px 0 90px;text-align:center;color:var(--muted);font-weight:300}
 
@@ -345,6 +355,12 @@ const WA = "5561992650920";
 const COLS = { todas:"Todas", espanha:"Espanha", italia:"Itália", franca:"França", essenciais:"Essenciais" };
 const ORDER = ["essenciais","franca","italia","espanha"];
 const SIZE_ORDER = ["PP","P","M","G","GG","XG","U"];
+// Coleção França: os conjuntos também saem peça por peça.
+const AVULSO = {
+  "Conjunto calça": [{ n:"Top", art:"o top", v:120 }, { n:"Calça", art:"a calça", v:195 }],
+  "Conjunto short": [{ n:"Top", art:"o top", v:120 }, { n:"Short", art:"o short", v:165 }]
+};
+function avulsasDe(i){ return i.col === "franca" ? (AVULSO[i.kind] || null) : null; }
 
 let stock = SNAPSHOT;
 let state = { col:"todas", view:"avail" };
@@ -384,7 +400,7 @@ function buildPills(){
 }
 
 function card(i){
-  const e = entry(i), sz = sizesOf(e);
+  const e = entry(i), sz = sizesOf(e), ap = avulsasDe(i);
   const el = document.createElement("button");
   el.type = "button";
   el.className = "card" + (e ? "" : " is-archive") + (i.spin ? " has-spin" : "");
@@ -405,6 +421,7 @@ function card(i){
                 <span class="sizes">${sz.map(x => `<span class="sz on">${x.s}</span>`).join("")}</span>`
              : `<span class="archive-tag">Esgotado</span>`}
        </span>
+       ${ap ? `<span class="apart">Ou avulso a partir de ${brl(Math.min(...ap.map(x => x.v)))}</span>` : ""}
      </div>`;
   if(i.spin){
     const v = el.querySelector("video");
@@ -427,6 +444,9 @@ function openSheet(i){
   const e = entry(i), sz = sizesOf(e), promo = e && e.price < e.orig;
   const total = sz.reduce((a,x) => a + x.q, 0);
   const pct = promo ? Math.round((1 - e.price / e.orig) * 100) : 0;
+  const ap = avulsasDe(i);
+  const soma = ap ? ap.reduce((a, x) => a + x.v, 0) : 0;
+  const somaBate = !!(ap && e && Math.abs(soma - e.orig) < 0.01);
   const label = labelOf(i);
   const ghostWord = i.col === "essenciais" ? i.name.split(" ").pop() : i.name.split(" ")[0];
   const waMsg = encodeURIComponent(e
@@ -463,6 +483,13 @@ function openSheet(i){
                   <p class="micro">Esgotado</p>
                   <p class="note">Esse modelo saiu do estoque. Chama no WhatsApp para saber se volta, ou para encomendar na sua cor e no seu tamanho.</p>
                 </div>`}
+         ${ap ? `<div class="block">
+                  <p class="micro">Peças avulsas</p>
+                  <div class="apart-grid">
+                    ${ap.map(x => `<a class="apart-item" href="https://wa.me/${WA}?text=${encodeURIComponent(`Oi! Vim pelo site. Quero comprar só ${x.art} do conjunto ${i.name} — ${brl(x.v)}.`)}" target="_blank" rel="noopener"><b>${x.n}</b><span>${brl(x.v)}</span></a>`).join("")}
+                  </div>
+                  <p class="note">Não precisa levar o conjunto inteiro.${somaBate ? ` As duas avulsas somam ${brl(soma)}, o mesmo preço do conjunto.` : ""} Avulsas saem pelo WhatsApp.</p>
+                </div>` : ""}
          <div class="actions">
            ${e ? `<a class="btn solid" href="${STORE}" target="_blank" rel="noopener">Comprar na loja</a>` : ""}
            <a class="btn ghost" href="https://wa.me/${WA}?text=${waMsg}" target="_blank" rel="noopener">${e ? "Comprar no WhatsApp" : "Avise-me quando voltar"}</a>

@@ -57,8 +57,32 @@ minúsculas e sem acento:
 | `p/granada.jpg`    | `corta vento granada`         |
 | `p/top-high.jpg`   | `top high`                    |
 
-Render com `key: null` é peça de arquivo: aparece só na aba **Acervo**,
-dessaturada, sem preço.
+Render com `key: null` não tem estoque na loja: aparece só na aba
+**Ver tudo**, dessaturado e marcado como **Esgotado**.
+
+## Peças avulsas (coleção França)
+
+Os conjuntos da França também são vendidos peça por peça. Isso não vem
+da loja — está fixo no `index.html`, na constante `AVULSO`:
+
+```js
+const AVULSO = {
+  "Conjunto calça": [{ n:"Top", art:"o top", v:120 }, { n:"Calça", art:"a calça", v:195 }],
+  "Conjunto short": [{ n:"Top", art:"o top", v:120 }, { n:"Short", art:"o short", v:165 }]
+};
+```
+
+Vale para qualquer item com `col: "franca"` cujo `kind` esteja nessa
+lista — hoje, 11 dos 13 modelos. Os dois macacões (Marselha e
+Estrasburgo) ficam de fora porque não dá para separar.
+
+As avulsas somam exatamente o preço do conjunto (120+195=315,
+120+165=285), e o site diz isso na ficha. Se você mudar um preço e a
+soma deixar de bater, a frase some sozinha — não vira informação falsa.
+
+Como a loja não cadastra as avulsas, cada uma abre o WhatsApp com a
+mensagem já escrita. Para liberar avulsas em outra coleção, troque o
+`i.col === "franca"` da função `avulsasDe`.
 
 ## Quando entrar coleção nova
 
