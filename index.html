@@ -1,0 +1,532 @@
+<meta charset="utf-8">
+<title>Catálogo LBA Fitwear</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Jost:wght@300;400;500&display=swap">
+
+<style>
+/* Layout: folha de contato do estúdio 3D — placas claras sobre fundo de estúdio.
+   O nome da peça, em tipografia gigante, é a única voz da página. */
+:root{
+  --paper:#E6E6E4;
+  --plate:#EDEDEB;
+  --ink:#0C0C0D;
+  --muted:#75747A;
+  --line:rgba(12,12,13,.15);
+  --line-soft:rgba(12,12,13,.08);
+  --ghost:rgba(12,12,13,.07);
+  --live:#2B7A52;
+  --chip:rgba(12,12,13,.06);
+  --logo-invert:0;
+  --shadow:0 1px 2px rgba(12,12,13,.05), 0 18px 40px -28px rgba(12,12,13,.45);
+  --shadow-lift:0 2px 4px rgba(12,12,13,.06), 0 34px 60px -30px rgba(12,12,13,.55);
+  --font-display:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-ui:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --bar:58px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0B0B0C; --ink:#ECECEA; --muted:#8C8B91;
+    --line:rgba(236,236,234,.16); --line-soft:rgba(236,236,234,.08);
+    --ghost:rgba(236,236,234,.12); --live:#56B183; --chip:rgba(236,236,234,.08);
+    --logo-invert:1;
+    --shadow:0 18px 44px -26px rgba(0,0,0,.9);
+    --shadow-lift:0 30px 64px -26px rgba(0,0,0,1);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0B0B0C; --ink:#ECECEA; --muted:#8C8B91;
+  --line:rgba(236,236,234,.16); --line-soft:rgba(236,236,234,.08);
+  --ghost:rgba(236,236,234,.12); --live:#56B183; --chip:rgba(236,236,234,.08);
+  --logo-invert:1;
+  --shadow:0 18px 44px -26px rgba(0,0,0,.9);
+  --shadow-lift:0 30px 64px -26px rgba(0,0,0,1);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--font-ui); font-weight:400;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--paper)}
+.wrap{
+  width:100%; max-width:1480px; margin-inline:auto;
+  padding-left:max(20px, env(safe-area-inset-left,0px));
+  padding-right:max(20px, env(safe-area-inset-right,0px));
+}
+.micro{
+  font-size:.625rem; letter-spacing:.22em; text-transform:uppercase;
+  font-weight:400; color:var(--muted);
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
+img{display:block}
+
+/* ---------- barra fixa ---------- */
+.bar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:saturate(180%) blur(14px);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--line-soft);
+}
+.bar-in{display:flex;align-items:center;gap:16px;min-height:var(--bar);padding-block:9px;flex-wrap:nowrap}
+.brand{display:flex;align-items:center;gap:11px;flex:0 0 auto}
+.brand img{height:19px;width:auto;flex:0 0 auto;object-fit:contain;filter:invert(var(--logo-invert))}
+.brand span{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.bar-spacer{flex:1 1 auto;min-width:0}
+.live{
+  display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;
+  font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  white-space:nowrap;
+}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--live);flex:0 0 auto}
+.dot.is-live{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.32}}
+.shop{
+  flex:0 0 auto;font-size:.625rem;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;border:1px solid var(--line);border-radius:999px;
+  padding:8px 15px;transition:background .18s ease,border-color .18s ease;
+}
+.shop:hover{background:var(--chip);border-color:var(--ink)}
+
+/* ---------- abertura ---------- */
+.hero{padding-block:clamp(40px,8vw,88px) clamp(34px,5vw,56px)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(28px,5vw,64px);align-items:center}
+.hero-copy{min-width:0}
+.hero h1{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(2.9rem,8.4vw,6.4rem); line-height:.84;
+  letter-spacing:-.045em; margin:14px 0 0; text-wrap:balance;
+}
+.hero h1 em{font-style:normal;color:var(--muted)}
+.hero p{
+  max-width:34ch; margin:22px 0 0; font-weight:300;
+  font-size:clamp(.94rem,1.5vw,1.06rem); line-height:1.62; color:var(--muted);
+}
+.hero-spin{position:relative;min-width:0;display:flex;justify-content:center}
+.hero-spin .ghost{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-weight:800;font-size:clamp(2.8rem,7.4vw,6.2rem);
+  letter-spacing:-.055em;color:var(--ghost);pointer-events:none;user-select:none;z-index:0;
+  white-space:nowrap;
+}
+.hero-spin figure{position:relative;z-index:1;margin:0;width:min(330px,100%)}
+.hero-spin video{
+  width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 42%;
+  background:var(--plate);border-radius:14px;box-shadow:var(--shadow-lift);
+}
+.hero-spin figcaption{margin-top:13px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+
+/* ---------- filtros ---------- */
+.controls{
+  position:sticky; top:calc(env(safe-area-inset-top,0px) + var(--bar)); z-index:20;
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter:saturate(180%) blur(14px);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
+  border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);
+}
+.controls-in{display:flex;align-items:center;gap:14px;padding-block:11px;flex-wrap:wrap}
+.pills{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px;min-width:0}
+.pills::-webkit-scrollbar{display:none}
+.pill{
+  flex:0 0 auto;border:1px solid var(--line);border-radius:999px;padding:8px 15px;
+  font-size:.625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  transition:color .18s ease,border-color .18s ease,background .18s ease;white-space:nowrap;
+}
+.pill:hover{color:var(--ink);border-color:var(--ink)}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.count{margin-left:auto;flex:0 0 auto;font-variant-numeric:tabular-nums}
+
+/* ---------- grade ---------- */
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(222px,100%),1fr));
+  gap:clamp(26px,3vw,40px) clamp(14px,1.6vw,22px);
+  padding-block:clamp(30px,4vw,48px) 70px;
+}
+.card{display:flex;flex-direction:column;text-align:left;width:100%;min-width:0}
+.plate{
+  position:relative;width:100%;aspect-ratio:4/5;border-radius:11px;overflow:hidden;
+  background:var(--plate);box-shadow:var(--shadow);
+  transition:transform .4s cubic-bezier(.22,.8,.3,1), box-shadow .4s cubic-bezier(.22,.8,.3,1);
+}
+.plate img,.plate video{width:100%;height:100%;object-fit:cover;transition:opacity .35s ease}
+.plate video{position:absolute;inset:0;opacity:0;object-position:center 42%}
+.card:hover .plate,.card:focus-visible .plate{transform:translateY(-5px);box-shadow:var(--shadow-lift)}
+.card.has-spin:hover .plate video,.card.has-spin.playing .plate video{opacity:1}
+.card.is-archive .plate{opacity:.88}
+.card.is-archive .plate img{filter:saturate(.3)}
+.card.is-archive:hover .plate img{filter:saturate(1)}
+.badge{
+  position:absolute;top:9px;left:9px;z-index:2;background:rgba(12,12,13,.82);color:#EDEDEB;
+  border-radius:999px;padding:5px 9px;font-size:.5rem;letter-spacing:.17em;text-transform:uppercase;
+}
+.badge.off{background:transparent;color:rgba(12,12,13,.5);border:1px solid rgba(12,12,13,.22)}
+.meta{padding-top:13px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.meta .kind{font-size:.56rem;letter-spacing:.21em;text-transform:uppercase;color:var(--muted)}
+.meta .name{font-family:var(--font-display);font-weight:600;font-size:1.02rem;letter-spacing:-.022em;line-height:1.16}
+.meta .cardfoot{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-top:2px}
+.price{font-size:.84rem;font-weight:400;font-variant-numeric:tabular-nums}
+.price s{color:var(--muted);text-decoration-thickness:1px;margin-right:6px;font-size:.76rem}
+.sizes{display:flex;gap:4px;flex-wrap:wrap}
+.sz{
+  font-size:.55rem;letter-spacing:.09em;padding:3px 6px;border-radius:3px;
+  background:var(--chip);color:var(--muted);font-variant-numeric:tabular-nums;
+}
+.sz.on{background:var(--ink);color:var(--paper)}
+.archive-tag{font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+.empty{padding:70px 0 90px;text-align:center;color:var(--muted);font-weight:300}
+
+/* ---------- detalhe ---------- */
+dialog{
+  border:0;padding:0;background:transparent;max-width:min(1040px,94vw);width:100%;
+  color:var(--ink);overflow:visible;
+}
+dialog::backdrop{background:color-mix(in srgb, var(--paper) 82%, transparent);backdrop-filter:blur(9px)}
+.sheet{
+  position:relative;background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  box-shadow:var(--shadow-lift);overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  max-height:88vh;
+}
+.sheet-img{background:var(--plate);display:flex;align-items:center;justify-content:center;min-width:0}
+.sheet-img img,.sheet-img video{width:100%;height:100%;max-height:88vh;object-fit:cover;object-position:center 44%}
+.sheet-body{position:relative;padding:clamp(24px,3.4vw,44px);overflow-y:auto;min-width:0}
+.sheet-ghost{
+  position:absolute;top:-.1em;right:-.12em;z-index:0;pointer-events:none;user-select:none;
+  font-family:var(--font-display);font-weight:800;font-size:clamp(4rem,11vw,8.5rem);
+  letter-spacing:-.06em;line-height:.78;color:var(--ghost);text-align:right;max-width:140%;
+}
+.sheet-body > *{position:relative;z-index:1}
+.sheet h2{font-family:var(--font-display);font-weight:700;font-size:clamp(1.9rem,4vw,3rem);letter-spacing:-.04em;line-height:.98;margin:11px 0 0}
+.sheet .kindline{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.sheet .priceline{margin-top:22px;display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+.sheet .big{font-family:var(--font-display);font-weight:600;font-size:1.65rem;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.sheet .was{color:var(--muted);text-decoration:line-through;font-size:.95rem}
+.off-tag{font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:4px 9px}
+.block{margin-top:26px;padding-top:20px;border-top:1px solid var(--line-soft)}
+.szgrid{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.szbox{
+  min-width:56px;border:1px solid var(--line);border-radius:7px;padding:9px 11px;text-align:center;
+}
+.szbox.out{opacity:.4}
+.szbox b{display:block;font-family:var(--font-display);font-weight:600;font-size:.92rem;letter-spacing:.02em}
+.szbox span{display:block;margin-top:3px;font-size:.52rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:26px}
+.btn{
+  text-decoration:none;border:1px solid var(--ink);border-radius:999px;padding:12px 21px;
+  font-size:.625rem;letter-spacing:.17em;text-transform:uppercase;
+  transition:opacity .18s ease,background .18s ease,color .18s ease;
+}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn.solid:hover{opacity:.84}
+.btn.ghost:hover{background:var(--chip)}
+.note{margin-top:17px;font-size:.78rem;font-weight:300;line-height:1.6;color:var(--muted);max-width:46ch}
+.close{
+  position:absolute;top:13px;right:14px;z-index:5;width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--line);background:var(--paper);display:grid;place-items:center;font-size:1rem;line-height:1;
+}
+.close:hover{background:var(--chip)}
+
+/* ---------- rodapé ---------- */
+.foot{border-top:1px solid var(--line);padding-block:38px 46px}
+.foot-in{display:flex;gap:30px;flex-wrap:wrap;justify-content:space-between;align-items:flex-start}
+.foot-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.foot-col a,.foot-col p{margin:0;font-size:.82rem;font-weight:300;color:var(--muted);text-decoration:none;line-height:1.55}
+.foot-col a:hover{color:var(--ink)}
+.foot img{height:19px;width:auto;flex:0 0 auto;align-self:flex-start;object-fit:contain;filter:invert(var(--logo-invert));margin-bottom:5px}
+.legal{margin-top:26px;font-size:.62rem;color:var(--muted);font-weight:300;line-height:1.6}
+
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-spin{order:-1}
+  .hero-spin figure{width:min(260px,72%)}
+  .sheet{grid-template-columns:1fr;max-height:92vh}
+  .sheet-img{max-height:42vh}
+  .sheet-img img,.sheet-img video{max-height:42vh}
+}
+@media (max-width:600px){ .brand span{display:none} }
+@media (max-width:470px){ #liveLabel{display:none} }
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <div class="brand">
+      <img src="p/lba.png" alt="LBA Fitwear">
+      <span>Fitwear</span>
+    </div>
+    <div class="bar-spacer"></div>
+    <div class="live"><span class="dot" id="dot"></span><span id="liveLabel">carregando estoque</span></div>
+    <a class="shop" href="https://venda.nextfit.com.br/2f668a4a-1ad7-4690-82dd-03e3e6efa141/produtos" target="_blank" rel="noopener">Loja</a>
+  </div>
+</header>
+
+<main>
+  <section class="wrap hero">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="micro">Nova coleção · Do P ao GG</p>
+        <h1>O conjunto<br>que você vai<br><em>usar todo dia.</em></h1>
+        <p>Espanha, Itália, França e os essenciais do dia a dia. Veja o caimento por todos os lados, confira os tamanhos que ainda temos e compre pela loja ou direto no WhatsApp.</p>
+      </div>
+      <div class="hero-spin">
+        <div class="ghost" aria-hidden="true">BARI</div>
+        <figure>
+          <video id="heroVid" src="v/bari.mp4" poster="v/bari.jpg" muted loop playsinline autoplay preload="metadata" aria-label="Conjunto Bari girando em 360 graus"></video>
+          <figcaption>
+            <span class="micro">Bari · Itália</span>
+            <span class="micro">Gire 360°</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="controls">
+    <div class="wrap controls-in">
+      <div class="pills" id="pillsCol" role="group" aria-label="Filtrar por coleção"></div>
+      <div class="pills" id="pillsView" role="group" aria-label="Filtrar por disponibilidade"></div>
+      <p class="micro count" id="count"></p>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="empty" hidden>Nenhuma peça nesse filtro.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-in">
+      <div class="foot-col">
+        <img src="p/lba.png" alt="LBA Fitwear">
+        <p>Moda fitness · Brasília, DF</p>
+      </div>
+      <div class="foot-col">
+        <p class="micro">Contato</p>
+        <p>(61) 99265-0920</p>
+        <p>lbafitwear@gmail.com</p>
+      </div>
+      <div class="foot-col">
+        <p class="micro">Endereço</p>
+        <p>Rua 8 Chácara, 189<br>Setor Habitacional Vicente Pires<br>Brasília · DF</p>
+      </div>
+      <div class="foot-col">
+        <p class="micro">Comprar</p>
+        <a href="https://venda.nextfit.com.br/2f668a4a-1ad7-4690-82dd-03e3e6efa141/produtos" target="_blank" rel="noopener">Loja oficial</a>
+        <a id="waFoot" href="https://wa.me/5561992650920" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+    <p class="legal">CNPJ 24.973.823/0001-61 · Preços e disponibilidade conforme a loja oficial. <span id="stamp"></span></p>
+  </div>
+</footer>
+
+<dialog id="sheet" aria-label="Detalhe da peça"></dialog>
+
+<script>
+const CATALOG = [{"slug":"avila","col":"espanha","name":"Ávila","kind":"Conjunto calça","key":null,"img":"p/avila.jpg"},{"slug":"barcelona-azul","col":"espanha","name":"Barcelona Azul","kind":"Macaquinho","key":null,"img":"p/barcelona-azul.jpg"},{"slug":"barcelona-marrom","col":"espanha","name":"Barcelona Marrom","kind":"Macaquinho","key":null,"img":"p/barcelona-marrom.jpg"},{"slug":"barcelona-rosa","col":"espanha","name":"Barcelona Rosa","kind":"Macaquinho","key":null,"img":"p/barcelona-rosa.jpg"},{"slug":"cadiz-vermelho","col":"espanha","name":"Cádiz Vermelho","kind":"Conjunto short","key":null,"img":"p/cadiz-vermelho.jpg"},{"slug":"cadiz-amarelo","col":"espanha","name":"Cádiz Amarelo","kind":"Conjunto short","key":null,"img":"p/cadiz-amarelo.jpg"},{"slug":"cordoba","col":"espanha","name":"Córdoba","kind":"Conjunto calça","key":"conjunto calca cordoba","img":"p/cordoba.jpg"},{"slug":"granada","col":"espanha","name":"Granada","kind":"Corta-vento","key":"corta vento granada","img":"p/granada.jpg"},{"slug":"ibiza-azul","col":"espanha","name":"Ibiza Azul","kind":"Macaquinho","key":null,"img":"p/ibiza-azul.jpg"},{"slug":"ibiza-lilas","col":"espanha","name":"Ibiza Lilás","kind":"Macaquinho","key":null,"img":"p/ibiza-lilas.jpg"},{"slug":"ibiza-marinho","col":"espanha","name":"Ibiza Azul Marinho","kind":"Macaquinho","key":"macaquinho ibiza azul marinho","img":"p/ibiza-marinho.jpg"},{"slug":"ibiza-preto","col":"espanha","name":"Ibiza Preto","kind":"Macaquinho","key":"macaquinho ibiza preto","img":"p/ibiza-preto.jpg"},{"slug":"ibiza-verde","col":"espanha","name":"Ibiza Verde","kind":"Macaquinho","key":null,"img":"p/ibiza-verde.jpg"},{"slug":"leon","col":"espanha","name":"Léon","kind":"Conjunto calça","key":"conjunto calca leon","img":"p/leon.jpg"},{"slug":"madri","col":"espanha","name":"Madri","kind":"Macaquinho","key":null,"img":"p/madri.jpg"},{"slug":"marbella","col":"espanha","name":"Marbella","kind":"Conjunto short","key":null,"img":"p/marbella.jpg"},{"slug":"merida-branco","col":"espanha","name":"Mérida Branco","kind":"Camiseta","key":null,"img":"p/merida-branco.jpg"},{"slug":"merida-preto","col":"espanha","name":"Mérida Preto","kind":"Camiseta","key":null,"img":"p/merida-preto.jpg"},{"slug":"milao-es","col":"espanha","name":"Milão","kind":"Macaquinho","key":null,"img":"p/milao-es.jpg"},{"slug":"napoles-vinho-es","col":"espanha","name":"Nápoles Vinho","kind":"Conjunto short","key":null,"img":"p/napoles-vinho-es.jpg"},{"slug":"pamplona","col":"espanha","name":"Pamplona","kind":"Conjunto short","key":null,"img":"p/pamplona.jpg"},{"slug":"parma","col":"espanha","name":"Parma","kind":"Conjunto calça","key":null,"img":"p/parma.jpg"},{"slug":"ronda","col":"espanha","name":"Ronda","kind":"Conjunto short","key":"conjunto short ronda","img":"p/ronda.jpg"},{"slug":"sevilha","col":"espanha","name":"Sevilha","kind":"Conjunto calça","key":null,"img":"p/sevilha.jpg"},{"slug":"toledo","col":"espanha","name":"Toledo","kind":"Macaquinho","key":null,"img":"p/toledo.jpg"},{"slug":"trento-vinho-es","col":"espanha","name":"Trento Vinho","kind":"Conjunto calça","key":null,"img":"p/trento-vinho-es.jpg"},{"slug":"valencia","col":"espanha","name":"Valência","kind":"Conjunto short","key":null,"img":"p/valencia.jpg","spin":"valencia"},{"slug":"veneza-es","col":"espanha","name":"Veneza","kind":"Macacão longo","key":null,"img":"p/veneza-es.jpg"},{"slug":"bari-azul","col":"italia","name":"Bari Azul","kind":"Conjunto short","key":null,"img":"p/bari-azul.jpg"},{"slug":"bari-cinza","col":"italia","name":"Bari Cinza","kind":"Conjunto short","key":null,"img":"p/bari-cinza.jpg","spin":"bari"},{"slug":"bari-verde","col":"italia","name":"Bari Verde","kind":"Conjunto short","key":null,"img":"p/bari-verde.jpg"},{"slug":"bari-vinho","col":"italia","name":"Bari Vinho","kind":"Conjunto short","key":null,"img":"p/bari-vinho.jpg"},{"slug":"bolonha","col":"italia","name":"Bolonha","kind":"Conjunto short","key":null,"img":"p/bolonha.jpg"},{"slug":"capri","col":"italia","name":"Capri","kind":"Conjunto calça","key":null,"img":"p/capri.jpg"},{"slug":"como","col":"italia","name":"Como","kind":"Conjunto calça","key":null,"img":"p/como.jpg"},{"slug":"florenca","col":"italia","name":"Florença","kind":"Macaquinho","key":null,"img":"p/florenca.jpg"},{"slug":"genova","col":"italia","name":"Gênova","kind":"Conjunto calça","key":null,"img":"p/genova.jpg"},{"slug":"luca-nude","col":"italia","name":"Luca Nude","kind":"Conjunto short","key":null,"img":"p/luca-nude.jpg"},{"slug":"luca","col":"italia","name":"Luca","kind":"Conjunto short","key":"conjunto short luca","img":"p/luca.jpg"},{"slug":"milao-it","col":"italia","name":"Milão","kind":"Macaquinho","key":null,"img":"p/milao-it.jpg"},{"slug":"napoles-verde","col":"italia","name":"Nápoles Verde","kind":"Conjunto short","key":null,"img":"p/napoles-verde.jpg"},{"slug":"pisa","col":"italia","name":"Pisa","kind":"Macaquinho","key":null,"img":"p/pisa.jpg"},{"slug":"pompeia","col":"italia","name":"Pompeia","kind":"Conjunto calça","key":null,"img":"p/pompeia.jpg"},{"slug":"roma","col":"italia","name":"Roma","kind":"Macaquinho","key":null,"img":"p/roma.jpg"},{"slug":"siena","col":"italia","name":"Siena","kind":"Conjunto short","key":"conjunto short siena","img":"p/siena.jpg"},{"slug":"trento-amarelo","col":"italia","name":"Trento Amarelo","kind":"Conjunto calça","key":null,"img":"p/trento-amarelo.jpg"},{"slug":"trento-offwhite","col":"italia","name":"Trento Off-White","kind":"Conjunto calça","key":null,"img":"p/trento-offwhite.jpg"},{"slug":"trento-preto","col":"italia","name":"Trento Preto","kind":"Conjunto calça","key":"conjunto calca trento preto","img":"p/trento-preto.jpg"},{"slug":"trento-verde","col":"italia","name":"Trento Verde","kind":"Conjunto calça","key":null,"img":"p/trento-verde.jpg"},{"slug":"turim","col":"italia","name":"Turim","kind":"Macaquinho","key":null,"img":"p/turim.jpg"},{"slug":"veneza-verde","col":"italia","name":"Veneza Verde","kind":"Macacão longo","key":null,"img":"p/veneza-verde.jpg"},{"slug":"verona","col":"italia","name":"Verona","kind":"Conjunto short","key":"conjunto short verona","img":"p/verona.jpg"},{"slug":"annecy","col":"franca","name":"Annecy","kind":"Conjunto short","key":"conjunto short annecy","img":"p/annecy.jpg"},{"slug":"cannes","col":"franca","name":"Cannes","kind":"Conjunto calça","key":"conjunto calca cannes","img":"p/cannes.jpg"},{"slug":"colmar-calca","col":"franca","name":"Colmar","kind":"Conjunto calça","key":"conjunto calca colmar","img":"p/colmar-calca.jpg"},{"slug":"colmar-short","col":"franca","name":"Colmar","kind":"Conjunto short","key":"conjunto short colmar","img":"p/colmar-short.jpg"},{"slug":"estrasburgo","col":"franca","name":"Estrasburgo","kind":"Macacão longo","key":null,"img":"p/estrasburgo.jpg"},{"slug":"lille","col":"franca","name":"Lille","kind":"Conjunto calça","key":"conjunto calca lille","img":"p/lille.jpg"},{"slug":"lyon-calca","col":"franca","name":"Lyon","kind":"Conjunto calça","key":"conjunto calca lyon","img":"p/lyon-calca.jpg"},{"slug":"lyon-short","col":"franca","name":"Lyon","kind":"Conjunto short","key":"conjunto short lyon","img":"p/lyon-short.jpg"},{"slug":"marselha","col":"franca","name":"Marselha","kind":"Macacão longo","key":"macacao longo marselha","img":"p/marselha.jpg"},{"slug":"montpellier-calca","col":"franca","name":"Montpellier","kind":"Conjunto calça","key":"conjunto calca montpellier","img":"p/montpellier-calca.jpg"},{"slug":"montpellier-short","col":"franca","name":"Montpellier","kind":"Conjunto short","key":"conjunto short montpellier","img":"p/montpellier-short.jpg"},{"slug":"paris","col":"franca","name":"Paris","kind":"Conjunto calça","key":"conjunto calca paris","img":"p/paris.jpg"},{"slug":"provenca","col":"franca","name":"Provença","kind":"Conjunto calça","key":"conjunto calca provenca","img":"p/provenca.jpg"},{"slug":"calca-flare","col":"essenciais","name":"Calça Flare","kind":"Calça","key":"calca flare","img":"p/calca-flare.jpg"},{"slug":"jaqueta-slim","col":"essenciais","name":"Jaqueta Slim","kind":"Jaqueta","key":"jaqueta slim","img":"p/jaqueta-slim.jpg"},{"slug":"legging-cos-reto","col":"essenciais","name":"Legging Cós Reto","kind":"Legging","key":"legging cos reto","img":"p/legging-cos-reto.jpg"},{"slug":"macacao-flare","col":"essenciais","name":"Macacão Flare","kind":"Macacão","key":"macacao flare","img":"p/macacao-flare.jpg"},{"slug":"regata-lua","col":"essenciais","name":"Regata Lua","kind":"Regata","key":"regata lua","img":"p/regata-lua.jpg"},{"slug":"short-com-bolso","col":"essenciais","name":"Short com Bolso","kind":"Short","key":"short com bolso","img":"p/short-com-bolso.jpg"},{"slug":"short-cos-estreito","col":"essenciais","name":"Short Cós Estreito","kind":"Short","key":"short cos estreito","img":"p/short-cos-estreito.jpg"},{"slug":"short-saia-beach","col":"essenciais","name":"Short Saia Beach","kind":"Short-saia","key":"short saia beach","img":"p/short-saia-beach.jpg"},{"slug":"top-alca-vazada","col":"essenciais","name":"Top Alça Vazada","kind":"Top","key":"top alca vazada","img":"p/top-alca-vazada.jpg"},{"slug":"top-costas-nuas","col":"essenciais","name":"Top Costas Nuas","kind":"Top","key":"top costas nuas","img":"p/top-costas-nuas.jpg"},{"slug":"top-high","col":"essenciais","name":"Top High","kind":"Top","key":"top high","img":"p/top-high.jpg"},{"slug":"top-alca-dupla","col":"essenciais","name":"Top Alça Dupla","kind":"Top","key":"top alca dupla","img":"p/top-alca-dupla.jpg"},{"slug":"vestido-beach","col":"essenciais","name":"Vestido Beach","kind":"Vestido","key":"vestido beach","img":"p/vestido-beach.jpg"}];
+const SNAPSHOT = {"conjunto short luca":{"price":242.25,"orig":285.0,"sizes":{"M":2.0}},"conjunto short siena":{"price":242.25,"orig":285.0,"sizes":{"P":2.0,"M":2.0}},"conjunto short verona":{"price":242.25,"orig":285.0,"sizes":{"G":1.0}},"conjunto short ronda":{"price":242.25,"orig":285.0,"sizes":{"M":1.0}},"conjunto calca trento preto":{"price":267.75,"orig":315.0,"sizes":{"G":1.0}},"conjunto calca cordoba":{"price":267.75,"orig":315.0,"sizes":{"P":1.0,"M":1.0}},"conjunto calca leon":{"price":267.75,"orig":315.0,"sizes":{"P":1.0}},"macaquinho ibiza azul marinho":{"price":246.42,"orig":289.9,"sizes":{"G":1.0}},"macaquinho ibiza preto":{"price":246.42,"orig":289.9,"sizes":{"P":1.0,"G":1.0}},"conjunto calca provenca":{"price":315.0,"orig":315.0,"sizes":{"P":2.0,"M":1.0}},"conjunto calca lyon":{"price":315.0,"orig":315.0,"sizes":{"M":3.0,"G":1.0,"GG":1.0}},"conjunto calca paris":{"price":315.0,"orig":315.0,"sizes":{"M":3.0}},"macacao longo marselha":{"price":315.0,"orig":315.0,"sizes":{"P":1.0,"G":1.0,"GG":1.0}},"conjunto calca montpellier":{"price":315.0,"orig":315.0,"sizes":{"M":2.0}},"conjunto calca lille":{"price":315.0,"orig":315.0,"sizes":{"P":2.0,"M":2.0}},"conjunto calca cannes":{"price":315.0,"orig":315.0,"sizes":{"P":1.0,"M":2.0,"G":1.0}},"conjunto calca colmar":{"price":315.0,"orig":315.0,"sizes":{"P":2.0,"M":2.0,"G":2.0}},"conjunto short montpellier":{"price":285.0,"orig":285.0,"sizes":{"P":2.0,"M":2.0}},"conjunto short colmar":{"price":285.0,"orig":285.0,"sizes":{"P":1.0,"M":2.0,"G":1.0}},"conjunto short lyon":{"price":285.0,"orig":285.0,"sizes":{"P":3.0,"M":3.0,"G":2.0,"GG":1.0}},"conjunto short annecy":{"price":285.0,"orig":285.0,"sizes":{"P":1.0,"M":1.0}},"calca flare":{"price":199.9,"orig":199.9,"sizes":{"P":2.0,"M":1.0,"G":1.0,"GG":1.0}},"corta vento granada":{"price":215.0,"orig":215.0,"sizes":{"P":6.0,"M":9.0,"G":5.0}},"legging cos reto":{"price":169.9,"orig":169.9,"sizes":{"P":2.0,"M":4.0,"G":3.0}},"top high":{"price":129.9,"orig":129.9,"sizes":{"P":2.0,"M":3.0,"G":2.0,"GG":1.0}},"top alca vazada":{"price":139.9,"orig":139.9,"sizes":{"P":2.0,"M":5.0,"G":2.0}},"top alca dupla":{"price":129.9,"orig":129.9,"sizes":{"P":2.0,"M":1.0,"G":3.0}},"top costas nuas":{"price":139.9,"orig":139.9,"sizes":{"P":2.0,"M":6.0,"G":2.0}},"macacao flare":{"price":315.0,"orig":315.0,"sizes":{"P":2.0,"M":4.0,"G":2.0}},"short cos estreito":{"price":109.9,"orig":109.9,"sizes":{"P":4.0,"M":5.0,"G":2.0}},"short com bolso":{"price":149.9,"orig":149.9,"sizes":{"P":2.0,"M":6.0,"G":2.0}},"short saia beach":{"price":159.9,"orig":159.9,"sizes":{"P":2.0,"M":4.0,"G":1.0}},"vestido beach":{"price":179.9,"orig":179.9,"sizes":{"P":2.0,"M":4.0,"G":2.0}},"regata lua":{"price":129.9,"orig":129.9,"sizes":{"P":1.0,"M":5.0,"G":2.0}},"jaqueta slim":{"price":259.9,"orig":259.9,"sizes":{"P":2.0,"M":4.0,"G":2.0,"GG":2.0}}};
+const SNAP_DATE = "11 nov 2026";
+const STORE = "https://venda.nextfit.com.br/2f668a4a-1ad7-4690-82dd-03e3e6efa141/produtos";
+const API = "https://apiappaluno.nextfit.com.br/api/SiteVendaPublico/RecuperarItens/2f668a4a-1ad7-4690-82dd-03e3e6efa141?Descricao=&CodigosItensStr=%5B%5D&page=1&limit=500&sort=%5B%7B%22property%22%3A%22Ordem%22%2C%22direction%22%3A%22asc%22%7D%5D";
+const WA = "5561992650920";
+const COLS = { todas:"Todas", espanha:"Espanha", italia:"Itália", franca:"França", essenciais:"Essenciais" };
+const ORDER = ["essenciais","franca","italia","espanha"];
+const SIZE_ORDER = ["PP","P","M","G","GG","XG","U"];
+
+let stock = SNAPSHOT;
+let state = { col:"todas", view:"avail" };
+
+const brl = n => n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const $ = id => document.getElementById(id);
+
+function entry(item){ return item.key ? stock[item.key] : null; }
+function labelOf(i){
+  return i.name.toLowerCase().startsWith(i.kind.toLowerCase()) ? i.name : `${i.kind} ${i.name}`;
+}
+function sizesOf(e){
+  if(!e) return [];
+  return SIZE_ORDER.filter(s => s in e.sizes).map(s => ({ s, q: e.sizes[s] }));
+}
+function visible(){
+  return CATALOG.filter(i => {
+    if(state.col !== "todas" && i.col !== state.col) return false;
+    if(state.view === "avail" && !entry(i)) return false;
+    return true;
+  }).sort((a,b) => {
+    const av = !!entry(a), bv = !!entry(b);
+    if(av !== bv) return av ? -1 : 1;
+    const oa = ORDER.indexOf(a.col), ob = ORDER.indexOf(b.col);
+    if(oa !== ob) return oa - ob;
+    return a.name.localeCompare(b.name,"pt-BR");
+  });
+}
+
+function buildPills(){
+  $("pillsCol").innerHTML = Object.keys(COLS).map(k =>
+    `<button class="pill" data-col="${k}" aria-pressed="${state.col===k}">${COLS[k]}</button>`).join("");
+  const nAvail = CATALOG.filter(i => entry(i)).length;
+  $("pillsView").innerHTML =
+    `<button class="pill" data-view="avail" aria-pressed="${state.view==="avail"}">À venda ${nAvail}</button>` +
+    `<button class="pill" data-view="all" aria-pressed="${state.view==="all"}">Ver tudo ${CATALOG.length}</button>`;
+}
+
+function card(i){
+  const e = entry(i), sz = sizesOf(e);
+  const el = document.createElement("button");
+  el.type = "button";
+  el.className = "card" + (e ? "" : " is-archive") + (i.spin ? " has-spin" : "");
+  el.dataset.slug = i.slug;
+  el.setAttribute("aria-label", `${labelOf(i)}${e ? ", à venda" : ", peça de arquivo"}`);
+  const promo = e && e.price < e.orig;
+  el.innerHTML =
+    `<div class="plate">
+       ${i.spin ? `<span class="badge">360°</span>` : (e ? "" : `<span class="badge off">Esgotado</span>`)}
+       <img src="${i.img}" alt="${labelOf(i)} — LBA Fitwear" loading="lazy" decoding="async">
+       ${i.spin ? `<video src="v/${i.spin}.mp4" muted loop playsinline preload="none"></video>` : ""}
+     </div>
+     <div class="meta">
+       <span class="kind">${i.kind} · ${COLS[i.col]}</span>
+       <span class="name">${i.name}</span>
+       <span class="cardfoot">
+         ${e ? `<span class="price">${promo ? `<s>${brl(e.orig)}</s>` : ""}${brl(e.price)}</span>
+                <span class="sizes">${sz.map(x => `<span class="sz on">${x.s}</span>`).join("")}</span>`
+             : `<span class="archive-tag">Esgotado</span>`}
+       </span>
+     </div>`;
+  if(i.spin){
+    const v = el.querySelector("video");
+    el.addEventListener("pointerenter", () => { v.play().catch(()=>{}); });
+    el.addEventListener("pointerleave", () => { v.pause(); });
+  }
+  el.addEventListener("click", () => openSheet(i));
+  return el;
+}
+
+function render(){
+  const items = visible(), grid = $("grid");
+  grid.replaceChildren(...items.map(card));
+  $("empty").hidden = items.length > 0;
+  $("count").textContent = `${items.length} ${items.length === 1 ? "peça" : "peças"}`;
+  buildPills();
+}
+
+function openSheet(i){
+  const e = entry(i), sz = sizesOf(e), promo = e && e.price < e.orig;
+  const total = sz.reduce((a,x) => a + x.q, 0);
+  const pct = promo ? Math.round((1 - e.price / e.orig) * 100) : 0;
+  const label = labelOf(i);
+  const ghostWord = i.col === "essenciais" ? i.name.split(" ").pop() : i.name.split(" ")[0];
+  const waMsg = encodeURIComponent(e
+    ? `Oi! Vim pelo site. Quero comprar: ${label}.`
+    : `Oi! Vim pelo site. O ${label} está esgotado — me avisa quando voltar?`);
+  const dlg = $("sheet");
+  dlg.innerHTML =
+    `<div class="sheet">
+       <button class="close" aria-label="Fechar">&times;</button>
+       <div class="sheet-img">
+         ${i.spin
+           ? `<video src="v/${i.spin}.mp4" poster="${i.img}" muted loop playsinline autoplay aria-label="${i.name} girando em 360 graus"></video>`
+           : `<img src="${i.img}" alt="${label} — LBA Fitwear">`}
+       </div>
+       <div class="sheet-body">
+         <div class="sheet-ghost" aria-hidden="true">${ghostWord}</div>
+         <div class="kindline">
+           <span class="micro">${COLS[i.col]}</span><span class="micro">·</span><span class="micro">${i.kind}</span>
+           ${i.spin ? `<span class="micro">· Gire 360°</span>` : ""}
+         </div>
+         <h2>${i.name}</h2>
+         ${e ? `<div class="priceline">
+                  <span class="big">${brl(e.price)}</span>
+                  ${promo ? `<span class="was">${brl(e.orig)}</span><span class="off-tag">${pct}% off</span>` : ""}
+                </div>
+                <div class="block">
+                  <p class="micro">Tamanhos em estoque</p>
+                  <div class="szgrid">
+                    ${sz.map(x => `<div class="szbox"><b>${x.s}</b><span>${x.q} un</span></div>`).join("")}
+                  </div>
+                  <p class="note">${total <= 3 ? `Últimas ${total} ${total === 1 ? "peça" : "peças"} desse modelo.` : `${total} peças disponíveis.`} Quantidades direto da loja oficial.</p>
+                </div>`
+             : `<div class="block">
+                  <p class="micro">Esgotado</p>
+                  <p class="note">Esse modelo saiu do estoque. Chama no WhatsApp para saber se volta, ou para encomendar na sua cor e no seu tamanho.</p>
+                </div>`}
+         <div class="actions">
+           ${e ? `<a class="btn solid" href="${STORE}" target="_blank" rel="noopener">Comprar na loja</a>` : ""}
+           <a class="btn ghost" href="https://wa.me/${WA}?text=${waMsg}" target="_blank" rel="noopener">${e ? "Comprar no WhatsApp" : "Avise-me quando voltar"}</a>
+         </div>
+         ${e ? `<p class="note">Na loja, busque por <strong>${label}</strong>.</p>` : ""}
+       </div>
+     </div>`;
+  dlg.querySelector(".close").addEventListener("click", () => dlg.close());
+  dlg.showModal();
+}
+
+function setStatus(isLive){
+  $("dot").classList.toggle("is-live", isLive);
+  $("liveLabel").textContent = isLive ? "estoque ao vivo" : `estoque de ${SNAP_DATE}`;
+  $("stamp").textContent = isLive
+    ? "Estoque lido da loja agora."
+    : `Estoque registrado em ${SNAP_DATE} — confira a loja para o número do momento.`;
+}
+
+const SIZE_SET = new Set(SIZE_ORDER.map(s => s.toLowerCase()));
+function norm(s){
+  return s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\s+/g," ").trim().toLowerCase();
+}
+async function refresh(){
+  try{
+    const res = await fetch(API, { cache:"no-store" });
+    if(!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    if(!data || !Array.isArray(data.Content) || !data.Content.length) throw new Error("vazio");
+    const next = {};
+    for(const row of data.Content){
+      const it = row.Item, t = norm(it.Descricao).split(" ");
+      const hasSize = SIZE_SET.has(t[t.length - 1]);
+      const size = hasSize ? t[t.length - 1].toUpperCase() : "U";
+      const key = (hasSize ? t.slice(0, -1) : t).join(" ");
+      const e = next[key] || (next[key] = { price:it.Valor, orig:it.ValorOriginal, sizes:{} });
+      e.price = Math.min(e.price, it.Valor);
+      e.orig = Math.max(e.orig, it.ValorOriginal);
+      e.sizes[size] = (e.sizes[size] || 0) + Math.max(0, it.QtdeEmEstoque);
+    }
+    stock = next;
+    setStatus(true);
+  }catch(err){
+    setStatus(false);
+  }
+  render();
+}
+
+$("sheet").addEventListener("click", ev => { if(ev.target.id === "sheet") $("sheet").close(); });
+
+document.addEventListener("click", ev => {
+  const p = ev.target.closest(".pill");
+  if(!p) return;
+  if(p.dataset.col) state.col = p.dataset.col;
+  if(p.dataset.view) state.view = p.dataset.view;
+  render();
+});
+
+setStatus(false);
+render();
+refresh();
+
+const hv = $("heroVid");
+if(hv && !window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+  hv.play().catch(()=>{});
+}
+</script>
