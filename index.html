@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Catálogo LBA Fitwear</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6,43 +7,25 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Jost:wght@300;400;500&display=swap">
 
 <style>
-/* Layout: folha de contato do estúdio 3D — placas claras sobre fundo de estúdio.
-   O nome da peça, em tipografia gigante, é a única voz da página. */
+/* Tema único escuro, por decisão da marca: o fundo é sempre #0C0C0E,
+   em qualquer aparelho. As placas dos produtos continuam claras porque
+   essa é a cor do fundo dos próprios renders. */
 :root{
-  --paper:#E6E6E4;
+  --paper:#0C0C0E;
   --plate:#EDEDEB;
-  --ink:#0C0C0D;
-  --muted:#75747A;
-  --line:rgba(12,12,13,.15);
-  --line-soft:rgba(12,12,13,.08);
-  --ghost:rgba(12,12,13,.07);
-  --live:#2B7A52;
-  --chip:rgba(12,12,13,.06);
-  --logo-invert:0;
-  --shadow:0 1px 2px rgba(12,12,13,.05), 0 18px 40px -28px rgba(12,12,13,.45);
-  --shadow-lift:0 2px 4px rgba(12,12,13,.06), 0 34px 60px -30px rgba(12,12,13,.55);
-  --font-display:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
-  --font-ui:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
-  --bar:58px;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --paper:#0B0B0C; --ink:#ECECEA; --muted:#8C8B91;
-    --line:rgba(236,236,234,.16); --line-soft:rgba(236,236,234,.08);
-    --ghost:rgba(236,236,234,.12); --live:#56B183; --chip:rgba(236,236,234,.08);
-    --logo-invert:1;
-    --shadow:0 18px 44px -26px rgba(0,0,0,.9);
-    --shadow-lift:0 30px 64px -26px rgba(0,0,0,1);
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#0B0B0C; --ink:#ECECEA; --muted:#8C8B91;
-  --line:rgba(236,236,234,.16); --line-soft:rgba(236,236,234,.08);
-  --ghost:rgba(236,236,234,.12); --live:#56B183; --chip:rgba(236,236,234,.08);
+  --ink:#ECECEA;
+  --muted:#8C8B91;
+  --line:rgba(236,236,234,.16);
+  --line-soft:rgba(236,236,234,.08);
+  --ghost:rgba(236,236,234,.12);
+  --live:#56B183;
+  --chip:rgba(236,236,234,.08);
   --logo-invert:1;
   --shadow:0 18px 44px -26px rgba(0,0,0,.9);
   --shadow-lift:0 30px 64px -26px rgba(0,0,0,1);
+  --font-display:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-ui:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --bar:58px;
   color-scheme:dark;
 }
 
@@ -97,32 +80,45 @@ img{display:block}
 .shop:hover{background:var(--chip);border-color:var(--ink)}
 
 /* ---------- abertura ---------- */
-.hero{padding-block:clamp(40px,8vw,88px) clamp(34px,5vw,56px)}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(28px,5vw,64px);align-items:center}
-.hero-copy{min-width:0}
+/* Hero: retrato editorial sangrando pela direita. As bordas da foto
+   derretem no fundo da página, então ela não termina num retângulo. */
+.hero{position:relative;isolation:isolate;overflow:hidden}
+.hero-photo{position:absolute;inset:0 0 0 auto;z-index:1;width:min(52%,880px);pointer-events:none}
+.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:54% 22%}
+.hero-photo::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(to right, var(--paper) 0%, rgba(12,12,14,.78) 22%, rgba(12,12,14,0) 56%),
+    linear-gradient(to bottom, var(--paper) 0%, rgba(12,12,14,0) 20%, rgba(12,12,14,0) 74%, var(--paper) 100%);
+}
+.hero-in{
+  position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;
+  min-height:clamp(440px,70vh,700px);
+  padding-block:clamp(44px,8vw,92px) clamp(40px,6vw,76px);
+}
+.hero-copy{min-width:0;max-width:min(100%,34rem)}
 .hero h1{
   font-family:var(--font-display); font-weight:800;
-  font-size:clamp(2.9rem,8.4vw,6.4rem); line-height:.84;
+  font-size:clamp(2.05rem,7.4vw,4.6rem); line-height:.86;
   letter-spacing:-.045em; margin:14px 0 0; text-wrap:balance;
 }
 .hero h1 em{font-style:normal;color:var(--muted)}
 .hero p{
-  max-width:34ch; margin:22px 0 0; font-weight:300;
+  max-width:34ch; margin:20px 0 0; font-weight:300;
   font-size:clamp(.94rem,1.5vw,1.06rem); line-height:1.62; color:var(--muted);
 }
-.hero-spin{position:relative;min-width:0;display:flex;justify-content:center}
-.hero-spin .ghost{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-weight:800;font-size:clamp(2.8rem,7.4vw,6.2rem);
-  letter-spacing:-.055em;color:var(--ghost);pointer-events:none;user-select:none;z-index:0;
-  white-space:nowrap;
+.hero-cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:clamp(24px,3vw,34px)}
+/* Abaixo de 1000px não sobra largura para a divisão em duas colunas:
+   a foto vira topo de página inteira e o texto desce. */
+@media (max-width:1000px){
+  .hero{display:flex;flex-direction:column}
+  .hero-photo{position:relative;inset:auto;width:100%;aspect-ratio:4/5;max-height:62vh;order:-1}
+  .hero-photo img{object-position:54% 18%}
+  .hero-photo::after{
+    background:linear-gradient(to bottom, rgba(12,12,14,.30) 0%, rgba(12,12,14,0) 26%, rgba(12,12,14,0) 50%, var(--paper) 93%);
+  }
+  .hero-in{min-height:0;padding-block:0 clamp(32px,7vw,54px);margin-top:-8vw}
 }
-.hero-spin figure{position:relative;z-index:1;margin:0;width:min(330px,100%)}
-.hero-spin video{
-  width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 42%;
-  background:var(--plate);border-radius:14px;box-shadow:var(--shadow-lift);
-}
-.hero-spin figcaption{margin-top:13px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 
 /* ---------- filtros ---------- */
 .controls{
@@ -256,9 +252,6 @@ dialog::backdrop{background:color-mix(in srgb, var(--paper) 82%, transparent);ba
 .legal{margin-top:26px;font-size:.62rem;color:var(--muted);font-weight:300;line-height:1.6}
 
 @media (max-width:860px){
-  .hero-grid{grid-template-columns:1fr}
-  .hero-spin{order:-1}
-  .hero-spin figure{width:min(260px,72%)}
   .sheet{grid-template-columns:1fr;max-height:92vh}
   .sheet-img{max-height:42vh}
   .sheet-img img,.sheet-img video{max-height:42vh}
@@ -283,22 +276,19 @@ dialog::backdrop{background:color-mix(in srgb, var(--paper) 82%, transparent);ba
 </header>
 
 <main>
-  <section class="wrap hero">
-    <div class="hero-grid">
+  <section class="hero">
+    <div class="hero-photo">
+      <img src="p/hero.jpg" alt="Modelo usando conjunto LBA preto, top e legging" fetchpriority="high" decoding="async">
+    </div>
+    <div class="wrap hero-in">
       <div class="hero-copy">
         <p class="micro">Nova coleção · Do P ao GG</p>
         <h1>O conjunto<br>que você vai<br><em>usar todo dia.</em></h1>
         <p>Espanha, Itália, França e os essenciais do dia a dia. Veja o caimento por todos os lados, confira os tamanhos que ainda temos e compre pela loja ou direto no WhatsApp.</p>
-      </div>
-      <div class="hero-spin">
-        <div class="ghost" aria-hidden="true">BARI</div>
-        <figure>
-          <video id="heroVid" src="v/bari.mp4" poster="v/bari.jpg" muted loop playsinline autoplay preload="metadata" aria-label="Conjunto Bari girando em 360 graus"></video>
-          <figcaption>
-            <span class="micro">Bari · Itália</span>
-            <span class="micro">Gire 360°</span>
-          </figcaption>
-        </figure>
+        <div class="hero-cta">
+          <button type="button" class="btn solid" id="verColecao">Ver a coleção</button>
+          <a class="btn ghost" href="https://wa.me/5561992650920?text=Oi!%20Vim%20pelo%20site%20e%20quero%20saber%20mais%20sobre%20as%20pe%C3%A7as." target="_blank" rel="noopener">Falar no WhatsApp</a>
+        </div>
       </div>
     </div>
   </section>
@@ -552,8 +542,9 @@ setStatus(false);
 render();
 refresh();
 
-const hv = $("heroVid");
-if(hv && !window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-  hv.play().catch(()=>{});
-}
+$("verColecao").addEventListener("click", () => {
+  const alvo = document.querySelector(".controls");
+  const suave = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  alvo.scrollIntoView({ behavior: suave ? "smooth" : "auto", block: "start" });
+});
 </script>

@@ -60,6 +60,27 @@ minúsculas e sem acento:
 Render com `key: null` não tem estoque na loja: aparece só na aba
 **Ver tudo**, dessaturado e marcado como **Esgotado**.
 
+## Foto do hero
+
+`p/hero.jpg` é um recorte de
+`Fotos/Fotos Dia 4/Edit D4 LBA/LBA-Ronda-5.jpg` (4000×6000), cortado em
+4000×5400 e reduzido para 1300×1755.
+
+Para trocar a foto: exporte na mesma proporção (~3:4), salve por cima de
+`p/hero.jpg` e pronto. Se a modelo ficar mal enquadrada, ajuste o
+`object-position` de `.hero-photo img` no `index.html` — são dois
+valores, um para desktop e um dentro do `@media (max-width:1000px)`.
+
+As bordas da foto derretem no fundo por gradiente, não por recorte. Por
+isso a foto precisa ter margem sobrando nas laterais: o degradê come os
+primeiros 56% da largura dela no desktop.
+
+## Tema
+
+O site é escuro sempre, em qualquer aparelho — fundo `#0C0C0E`, fixo no
+bloco `:root`. Não existe versão clara: as placas dos produtos são
+claras porque essa é a cor do fundo dos próprios renders.
+
 ## Peças avulsas (coleção França)
 
 Os conjuntos da França também são vendidos peça por peça. Isso não vem
