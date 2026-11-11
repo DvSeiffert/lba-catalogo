@@ -62,12 +62,18 @@ Render com `key: null` não tem estoque na loja: aparece só na aba
 
 ## Foto do hero
 
-`p/hero.jpg` é um recorte de
+`p/hero-lyon.jpg` é um recorte de
 `Fotos/Fotos Dia 5 - Coleção 3/Edited-D5-C3/LBA-Lyon-18.jpg` (2496×3744),
 cortado em 2496×3328 e reduzido para 1300×1733.
 
-Para trocar a foto: exporte na mesma proporção (~3:4), salve por cima de
-`p/hero.jpg` e pronto. Se a modelo ficar mal enquadrada, ajuste o
+Para trocar a foto: exporte na mesma proporção (~3:4), salve com um nome
+novo em `p/` e troque o `src` do `<img>` dentro de `.hero-photo`. Nome
+novo em vez de sobrescrever evita que o navegador de quem já visitou
+continue mostrando a foto antiga.
+
+> Cuidado para não confundir: `p/ronda.jpg`, `p/lyon-short.jpg` e afins
+> são os renders 3D dos produtos, não fotos de modelo. Apagar qualquer
+> um deles deixa um card do catálogo sem imagem. Se a modelo ficar mal enquadrada, ajuste o
 `object-position` de `.hero-photo img` no `index.html` — são dois
 valores, um para desktop e um dentro do `@media (max-width:1000px)`.
 
