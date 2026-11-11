@@ -62,14 +62,19 @@ Render com `key: null` não tem estoque na loja: aparece só na aba
 
 ## Foto do hero
 
-`p/hero-lyon.jpg` é um recorte de
-`Fotos/Fotos Dia 5 - Coleção 3/Edited-D5-C3/LBA-Lyon-18.jpg` (2496×3744),
-cortado em 2496×3328 e reduzido para 1300×1733.
+`p/hero-cat.jpg` vem de `LBA-Site-Cat.png` (1920×1080), só reduzido para
+1600×900 e convertido para JPEG.
 
-Para trocar a foto: exporte na mesma proporção (~3:4), salve com um nome
-novo em `p/` e troque o `src` do `<img>` dentro de `.hero-photo`. Nome
-novo em vez de sobrescrever evita que o navegador de quem já visitou
-continue mostrando a foto antiga.
+A foto é deitada (16:9) e o site a encaixa em dois formatos: um painel
+vertical à direita no desktop e um quadrado no topo no celular. Funciona
+porque as modelos estão no centro e sobra parede vazia nos dois lados —
+é justamente essa margem que o degradê consome. Uma foto com alguém
+encostado na borda não se comporta bem aqui.
+
+Para trocar: exporte deitada com as pessoas centralizadas, salve com um
+nome novo em `p/` e troque o `src` do `<img>` dentro de `.hero-photo`.
+Nome novo em vez de sobrescrever evita que quem já visitou continue
+vendo a foto antiga em cache.
 
 > Cuidado para não confundir: `p/ronda.jpg`, `p/lyon-short.jpg` e afins
 > são os renders 3D dos produtos, não fotos de modelo. Apagar qualquer
