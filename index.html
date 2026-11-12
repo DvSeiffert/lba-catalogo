@@ -200,8 +200,17 @@ img{display:block}
 .apart-item b{font-family:var(--font-display);font-weight:600;font-size:.92rem;letter-spacing:-.01em}
 .apart-item span{font-size:.84rem;color:var(--ink);font-variant-numeric:tabular-nums}
 .apart-item em{
-  font-style:normal;margin-top:4px;font-size:.5rem;letter-spacing:.17em;
+  font-style:normal;margin-top:6px;font-size:.5rem;letter-spacing:.17em;
   text-transform:uppercase;color:var(--muted);
+}
+/* tamanhos disponíveis de cada peça solta */
+.apart-item .tams{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px;font-size:inherit}
+.apart-item .tams i{
+  font-style:normal;font-size:.55rem;letter-spacing:.06em;padding:2px 5px;
+  border-radius:3px;background:var(--chip);color:var(--ink);
+}
+.apart-item .tams.vazio{
+  display:block;font-size:.58rem;letter-spacing:.04em;color:var(--muted);
 }
 
 .empty{padding:70px 0 90px;text-align:center;color:var(--muted);font-weight:300}
@@ -369,7 +378,30 @@ const AVULSO = {
   "Conjunto calça": [{ n:"Top", art:"o top", v:120 }, { n:"Calça", art:"a calça", v:195 }],
   "Conjunto short": [{ n:"Top", art:"o top", v:120 }, { n:"Short", art:"o short", v:165 }]
 };
-function avulsasDe(i){ return i.col === "franca" ? (AVULSO[i.kind] || null) : null; }
+// Estoque dos tops avulsos — contagem manual da planilha Controle de Estoque
+// (aba França, 11/11/2026). A loja não cadastra peça avulsa, então isso não
+// vem da API. O mesmo top serve o conjunto de short e o de calça do modelo.
+const TOP_ESTOQUE = {
+  "Annecy":      { P:2, M:2 },
+  "Cannes":      { P:1, M:2, G:1 },
+  "Colmar":      { P:2, M:2, G:3 },
+  "Lille":       { P:2, M:2 },
+  "Lyon":        { P:2, M:5, G:3, GG:2 },
+  "Montpellier": { P:2, M:3 },
+  "Paris":       { M:3 },
+  "Provença":    { P:3, M:2 }
+};
+// A peça de baixo é o próprio conjunto, então o estoque dela é o da loja, ao
+// vivo. Só o top precisa da planilha.
+function avulsasDe(i, e){
+  if(i.col !== "franca") return null;
+  const base = AVULSO[i.kind];
+  if(!base) return null;
+  return base.map(x => ({
+    ...x,
+    estoque: x.n === "Top" ? (TOP_ESTOQUE[i.name] || null) : (e ? e.sizes : null)
+  }));
+}
 
 let stock = SNAPSHOT;
 let state = { col:"todas", view:"avail" };
@@ -409,7 +441,7 @@ function buildPills(){
 }
 
 function card(i){
-  const e = entry(i), sz = sizesOf(e), ap = avulsasDe(i);
+  const e = entry(i), sz = sizesOf(e), ap = avulsasDe(i, e);
   const el = document.createElement("button");
   el.type = "button";
   el.className = "card" + (e ? "" : " is-archive") + (i.spin ? " has-spin" : "");
@@ -455,7 +487,7 @@ function openSheet(i){
   const e = entry(i), sz = sizesOf(e), promo = e && e.price < e.orig;
   const total = sz.reduce((a,x) => a + x.q, 0);
   const pct = promo ? Math.round((1 - e.price / e.orig) * 100) : 0;
-  const ap = avulsasDe(i);
+  const ap = avulsasDe(i, e);
   const soma = ap ? ap.reduce((a, x) => a + x.v, 0) : 0;
   const somaBate = !!(ap && e && Math.abs(soma - e.orig) < 0.01);
   const label = labelOf(i);
@@ -487,9 +519,14 @@ function openSheet(i){
          ${ap ? `<div class="block destaque">
                   <p class="micro forte">Leve só a peça que quiser</p>
                   <div class="apart-grid">
-                    ${ap.map(x => `<a class="apart-item" href="https://wa.me/${WA}?text=${encodeURIComponent(`Oi! Vim pelo site. Quero comprar só ${x.art} do conjunto ${i.name} — ${brl(x.v)}.`)}" target="_blank" rel="noopener"><b>${x.n}</b><span>${brl(x.v)}</span><em>pedir</em></a>`).join("")}
+                    ${ap.map(x => {
+                      const tam = x.estoque ? SIZE_ORDER.filter(s => x.estoque[s] > 0) : [];
+                      return `<a class="apart-item" href="https://wa.me/${WA}?text=${encodeURIComponent(`Oi! Vim pelo site. Quero comprar só ${x.art} do conjunto ${i.name} — ${brl(x.v)}.`)}" target="_blank" rel="noopener"><b>${x.n}</b><span>${brl(x.v)}</span>${
+                        tam.length ? `<span class="tams">${tam.map(s => `<i>${s}</i>`).join("")}</span>` : `<span class="tams vazio">sob consulta</span>`
+                      }<em>pedir</em></a>`;
+                    }).join("")}
                   </div>
-                  <p class="note">${somaBate ? `As duas somam ${brl(soma)}, o mesmo preço do conjunto — você escolhe sem pagar a mais.` : `Cada peça sai separada, no seu tamanho.`}</p>
+                  <p class="note">${somaBate ? `As duas somam ${brl(soma)}, o mesmo preço do conjunto — você escolhe sem pagar a mais.` : `Cada peça sai separada, no seu tamanho.`} Os tamanhos acima são os que temos de cada peça solta.</p>
                 </div>` : ""}
          ${e ? `<div class="block">
                   <p class="micro">Tamanhos em estoque</p>

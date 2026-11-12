@@ -142,6 +142,23 @@ Como a loja não cadastra as avulsas, cada uma abre o WhatsApp com a
 mensagem já escrita. Para liberar avulsas em outra coleção, troque o
 `i.col === "franca"` da função `avulsasDe`.
 
+### Tamanhos das avulsas
+
+A ficha mostra quais tamanhos existem de cada peça solta. As duas metades
+vêm de lugares diferentes:
+
+- **Short / calça** — é o próprio conjunto, então sai da API da loja, ao
+  vivo. Não precisa manutenção.
+- **Top** — a loja não cadastra top avulso, então vem da constante
+  `TOP_ESTOQUE` no `index.html`, transcrita da aba França da planilha
+  *Controle de Estoque*. **Isso não se atualiza sozinho:** quando o
+  estoque de tops mudar, edite a constante.
+
+O mesmo top serve o conjunto de short e o de calça do modelo — por isso
+`TOP_ESTOQUE` é indexado pelo nome do modelo (`Lyon`), não pelo conjunto.
+Na planilha isso se confirma: o total de tops é igual a short + calça em
+15 dos 16 modelos.
+
 ## Quando entrar coleção nova
 
 1. Exporte os renders em 1080×1350 e jogue em `p/` com um nome-slug
