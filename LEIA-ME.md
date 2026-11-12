@@ -1,6 +1,32 @@
 # Catálogo LBA Fitwear
 
-**No ar:** https://dvseiffert.github.io/lba-catalogo/
+**No ar:** https://lbafitwear.com.br
+
+O endereço antigo `dvseiffert.github.io/lba-catalogo` continua válido e
+redireciona para o domínio.
+
+## Domínio
+
+Registrado no **registro.br**, mas o DNS é servido pela **Cloudflare** —
+os nameservers estão delegados para lá. Mexer em DNS no painel do
+registro.br não tem efeito nenhum; tudo se faz na Cloudflare.
+
+Registros que fazem o site funcionar:
+
+| Tipo | Nome | Valor | Proxy |
+|------|------|-------|-------|
+| A | `@` | `185.199.108.153` | Somente DNS |
+| A | `@` | `185.199.109.153` | Somente DNS |
+| A | `@` | `185.199.110.153` | Somente DNS |
+| A | `@` | `185.199.111.153` | Somente DNS |
+| CNAME | `www` | `dvseiffert.github.io` | Somente DNS |
+
+> O proxy da Cloudflare (nuvem laranja) tem de ficar **desligado** nos
+> cinco. Ligado, o GitHub não consegue emitir o certificado e o site
+> entra em loop de redirecionamento.
+
+O arquivo `CNAME` na raiz é o que diz ao GitHub Pages qual é o domínio.
+Não apague. Certificado HTTPS é do Let's Encrypt, renovado sozinho.
 
 Site de catálogo estático. Uma pasta, sem build, sem dependências.
 
