@@ -488,8 +488,14 @@ function reduzir(arquivo) {
 /* ---------- 6. gravar ---------- */
 
 async function salvar() {
-  if (!pendencias()) return;
-  const b = $("#salvar"); b.disabled = true; b.textContent = "Salvando…";
+  const b = $("#salvar");
+  if (!pendencias()) {
+    // antes isso saía em silêncio e parecia que o botão não funcionava
+    b.textContent = "Nada para salvar";
+    setTimeout(() => { b.textContent = "Salvar alterações"; }, 2500);
+    return;
+  }
+  b.disabled = true; b.textContent = "Salvando…";
   try {
     const d = await chamar("/api/catalogo", {
       method:"PUT",
