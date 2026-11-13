@@ -1,0 +1,694 @@
+{
+ "atualizado": "2026-11-13",
+ "itens": [
+  {
+   "slug": "avila",
+   "col": "espanha",
+   "name": "Ávila",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/avila.jpg"
+  },
+  {
+   "slug": "barcelona-azul",
+   "col": "espanha",
+   "name": "Barcelona Azul",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/barcelona-azul.jpg"
+  },
+  {
+   "slug": "barcelona-marrom",
+   "col": "espanha",
+   "name": "Barcelona Marrom",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/barcelona-marrom.jpg"
+  },
+  {
+   "slug": "barcelona-rosa",
+   "col": "espanha",
+   "name": "Barcelona Rosa",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/barcelona-rosa.jpg"
+  },
+  {
+   "slug": "cadiz-vermelho",
+   "col": "espanha",
+   "name": "Cádiz Vermelho",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/cadiz-vermelho.jpg"
+  },
+  {
+   "slug": "cadiz-amarelo",
+   "col": "espanha",
+   "name": "Cádiz Amarelo",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/cadiz-amarelo.jpg"
+  },
+  {
+   "slug": "cordoba",
+   "col": "espanha",
+   "name": "Córdoba",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca cordoba",
+   "img": "p/cordoba.jpg"
+  },
+  {
+   "slug": "granada",
+   "col": "espanha",
+   "name": "Granada",
+   "kind": "Corta-vento",
+   "key": "corta vento granada",
+   "img": "p/granada.jpg"
+  },
+  {
+   "slug": "ibiza-azul",
+   "col": "espanha",
+   "name": "Ibiza Azul",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/ibiza-azul.jpg"
+  },
+  {
+   "slug": "ibiza-lilas",
+   "col": "espanha",
+   "name": "Ibiza Lilás",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/ibiza-lilas.jpg"
+  },
+  {
+   "slug": "ibiza-marinho",
+   "col": "espanha",
+   "name": "Ibiza Azul Marinho",
+   "kind": "Macaquinho",
+   "key": "macaquinho ibiza azul marinho",
+   "img": "p/ibiza-marinho.jpg"
+  },
+  {
+   "slug": "ibiza-preto",
+   "col": "espanha",
+   "name": "Ibiza Preto",
+   "kind": "Macaquinho",
+   "key": "macaquinho ibiza preto",
+   "img": "p/ibiza-preto.jpg"
+  },
+  {
+   "slug": "ibiza-verde",
+   "col": "espanha",
+   "name": "Ibiza Verde",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/ibiza-verde.jpg"
+  },
+  {
+   "slug": "leon",
+   "col": "espanha",
+   "name": "Léon",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca leon",
+   "img": "p/leon.jpg"
+  },
+  {
+   "slug": "madri",
+   "col": "espanha",
+   "name": "Madri",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/madri.jpg"
+  },
+  {
+   "slug": "marbella",
+   "col": "espanha",
+   "name": "Marbella",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/marbella.jpg"
+  },
+  {
+   "slug": "merida-branco",
+   "col": "espanha",
+   "name": "Mérida Branco",
+   "kind": "Camiseta",
+   "key": null,
+   "img": "p/merida-branco.jpg"
+  },
+  {
+   "slug": "merida-preto",
+   "col": "espanha",
+   "name": "Mérida Preto",
+   "kind": "Camiseta",
+   "key": null,
+   "img": "p/merida-preto.jpg"
+  },
+  {
+   "slug": "milao-es",
+   "col": "espanha",
+   "name": "Milão",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/milao-es.jpg"
+  },
+  {
+   "slug": "napoles-vinho-es",
+   "col": "espanha",
+   "name": "Nápoles Vinho",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/napoles-vinho-es.jpg"
+  },
+  {
+   "slug": "pamplona",
+   "col": "espanha",
+   "name": "Pamplona",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/pamplona.jpg"
+  },
+  {
+   "slug": "parma",
+   "col": "espanha",
+   "name": "Parma",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/parma.jpg"
+  },
+  {
+   "slug": "ronda",
+   "col": "espanha",
+   "name": "Ronda",
+   "kind": "Conjunto short",
+   "key": "conjunto short ronda",
+   "img": "p/ronda.jpg"
+  },
+  {
+   "slug": "sevilha",
+   "col": "espanha",
+   "name": "Sevilha",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/sevilha.jpg"
+  },
+  {
+   "slug": "toledo",
+   "col": "espanha",
+   "name": "Toledo",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/toledo.jpg"
+  },
+  {
+   "slug": "trento-vinho-es",
+   "col": "espanha",
+   "name": "Trento Vinho",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/trento-vinho-es.jpg"
+  },
+  {
+   "slug": "valencia",
+   "col": "espanha",
+   "name": "Valência",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/valencia.jpg",
+   "spin": "valencia"
+  },
+  {
+   "slug": "veneza-es",
+   "col": "espanha",
+   "name": "Veneza",
+   "kind": "Macacão longo",
+   "key": null,
+   "img": "p/veneza-es.jpg"
+  },
+  {
+   "slug": "bari-azul",
+   "col": "italia",
+   "name": "Bari Azul",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/bari-azul.jpg"
+  },
+  {
+   "slug": "bari-cinza",
+   "col": "italia",
+   "name": "Bari Cinza",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/bari-cinza.jpg",
+   "spin": "bari"
+  },
+  {
+   "slug": "bari-verde",
+   "col": "italia",
+   "name": "Bari Verde",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/bari-verde.jpg"
+  },
+  {
+   "slug": "bari-vinho",
+   "col": "italia",
+   "name": "Bari Vinho",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/bari-vinho.jpg"
+  },
+  {
+   "slug": "bolonha",
+   "col": "italia",
+   "name": "Bolonha",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/bolonha.jpg"
+  },
+  {
+   "slug": "capri",
+   "col": "italia",
+   "name": "Capri",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/capri.jpg"
+  },
+  {
+   "slug": "como",
+   "col": "italia",
+   "name": "Como",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/como.jpg"
+  },
+  {
+   "slug": "florenca",
+   "col": "italia",
+   "name": "Florença",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/florenca.jpg"
+  },
+  {
+   "slug": "genova",
+   "col": "italia",
+   "name": "Gênova",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/genova.jpg"
+  },
+  {
+   "slug": "luca-nude",
+   "col": "italia",
+   "name": "Luca Nude",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/luca-nude.jpg"
+  },
+  {
+   "slug": "luca",
+   "col": "italia",
+   "name": "Luca",
+   "kind": "Conjunto short",
+   "key": "conjunto short luca",
+   "img": "p/luca.jpg"
+  },
+  {
+   "slug": "milao-it",
+   "col": "italia",
+   "name": "Milão",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/milao-it.jpg"
+  },
+  {
+   "slug": "napoles-verde",
+   "col": "italia",
+   "name": "Nápoles Verde",
+   "kind": "Conjunto short",
+   "key": null,
+   "img": "p/napoles-verde.jpg"
+  },
+  {
+   "slug": "pisa",
+   "col": "italia",
+   "name": "Pisa",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/pisa.jpg"
+  },
+  {
+   "slug": "pompeia",
+   "col": "italia",
+   "name": "Pompeia",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/pompeia.jpg"
+  },
+  {
+   "slug": "roma",
+   "col": "italia",
+   "name": "Roma",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/roma.jpg"
+  },
+  {
+   "slug": "siena",
+   "col": "italia",
+   "name": "Siena",
+   "kind": "Conjunto short",
+   "key": "conjunto short siena",
+   "img": "p/siena.jpg"
+  },
+  {
+   "slug": "trento-amarelo",
+   "col": "italia",
+   "name": "Trento Amarelo",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/trento-amarelo.jpg"
+  },
+  {
+   "slug": "trento-offwhite",
+   "col": "italia",
+   "name": "Trento Off-White",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/trento-offwhite.jpg"
+  },
+  {
+   "slug": "trento-preto",
+   "col": "italia",
+   "name": "Trento Preto",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca trento preto",
+   "img": "p/trento-preto.jpg"
+  },
+  {
+   "slug": "trento-verde",
+   "col": "italia",
+   "name": "Trento Verde",
+   "kind": "Conjunto calça",
+   "key": null,
+   "img": "p/trento-verde.jpg"
+  },
+  {
+   "slug": "turim",
+   "col": "italia",
+   "name": "Turim",
+   "kind": "Macaquinho",
+   "key": null,
+   "img": "p/turim.jpg"
+  },
+  {
+   "slug": "veneza-verde",
+   "col": "italia",
+   "name": "Veneza Verde",
+   "kind": "Macacão longo",
+   "key": null,
+   "img": "p/veneza-verde.jpg"
+  },
+  {
+   "slug": "verona",
+   "col": "italia",
+   "name": "Verona",
+   "kind": "Conjunto short",
+   "key": "conjunto short verona",
+   "img": "p/verona.jpg"
+  },
+  {
+   "slug": "annecy",
+   "col": "franca",
+   "name": "Annecy",
+   "kind": "Conjunto short",
+   "key": "conjunto short annecy",
+   "img": "p/annecy.jpg"
+  },
+  {
+   "slug": "cannes",
+   "col": "franca",
+   "name": "Cannes",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca cannes",
+   "img": "p/cannes.jpg"
+  },
+  {
+   "slug": "colmar-calca",
+   "col": "franca",
+   "name": "Colmar",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca colmar",
+   "img": "p/colmar-calca.jpg"
+  },
+  {
+   "slug": "colmar-short",
+   "col": "franca",
+   "name": "Colmar",
+   "kind": "Conjunto short",
+   "key": "conjunto short colmar",
+   "img": "p/colmar-short.jpg"
+  },
+  {
+   "slug": "estrasburgo",
+   "col": "franca",
+   "name": "Estrasburgo",
+   "kind": "Macacão longo",
+   "key": null,
+   "img": "p/estrasburgo.jpg"
+  },
+  {
+   "slug": "lille",
+   "col": "franca",
+   "name": "Lille",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca lille",
+   "img": "p/lille.jpg"
+  },
+  {
+   "slug": "lyon-calca",
+   "col": "franca",
+   "name": "Lyon",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca lyon",
+   "img": "p/lyon-calca.jpg"
+  },
+  {
+   "slug": "lyon-short",
+   "col": "franca",
+   "name": "Lyon",
+   "kind": "Conjunto short",
+   "key": "conjunto short lyon",
+   "img": "p/lyon-short.jpg"
+  },
+  {
+   "slug": "marselha",
+   "col": "franca",
+   "name": "Marselha",
+   "kind": "Macacão longo",
+   "key": "macacao longo marselha",
+   "img": "p/marselha.jpg"
+  },
+  {
+   "slug": "montpellier-calca",
+   "col": "franca",
+   "name": "Montpellier",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca montpellier",
+   "img": "p/montpellier-calca.jpg"
+  },
+  {
+   "slug": "montpellier-short",
+   "col": "franca",
+   "name": "Montpellier",
+   "kind": "Conjunto short",
+   "key": "conjunto short montpellier",
+   "img": "p/montpellier-short.jpg"
+  },
+  {
+   "slug": "paris",
+   "col": "franca",
+   "name": "Paris",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca paris",
+   "img": "p/paris.jpg"
+  },
+  {
+   "slug": "provenca",
+   "col": "franca",
+   "name": "Provença",
+   "kind": "Conjunto calça",
+   "key": "conjunto calca provenca",
+   "img": "p/provenca.jpg"
+  },
+  {
+   "slug": "calca-flare",
+   "col": "essenciais",
+   "name": "Calça Flare",
+   "kind": "Calça",
+   "key": "calca flare",
+   "img": "p/calca-flare.jpg"
+  },
+  {
+   "slug": "jaqueta-slim",
+   "col": "essenciais",
+   "name": "Jaqueta Slim",
+   "kind": "Jaqueta",
+   "key": "jaqueta slim",
+   "img": "p/jaqueta-slim.jpg"
+  },
+  {
+   "slug": "legging-cos-reto",
+   "col": "essenciais",
+   "name": "Legging Cós Reto",
+   "kind": "Legging",
+   "key": "legging cos reto",
+   "img": "p/legging-cos-reto.jpg"
+  },
+  {
+   "slug": "macacao-flare",
+   "col": "essenciais",
+   "name": "Macacão Flare",
+   "kind": "Macacão",
+   "key": "macacao flare",
+   "img": "p/macacao-flare.jpg"
+  },
+  {
+   "slug": "regata-lua",
+   "col": "essenciais",
+   "name": "Regata Lua",
+   "kind": "Regata",
+   "key": "regata lua",
+   "img": "p/regata-lua.jpg"
+  },
+  {
+   "slug": "short-com-bolso",
+   "col": "essenciais",
+   "name": "Short com Bolso",
+   "kind": "Short",
+   "key": "short com bolso",
+   "img": "p/short-com-bolso.jpg"
+  },
+  {
+   "slug": "short-cos-estreito",
+   "col": "essenciais",
+   "name": "Short Cós Estreito",
+   "kind": "Short",
+   "key": "short cos estreito",
+   "img": "p/short-cos-estreito.jpg"
+  },
+  {
+   "slug": "short-saia-beach",
+   "col": "essenciais",
+   "name": "Short Saia Beach",
+   "kind": "Short-saia",
+   "key": "short saia beach",
+   "img": "p/short-saia-beach.jpg"
+  },
+  {
+   "slug": "top-alca-vazada",
+   "col": "essenciais",
+   "name": "Top Alça Vazada",
+   "kind": "Top",
+   "key": "top alca vazada",
+   "img": "p/top-alca-vazada.jpg"
+  },
+  {
+   "slug": "top-costas-nuas",
+   "col": "essenciais",
+   "name": "Top Costas Nuas",
+   "kind": "Top",
+   "key": "top costas nuas",
+   "img": "p/top-costas-nuas.jpg"
+  },
+  {
+   "slug": "top-high",
+   "col": "essenciais",
+   "name": "Top High",
+   "kind": "Top",
+   "key": "top high",
+   "img": "p/top-high.jpg"
+  },
+  {
+   "slug": "top-alca-dupla",
+   "col": "essenciais",
+   "name": "Top Alça Dupla",
+   "kind": "Top",
+   "key": "top alca dupla",
+   "img": "p/top-alca-dupla.jpg"
+  },
+  {
+   "slug": "vestido-beach",
+   "col": "essenciais",
+   "name": "Vestido Beach",
+   "kind": "Vestido",
+   "key": "vestido beach",
+   "img": "p/vestido-beach.jpg"
+  }
+ ],
+ "avulso": {
+  "Conjunto calça": [
+   {
+    "n": "Top",
+    "art": "o top",
+    "v": 120
+   },
+   {
+    "n": "Calça",
+    "art": "a calça",
+    "v": 195
+   }
+  ],
+  "Conjunto short": [
+   {
+    "n": "Top",
+    "art": "o top",
+    "v": 120
+   },
+   {
+    "n": "Short",
+    "art": "o short",
+    "v": 165
+   }
+  ]
+ },
+ "topEstoque": {
+  "Annecy": {
+   "P": 2,
+   "M": 2
+  },
+  "Cannes": {
+   "P": 1,
+   "M": 2,
+   "G": 1
+  },
+  "Colmar": {
+   "P": 2,
+   "M": 2,
+   "G": 3
+  },
+  "Lille": {
+   "P": 2,
+   "M": 2
+  },
+  "Lyon": {
+   "P": 2,
+   "M": 5,
+   "G": 3,
+   "GG": 2
+  },
+  "Montpellier": {
+   "P": 2,
+   "M": 3
+  },
+  "Paris": {
+   "M": 3
+  },
+  "Provença": {
+   "P": 3,
+   "M": 2
+  }
+ }
+}

@@ -1,0 +1,526 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel do Catálogo LBA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Jost:wght@300;400;500&display=swap">
+
+<style>
+:root{
+  --paper:#0C0C0E; --painel:#141417; --plate:#EDEDEB;
+  --ink:#ECECEA; --muted:#8C8B91;
+  --line:rgba(236,236,234,.16); --line-soft:rgba(236,236,234,.08);
+  --chip:rgba(236,236,234,.08);
+  --ok:#56B183; --alerta:#D9A441; --erro:#D2685C;
+  --fd:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --fu:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--fu);font-weight:400;margin:0}
+.wrap{width:100%;max-width:1100px;margin-inline:auto;
+  padding-left:max(18px,env(safe-area-inset-left,0px));
+  padding-right:max(18px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--fd);letter-spacing:-.02em;margin:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select{font:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.micro{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* ---- telas de entrada ---- */
+.porta{min-height:100svh;display:grid;place-items:center;padding-block:40px}
+.porta form{width:min(360px,100%);display:flex;flex-direction:column;gap:14px}
+.porta h1{font-size:1.5rem;font-weight:700}
+.campo{display:flex;flex-direction:column;gap:6px}
+.campo label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.campo input,.campo select{
+  background:var(--painel);border:1px solid var(--line);border-radius:9px;
+  padding:11px 13px;color:var(--ink);width:100%}
+.campo input:focus,.campo select:focus{border-color:var(--ink);outline:none}
+.btn{border:1px solid var(--ink);border-radius:999px;padding:11px 20px;
+  font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;text-align:center;
+  transition:opacity .18s ease,background .18s ease}
+.btn.cheio{background:var(--ink);color:var(--paper)}
+.btn.cheio:hover{opacity:.85}
+.btn.vazio:hover{background:var(--chip)}
+.btn.perigo{border-color:var(--erro);color:var(--erro)}
+.btn.perigo:hover{background:rgba(210,104,92,.12)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.aviso{font-size:.82rem;font-weight:300;line-height:1.55;color:var(--muted)}
+.aviso.ruim{color:var(--erro)}
+.aviso.bom{color:var(--ok)}
+
+/* ---- barra ---- */
+.topo{position:sticky;top:0;z-index:20;background:var(--paper);
+  border-bottom:1px solid var(--line-soft)}
+.topo-in{display:flex;align-items:center;gap:14px;min-height:62px;padding-block:10px;flex-wrap:wrap}
+.topo h1{font-size:1.05rem;font-weight:600;flex:0 0 auto}
+.topo .vai{flex:1 1 auto}
+.pend{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--alerta)}
+
+.ferramentas{display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding-block:18px}
+.ferramentas input[type=search],.ferramentas select{
+  background:var(--painel);border:1px solid var(--line);border-radius:999px;
+  padding:9px 15px;color:var(--ink)}
+.ferramentas input[type=search]{flex:1 1 180px;min-width:0}
+
+/* ---- lista ---- */
+.lista{display:flex;flex-direction:column;gap:1px;background:var(--line-soft);
+  border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;margin-bottom:40px}
+.linha{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:13px;
+  align-items:center;background:var(--paper);padding:11px 13px;text-align:left;width:100%}
+.linha:hover{background:var(--painel)}
+.linha img{width:52px;height:65px;object-fit:cover;border-radius:5px;background:var(--plate)}
+.linha .nome{font-family:var(--fd);font-weight:600;font-size:.98rem}
+.linha .sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+.selo{font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:3px 7px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.selo.ok{color:var(--ok);border-color:rgba(86,177,131,.5)}
+.selo.sem{color:var(--muted)}
+.selo.novo{color:var(--alerta);border-color:rgba(217,164,65,.5)}
+.selo.alterado{color:var(--alerta);border-color:rgba(217,164,65,.5)}
+
+/* ---- ficha ---- */
+dialog{border:0;padding:0;background:transparent;max-width:min(620px,94vw);width:100%}
+dialog::backdrop{background:rgba(12,12,14,.8)}
+.ficha{background:var(--painel);border:1px solid var(--line);border-radius:14px;
+  max-height:90svh;display:flex;flex-direction:column;overflow:hidden}
+.ficha-topo{display:flex;align-items:center;gap:12px;padding:16px 18px;
+  border-bottom:1px solid var(--line-soft)}
+.ficha-topo h2{font-size:1.1rem;font-weight:600;flex:1 1 auto;min-width:0}
+.ficha-corpo{padding:18px;overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:15px}
+.ficha-pe{display:flex;gap:9px;flex-wrap:wrap;padding:14px 18px;
+  border-top:1px solid var(--line-soft)}
+.ficha-pe .vai{flex:1 1 auto}
+.dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.foto-area{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.foto-area img{width:104px;height:130px;object-fit:cover;border-radius:7px;background:var(--plate)}
+.foto-area .lado{flex:1 1 180px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.linha-botoes{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fechar{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);
+  display:grid;place-items:center;font-size:1rem;flex:0 0 auto}
+.fechar:hover{background:var(--chip)}
+input[type=file]{display:none}
+.nota{font-size:.75rem;font-weight:300;line-height:1.55;color:var(--muted)}
+.nota code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;
+  background:var(--chip);padding:1px 4px;border-radius:3px}
+.carregando{opacity:.5;pointer-events:none}
+@media (max-width:560px){ .dupla{grid-template-columns:1fr} }
+</style>
+
+<div id="app"></div>
+
+<dialog id="ficha"></dialog>
+
+<script>
+const COLS = { espanha:"Espanha", italia:"Itália", franca:"França", essenciais:"Essenciais" };
+const TIPOS = ["Conjunto short","Conjunto calça","Macaquinho","Macacão longo","Macacão curto",
+               "Corta-vento","Jaqueta","Camiseta","Top","Short","Short-saia","Calça","Legging",
+               "Regata","Vestido","Macacão"];
+const API_LOJA = "https://apiappaluno.nextfit.com.br/api/SiteVendaPublico/RecuperarItens/2f668a4a-1ad7-4690-82dd-03e3e6efa141?Descricao=&CodigosItensStr=%5B%5D&page=1&limit=500&sort=%5B%7B%22property%22%3A%22Ordem%22%2C%22direction%22%3A%22asc%22%7D%5D";
+const SITE = "https://lbafitwear.com.br";
+
+const $ = s => document.querySelector(s);
+const app = () => $("#app");
+let estado = { api:"", token:"", catalogo:null, sha:null, sujos:new Set(), novos:new Set(), loja:null };
+
+/* ---------- utilidades ---------- */
+const semAcento = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"");
+const chaveLoja = s => semAcento(s).replace(/\s+/g," ").trim().toLowerCase();
+const slugar = s => semAcento(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+
+function escapaHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+
+async function chamar(rota, opcoes = {}) {
+  const r = await fetch(estado.api.replace(/\/+$/,"") + rota, {
+    ...opcoes,
+    headers: { "content-type":"application/json",
+               ...(estado.token ? { authorization:"Bearer " + estado.token } : {}),
+               ...(opcoes.headers || {}) }
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.erro || `erro ${r.status}`);
+  return d;
+}
+
+/* ---------- 1. endereço da API ---------- */
+
+function telaEndereco(erro) {
+  app().innerHTML = `<div class="wrap porta"><form id="f">
+    <h1>Painel do catálogo</h1>
+    <p class="aviso">Primeiro acesso neste aparelho. Cole o endereço da função que foi publicada na Cloudflare — algo como <code>https://lba-admin.SEU-NOME.workers.dev</code>.</p>
+    <div class="campo"><label for="api">Endereço da função</label>
+      <input id="api" type="url" required placeholder="https://lba-admin.exemplo.workers.dev" autocomplete="off"></div>
+    ${erro ? `<p class="aviso ruim">${escapaHtml(erro)}</p>` : ""}
+    <button class="btn cheio" type="submit">Continuar</button>
+  </form></div>`;
+  $("#f").addEventListener("submit", e => {
+    e.preventDefault();
+    const v = $("#api").value.trim().replace(/\/+$/,"");
+    try { localStorage.setItem("lba_api", v); } catch(_) {}
+    estado.api = v;
+    telaSenha();
+  });
+}
+
+/* ---------- 2. senha ---------- */
+
+function telaSenha(erro) {
+  app().innerHTML = `<div class="wrap porta"><form id="f">
+    <h1>Painel do catálogo</h1>
+    <p class="aviso">Acesso restrito à equipe da LBA.</p>
+    <div class="campo"><label for="senha">Senha</label>
+      <input id="senha" type="password" required autocomplete="current-password" autofocus></div>
+    ${erro ? `<p class="aviso ruim">${escapaHtml(erro)}</p>` : ""}
+    <button class="btn cheio" type="submit" id="entrar">Entrar</button>
+    <button class="btn vazio" type="button" id="trocarApi">Trocar o endereço da função</button>
+  </form></div>`;
+  $("#trocarApi").addEventListener("click", () => telaEndereco());
+  $("#f").addEventListener("submit", async e => {
+    e.preventDefault();
+    const b = $("#entrar"); b.disabled = true; b.textContent = "Entrando…";
+    try {
+      const d = await chamar("/api/login", { method:"POST", body: JSON.stringify({ senha: $("#senha").value }) });
+      estado.token = d.token;
+      try { sessionStorage.setItem("lba_token", d.token); } catch(_) {}
+      await abrirPainel();
+    } catch (err) {
+      telaSenha(err.message === "senha incorreta" ? "Senha incorreta." : err.message);
+    }
+  });
+}
+
+/* ---------- 3. painel ---------- */
+
+async function abrirPainel() {
+  app().innerHTML = `<div class="wrap porta"><p class="aviso">Carregando o catálogo…</p></div>`;
+  try {
+    const d = await chamar("/api/catalogo");
+    estado.catalogo = d.catalogo;
+    estado.sha = d.sha;
+  } catch (err) {
+    if (/sess/.test(err.message)) return telaSenha("Sua sessão expirou. Entre de novo.");
+    return telaSenha(err.message);
+  }
+  carregarLoja();
+  desenharPainel();
+}
+
+async function carregarLoja() {
+  try {
+    const d = await fetch(API_LOJA, { cache:"no-store" }).then(r => r.json());
+    const mapa = {};
+    const tam = new Set(["p","m","g","gg","pp","xg"]);
+    for (const row of d.Content) {
+      const t = chaveLoja(row.Item.Descricao).split(" ");
+      const temTam = tam.has(t[t.length-1]);
+      const k = (temTam ? t.slice(0,-1) : t).join(" ");
+      mapa[k] = (mapa[k] || 0) + Math.max(0, row.Item.QtdeEmEstoque);
+    }
+    estado.loja = mapa;
+    if ($("#lista")) desenharLista();
+  } catch(_) { estado.loja = null; }
+}
+
+function pendencias() { return estado.sujos.size + estado.novos.size; }
+
+function desenharPainel() {
+  app().innerHTML = `
+    <header class="topo"><div class="wrap topo-in">
+      <h1>Catálogo LBA</h1>
+      <span class="micro" id="resumo"></span>
+      <span class="vai"></span>
+      <span class="pend" id="pend"></span>
+      <button class="btn cheio" id="salvar">Salvar alterações</button>
+      <button class="btn vazio" id="sair">Sair</button>
+    </div></header>
+    <div class="wrap">
+      <div class="ferramentas">
+        <input type="search" id="busca" placeholder="Buscar por nome…" autocomplete="off">
+        <select id="filtroCol">
+          <option value="">Todas as coleções</option>
+          ${Object.entries(COLS).map(([k,v]) => `<option value="${k}">${v}</option>`).join("")}
+        </select>
+        <select id="filtroLig">
+          <option value="">Qualquer ligação</option>
+          <option value="sem">Sem ligação com a loja</option>
+          <option value="ok">Com ligação</option>
+        </select>
+        <button class="btn vazio" id="novo">+ Novo modelo</button>
+      </div>
+      <div class="lista" id="lista"></div>
+    </div>`;
+  $("#salvar").addEventListener("click", salvar);
+  $("#sair").addEventListener("click", sair);
+  $("#novo").addEventListener("click", () => abrirFicha(null));
+  ["busca","filtroCol","filtroLig"].forEach(id => $("#"+id).addEventListener("input", desenharLista));
+  desenharLista();
+}
+
+function statusLigacao(it) {
+  if (!it.key) return { cls:"sem", txt:"sem ligação" };
+  if (!estado.loja) return { cls:"sem", txt:"ligação: ?" };
+  return it.key in estado.loja
+    ? { cls:"ok", txt:`na loja · ${estado.loja[it.key]} un` }
+    : { cls:"novo", txt:"chave não achada" };
+}
+
+function desenharLista() {
+  const busca = ($("#busca")?.value || "").toLowerCase();
+  const fc = $("#filtroCol")?.value || "";
+  const fl = $("#filtroLig")?.value || "";
+  const itens = estado.catalogo.itens.filter(it => {
+    if (busca && !it.name.toLowerCase().includes(busca)) return false;
+    if (fc && it.col !== fc) return false;
+    if (fl === "sem" && it.key) return false;
+    if (fl === "ok" && !it.key) return false;
+    return true;
+  });
+  $("#resumo").textContent = `${estado.catalogo.itens.length} modelos`;
+  $("#pend").textContent = pendencias() ? `${pendencias()} não salvo${pendencias() > 1 ? "s" : ""}` : "";
+  $("#lista").innerHTML = itens.length ? itens.map(it => {
+    const s = statusLigacao(it);
+    const marca = estado.novos.has(it.slug) ? `<span class="selo novo">novo</span>`
+                : estado.sujos.has(it.slug) ? `<span class="selo alterado">alterado</span>` : "";
+    return `<button class="linha" data-slug="${escapaHtml(it.slug)}">
+      <img src="${SITE}/${escapaHtml(it.img)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+      <span>
+        <span class="nome">${escapaHtml(it.name)}</span>
+        <span class="sub">${escapaHtml(it.kind)} · ${COLS[it.col] || it.col}</span>
+      </span>
+      <span class="linha-botoes">${marca}<span class="selo ${s.cls}">${s.txt}</span></span>
+    </button>`;
+  }).join("") : `<div style="padding:30px;text-align:center" class="aviso">Nenhum modelo nesse filtro.</div>`;
+  $("#lista").querySelectorAll(".linha").forEach(b =>
+    b.addEventListener("click", () => abrirFicha(b.dataset.slug)));
+}
+
+/* ---------- 4. ficha de um modelo ---------- */
+
+function abrirFicha(slug) {
+  const novo = !slug;
+  const it = novo
+    ? { slug:"", col:"franca", name:"", kind:"Conjunto short", key:"", img:"" }
+    : { ...estado.catalogo.itens.find(x => x.slug === slug) };
+  const d = $("#ficha");
+  d.innerHTML = `
+    <div class="ficha">
+      <div class="ficha-topo">
+        <h2>${novo ? "Novo modelo" : escapaHtml(it.name)}</h2>
+        <button class="fechar" id="x" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="ficha-corpo">
+        <div class="foto-area">
+          <img id="previa" src="${it.img ? SITE + "/" + escapaHtml(it.img) : ""}" alt=""
+               onerror="this.style.visibility='hidden'">
+          <div class="lado">
+            <p class="micro">Render do produto</p>
+            <p class="nota">Proporção 4:5, como os outros. A imagem é reduzida para 860×1075 aqui mesmo, antes de subir.</p>
+            <div class="linha-botoes">
+              <button class="btn vazio" id="escolher">${it.img ? "Trocar foto" : "Escolher foto"}</button>
+              <span class="nota" id="statusFoto"></span>
+            </div>
+            <input type="file" id="arquivo" accept="image/*">
+          </div>
+        </div>
+
+        <div class="dupla">
+          <div class="campo"><label for="f-name">Nome</label>
+            <input id="f-name" value="${escapaHtml(it.name)}" placeholder="Lyon"></div>
+          <div class="campo"><label for="f-col">Coleção</label>
+            <select id="f-col">${Object.entries(COLS).map(([k,v]) =>
+              `<option value="${k}" ${k===it.col?"selected":""}>${v}</option>`).join("")}</select></div>
+        </div>
+
+        <div class="dupla">
+          <div class="campo"><label for="f-kind">Tipo de peça</label>
+            <select id="f-kind">${TIPOS.map(t =>
+              `<option ${t===it.kind?"selected":""}>${t}</option>`).join("")}</select></div>
+          <div class="campo"><label for="f-slug">Identificador do arquivo</label>
+            <input id="f-slug" value="${escapaHtml(it.slug)}" placeholder="lyon-short" ${novo?"":"readonly"}></div>
+        </div>
+
+        <div class="campo"><label for="f-key">Nome do produto na loja (sem o tamanho)</label>
+          <input id="f-key" value="${escapaHtml(it.key || "")}" placeholder="conjunto short lyon" autocomplete="off">
+          <div class="linha-botoes">
+            <button class="btn vazio" id="testar">Testar na loja</button>
+            <span class="nota" id="statusKey"></span>
+          </div>
+          <p class="nota">É o nome exato cadastrado na NextFit, em minúsculas, sem acento e <strong>sem o tamanho</strong>. Sem isso o card nasce como “Esgotado”. Deixe vazio de propósito para peça de arquivo.</p>
+        </div>
+      </div>
+      <div class="ficha-pe">
+        ${novo ? "" : `<button class="btn perigo" id="remover">Remover do catálogo</button>`}
+        <span class="vai"></span>
+        <button class="btn vazio" id="cancelar">Cancelar</button>
+        <button class="btn cheio" id="aplicar">${novo ? "Adicionar" : "Aplicar"}</button>
+      </div>
+    </div>`;
+
+  let imgNova = it.img, base64Novo = null;
+
+  $("#x").onclick = $("#cancelar").onclick = () => d.close();
+  $("#escolher").onclick = () => $("#arquivo").click();
+  if (novo) $("#f-name").addEventListener("input", e => {
+    if (!$("#f-slug").dataset.tocado) $("#f-slug").value = slugar(e.target.value);
+  });
+  $("#f-slug").addEventListener("input", e => { e.target.dataset.tocado = "1"; });
+
+  $("#arquivo").addEventListener("change", async e => {
+    const f = e.target.files[0]; if (!f) return;
+    $("#statusFoto").textContent = "Reduzindo…";
+    try {
+      const r = await reduzir(f);
+      base64Novo = r.base64;
+      $("#previa").src = r.dataUrl;
+      $("#previa").style.visibility = "visible";
+      $("#statusFoto").textContent = `pronta · ${Math.round(r.bytes/1024)} KB`;
+    } catch (err) {
+      $("#statusFoto").textContent = "não consegui ler essa imagem";
+    }
+  });
+
+  $("#testar").addEventListener("click", async () => {
+    const k = chaveLoja($("#f-key").value);
+    $("#f-key").value = k;
+    const s = $("#statusKey");
+    if (!k) { s.textContent = "vazio — vai aparecer como peça de arquivo"; return; }
+    if (!estado.loja) { s.textContent = "não consegui falar com a loja agora"; return; }
+    s.textContent = k in estado.loja
+      ? `encontrado · ${estado.loja[k]} peças em estoque`
+      : "não existe na loja com esse nome";
+  });
+
+  if (!novo) $("#remover").addEventListener("click", () => {
+    if (!confirmarNaPagina($("#remover"), "Remover mesmo?")) return;
+    estado.catalogo.itens = estado.catalogo.itens.filter(x => x.slug !== it.slug);
+    estado.sujos.add(it.slug);
+    d.close(); desenharLista();
+  });
+
+  $("#aplicar").addEventListener("click", async () => {
+    const dados = {
+      slug: slugar($("#f-slug").value),
+      col: $("#f-col").value,
+      name: $("#f-name").value.trim(),
+      kind: $("#f-kind").value,
+      key: chaveLoja($("#f-key").value) || null,
+      img: imgNova
+    };
+    if (!dados.name) return alertaFicha("Falta o nome.");
+    if (!dados.slug) return alertaFicha("Falta o identificador do arquivo.");
+    if (novo && estado.catalogo.itens.some(x => x.slug === dados.slug))
+      return alertaFicha("Já existe um modelo com esse identificador.");
+    if (novo && !base64Novo) return alertaFicha("Escolha a foto do modelo.");
+
+    const btn = $("#aplicar"); btn.disabled = true; btn.textContent = "Enviando…";
+    try {
+      if (base64Novo) {
+        const nome = novo ? `${dados.slug}.jpg` : `${dados.slug}-${Date.now().toString(36)}.jpg`;
+        const r = await chamar("/api/foto", { method:"POST", body: JSON.stringify({ nome, base64: base64Novo }) });
+        dados.img = r.caminho;
+      }
+    } catch (err) {
+      btn.disabled = false; btn.textContent = novo ? "Adicionar" : "Aplicar";
+      return alertaFicha("A foto não subiu: " + err.message);
+    }
+
+    if (novo) { estado.catalogo.itens.push(dados); estado.novos.add(dados.slug); }
+    else {
+      const i = estado.catalogo.itens.findIndex(x => x.slug === it.slug);
+      const antigo = estado.catalogo.itens[i];
+      estado.catalogo.itens[i] = { ...antigo, ...dados };
+      if (antigo.spin) estado.catalogo.itens[i].spin = antigo.spin;
+      estado.sujos.add(dados.slug);
+    }
+    d.close(); desenharLista();
+  });
+
+  d.showModal();
+  setTimeout(() => $("#f-name").focus(), 50);
+}
+
+function alertaFicha(txt) {
+  let p = $("#ficha .ficha-pe .aviso");
+  if (!p) { p = document.createElement("p"); p.className = "aviso ruim"; p.style.flex = "1 1 100%";
+            $("#ficha .ficha-pe").prepend(p); }
+  p.textContent = txt;
+}
+
+function confirmarNaPagina(botao, pergunta) {
+  if (botao.dataset.confirmando === "1") return true;
+  botao.dataset.confirmando = "1";
+  const antes = botao.textContent;
+  botao.textContent = pergunta;
+  setTimeout(() => { botao.dataset.confirmando = ""; botao.textContent = antes; }, 4000);
+  return false;
+}
+
+/* ---------- 5. imagem ---------- */
+
+function reduzir(arquivo) {
+  return new Promise((ok, falha) => {
+    const img = new Image();
+    img.onload = () => {
+      const escala = Math.min(860 / img.width, 1075 / img.height, 1);
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * escala);
+      c.height = Math.round(img.height * escala);
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#EDEDEB"; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      const dataUrl = c.toDataURL("image/jpeg", 0.82);
+      const base64 = dataUrl.split(",")[1];
+      URL.revokeObjectURL(img.src);
+      ok({ dataUrl, base64, bytes: Math.round(base64.length * 0.75) });
+    };
+    img.onerror = () => falha(new Error("imagem inválida"));
+    img.src = URL.createObjectURL(arquivo);
+  });
+}
+
+/* ---------- 6. gravar ---------- */
+
+async function salvar() {
+  if (!pendencias()) return;
+  const b = $("#salvar"); b.disabled = true; b.textContent = "Salvando…";
+  try {
+    const d = await chamar("/api/catalogo", {
+      method:"PUT",
+      body: JSON.stringify({ catalogo: estado.catalogo, sha: estado.sha })
+    });
+    estado.sha = d.sha;
+    estado.sujos.clear(); estado.novos.clear();
+    b.textContent = "Salvo · no ar em ~2 min";
+    setTimeout(() => { b.textContent = "Salvar alterações"; b.disabled = false; }, 6000);
+    desenharLista();
+  } catch (err) {
+    b.disabled = false; b.textContent = "Salvar alterações";
+    if (/sess/.test(err.message)) return telaSenha("Sua sessão expirou. Entre de novo.");
+    alert("Não salvou: " + err.message);
+  }
+}
+
+function sair() {
+  if (pendencias() && !confirm(`Há ${pendencias()} alteração(ões) sem salvar. Sair mesmo?`)) return;
+  estado = { api: estado.api, token:"", catalogo:null, sha:null, sujos:new Set(), novos:new Set(), loja:null };
+  try { sessionStorage.removeItem("lba_token"); } catch(_) {}
+  telaSenha();
+}
+
+addEventListener("beforeunload", e => { if (pendencias()) e.preventDefault(); });
+
+/* ---------- entrada ---------- */
+
+(function inicio() {
+  try { estado.api = localStorage.getItem("lba_api") || ""; } catch(_) {}
+  if (!estado.api) return telaEndereco();
+  try { estado.token = sessionStorage.getItem("lba_token") || ""; } catch(_) {}
+  if (estado.token) return abrirPainel();
+  telaSenha();
+})();
+</script>
