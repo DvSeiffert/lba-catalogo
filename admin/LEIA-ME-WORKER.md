@@ -88,23 +88,34 @@ painel, para ninguém mais precisar colar.
 
 ## O que o painel faz
 
-- **Cadastrar modelo novo** — foto, nome, coleção, tipo e a ligação com o
-  produto na loja. A foto é reduzida para 860×1075 no próprio navegador
-  antes de subir, então pode mandar o arquivo grande.
-- **Editar** qualquer um dos modelos: trocar foto, corrigir nome, mudar
-  coleção ou tipo.
+- **Cadastrar modelo novo** — foto, nome, coleção, tipo, preço e estoque
+  por tamanho. A foto é reduzida para 860×1075 no próprio navegador antes
+  de subir, então pode mandar o arquivo grande.
+- **Editar** qualquer modelo: trocar foto, corrigir nome, mudar coleção
+  ou tipo, mexer no preço, pôr ou tirar promoção, acertar o estoque.
 - **Remover** do catálogo.
-- **Testar na loja** — confere, na hora, se o nome digitado existe mesmo
-  na NextFit. Esse é o campo que mais dá errado: se ele não bater, o card
-  nasce como "Esgotado" mesmo havendo estoque.
 
-Preço, tamanhos e disponibilidade continuam vindo da loja sozinhos. O
-painel não mexe nisso.
+Desde 13/11/2026 o catálogo é independente da loja NextFit: preço e
+estoque são do painel, não vêm mais de fora. Quando vender uma peça,
+baixe a quantidade aqui.
+
+Um modelo só aparece na aba **À venda** se tiver preço e pelo menos uma
+peça em estoque. Sem um dos dois, ele vira peça de arquivo: fica em "Ver
+tudo", marcado como Esgotado.
+
+Nos conjuntos da **França** aparece uma grade a mais, a dos tops
+avulsos. Ela é do modelo, não do conjunto — o mesmo top serve o de short
+e o de calça, então mudar num muda no outro. A calça e o short saem do
+estoque do próprio conjunto.
 
 ## Depois de salvar
 
-As alterações viram um commit no repositório e o GitHub Pages reconstrói
-o site em **1 a 2 minutos**. Não é instantâneo.
+As alterações viram um commit no repositório e **aparecem no site na
+hora** — a função lê o repositório direto, sem esperar o GitHub Pages.
+
+A única exceção é foto recém-enviada: o arquivo só existe no site depois
+do build, de 1 a 2 minutos. Até lá a imagem vem do próprio repositório,
+então ela aparece do mesmo jeito.
 
 Se duas pessoas abrirem o painel ao mesmo tempo, quem salvar depois
 recebe um aviso para recarregar em vez de apagar o trabalho da outra.
