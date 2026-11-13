@@ -500,7 +500,8 @@ function abrirFicha(slug) {
     else {
       const i = estado.catalogo.itens.findIndex(x => x.slug === it.slug);
       const final = { ...estado.catalogo.itens[i], ...dados };
-      if (final.de == null) delete final.de;   // saiu da promoção
+      // campo ausente em dados sobreviveria ao merge: promoção tirada some aqui
+      if (!(dados.de > 0)) delete final.de;
       estado.catalogo.itens[i] = final;
       estado.sujos.add(dados.slug);
     }
