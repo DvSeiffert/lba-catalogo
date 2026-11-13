@@ -55,6 +55,26 @@ Para usar um domínio próprio (ex.: catalogo.lbafitwear.com.br), aponte
 um CNAME para `dvseiffert.github.io` e cadastre o domínio em
 Settings → Pages no repositório.
 
+## De onde vem o catálogo
+
+O site lê `https://lba-admin.lbafitwear.workers.dev/catalogo.json`, servido
+pela função na Cloudflare. Ela enxerga o repositório na hora, então uma
+alteração feita no painel aparece **imediatamente** — sem esperar o
+GitHub Pages reconstruir.
+
+Se a função não responder, o site cai para `dados/catalogo.json`, o
+arquivo estático do próprio site. Esse arquivo é o mesmo conteúdo, só que
+publicado pelo build, e é o que vale dentro do artifact, onde buscar
+outro domínio é bloqueado.
+
+A função guarda a resposta na borda por 60 segundos e derruba esse cache
+assim que o painel grava. Isso evita bater no GitHub a cada visita sem
+atrasar a atualização.
+
+> Foto recém-enviada é o único caso que ainda depende do build: o arquivo
+> só existe no site depois dele. Até lá, a `<img>` cai para o
+> `raw.githubusercontent.com`, então a imagem aparece do mesmo jeito.
+
 ## Estoque
 
 A página tenta ler o estoque direto da API da loja NextFit ao carregar:
