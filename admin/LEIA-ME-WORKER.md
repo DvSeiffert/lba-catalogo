@@ -1,5 +1,15 @@
 # Ligar o painel — passo a passo
 
+> **Já instalado** em 13/11/2026. O Worker roda em
+> `lba-admin.lbafitwear.workers.dev`, na conta `lbafitwear@gmail.com`, e o
+> painel já traz esse endereço embutido. O roteiro abaixo fica como
+> referência, para refazer ou para migrar de conta.
+>
+> Token do GitHub em uso: `painel-catalogo-lba`, só no repositório
+> `lba-catalogo`, Contents com escrita, **vence em 12/11/2027**. Quando
+> vencer, o painel para de salvar — gere outro e troque a variável
+> `GITHUB_TOKEN`.
+
 O painel em `lbafitwear.com.br/admin/` já está no ar, mas sozinho ele não
 faz nada: falta a função que valida a senha e grava no repositório. São
 duas coisas para criar, uma no GitHub e uma na Cloudflare. Leva uns 5
