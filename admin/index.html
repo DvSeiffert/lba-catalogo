@@ -4,120 +4,216 @@
 <title>Painel do Catálogo LBA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Jost:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Jost:wght@300;400;500&display=swap">
 
 <style>
+/* O painel fala a mesma língua do catálogo: mesmo fundo, mesmas fontes,
+   mesmas pílulas, as mesmas placas claras dos produtos. Os tokens são os
+   do :root do index.html — mudou lá, muda aqui. */
 :root{
-  --paper:#0C0C0E; --painel:#141417; --plate:#EDEDEB;
-  --ink:#ECECEA; --muted:#8C8B91;
-  --line:rgba(236,236,234,.16); --line-soft:rgba(236,236,234,.08);
+  --paper:#0C0C0E;
+  --plate:#EDEDEB;
+  --ink:#ECECEA;
+  --muted:#8C8B91;
+  --line:rgba(236,236,234,.16);
+  --line-soft:rgba(236,236,234,.08);
+  --ghost:rgba(236,236,234,.12);
   --chip:rgba(236,236,234,.08);
+  --campo:#141417;
   --ok:#56B183; --alerta:#D9A441; --erro:#D2685C;
-  --fd:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
-  --fu:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --shadow:0 18px 44px -26px rgba(0,0,0,.9);
+  --shadow-lift:0 30px 64px -26px rgba(0,0,0,1);
+  --font-display:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-ui:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --bar:68px;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-body{background:var(--paper);color:var(--ink);font-family:var(--fu);font-weight:400;margin:0}
-.wrap{width:100%;max-width:1100px;margin-inline:auto;
-  padding-left:max(18px,env(safe-area-inset-left,0px));
-  padding-right:max(18px,env(safe-area-inset-right,0px))}
-h1,h2,h3{font-family:var(--fd);letter-spacing:-.02em;margin:0}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);
+  font-weight:400;margin:0;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);
+  z-index:40;background:var(--paper)}
+.wrap{width:100%;max-width:1180px;margin-inline:auto;
+  padding-left:max(20px,env(safe-area-inset-left,0px));
+  padding-right:max(20px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-.03em;margin:0}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 input,select{font:inherit}
 a{color:inherit}
-:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.micro{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+img{display:block}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
+.micro{font-size:.625rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
 
-/* ---- telas de entrada ---- */
-.porta{min-height:100svh;display:grid;place-items:center;padding-block:40px}
-.porta form{width:min(360px,100%);display:flex;flex-direction:column;gap:14px}
-.porta h1{font-size:1.5rem;font-weight:700}
-.campo{display:flex;flex-direction:column;gap:6px}
-.campo label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-.campo input,.campo select{
-  background:var(--painel);border:1px solid var(--line);border-radius:9px;
-  padding:11px 13px;color:var(--ink);width:100%}
+/* ---------- porta de entrada ---------- */
+.porta{min-height:100svh;display:grid;place-items:center;padding-block:44px}
+.porta-in{position:relative;width:min(386px,100%);isolation:isolate}
+.porta-in > *{position:relative;z-index:1}
+/* mesma palavra-fantasma da ficha do catálogo: atrás do título */
+.titulo{position:relative;isolation:isolate;margin-top:30px}
+.porta-ghost{position:absolute;top:-.28em;right:-.06em;z-index:-1;pointer-events:none;
+  user-select:none;font-family:var(--font-display);font-weight:800;
+  font-size:clamp(4.6rem,19vw,7rem);letter-spacing:-.07em;line-height:.76;color:var(--ghost)}
+.titulo h1{margin-top:0}
+.marca{height:34px;width:auto;object-fit:contain;filter:invert(1)}
+.porta h1{font-weight:800;font-size:clamp(2.1rem,7.4vw,2.9rem);line-height:.88;
+  letter-spacing:-.045em;margin-top:30px;text-wrap:balance}
+.porta h1 em{font-style:normal;color:var(--muted)}
+.porta form{display:flex;flex-direction:column;gap:13px;margin-top:30px}
+.porta .aviso{margin-top:18px}
+
+/* ---------- campos ---------- */
+.campo{display:flex;flex-direction:column;gap:7px;min-width:0}
+.campo label,.campo > .rot{font-size:.56rem;letter-spacing:.21em;text-transform:uppercase;color:var(--muted)}
+.campo input,.campo select{background:var(--campo);border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;color:var(--ink);width:100%;
+  transition:border-color .18s ease}
+.campo input::placeholder{color:rgba(140,139,145,.7)}
 .campo input:focus,.campo select:focus{border-color:var(--ink);outline:none}
-.btn{border:1px solid var(--ink);border-radius:999px;padding:11px 20px;
-  font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;text-align:center;
-  transition:opacity .18s ease,background .18s ease}
+/* seta própria: a nativa destoa do resto */
+.campo select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),
+                   linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 19px) calc(50% + 1px),calc(100% - 14px) calc(50% + 1px);
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.campo select:hover{border-color:var(--line)}
+
+/* ---------- pílulas e botões, iguais aos do catálogo ---------- */
+.btn{display:inline-block;text-align:center;text-decoration:none;
+  border:1px solid var(--ink);border-radius:999px;padding:12px 21px;
+  font-size:.625rem;letter-spacing:.17em;text-transform:uppercase;
+  transition:opacity .18s ease,background .18s ease,color .18s ease,border-color .18s ease}
 .btn.cheio{background:var(--ink);color:var(--paper)}
-.btn.cheio:hover{opacity:.85}
-.btn.vazio:hover{background:var(--chip)}
-.btn.perigo{border-color:var(--erro);color:var(--erro)}
-.btn.perigo:hover{background:rgba(210,104,92,.12)}
+.btn.cheio:hover{opacity:.84}
+.btn.vazio{border-color:var(--line);color:var(--muted)}
+.btn.vazio:hover{background:var(--chip);border-color:var(--ink);color:var(--ink)}
+.btn.perigo{border-color:rgba(210,104,92,.5);color:var(--erro)}
+.btn.perigo:hover{background:rgba(210,104,92,.12);border-color:var(--erro)}
 .btn[disabled]{opacity:.4;cursor:not-allowed}
-.aviso{font-size:.82rem;font-weight:300;line-height:1.55;color:var(--muted)}
+.btn.mini{padding:9px 16px}
+.pill{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;padding:8px 15px;
+  font-size:.625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  white-space:nowrap;transition:color .18s ease,border-color .18s ease,background .18s ease}
+.pill:hover{color:var(--ink);border-color:var(--ink)}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.aviso{font-size:.82rem;font-weight:300;line-height:1.6;color:var(--muted)}
 .aviso.ruim{color:var(--erro)}
 .aviso.bom{color:var(--ok)}
+.nota{font-size:.78rem;font-weight:300;line-height:1.6;color:var(--muted);max-width:52ch}
+.nota code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;
+  background:var(--chip);padding:1px 5px;border-radius:4px}
 
-/* ---- barra ---- */
-.topo{position:sticky;top:0;z-index:20;background:var(--paper);
+/* ---------- barra ---------- */
+.topo{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:saturate(180%) blur(14px);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
   border-bottom:1px solid var(--line-soft)}
-.topo-in{display:flex;align-items:center;gap:14px;min-height:62px;padding-block:10px;flex-wrap:wrap}
-.topo h1{font-size:1.05rem;font-weight:600;flex:0 0 auto}
-.topo .vai{flex:1 1 auto}
-.pend{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--alerta)}
+.topo-in{display:flex;align-items:center;gap:13px;min-height:var(--bar);padding-block:11px;flex-wrap:wrap}
+.selo-marca{display:flex;align-items:center;gap:11px;flex:0 0 auto}
+.selo-marca img{height:27px;width:auto;object-fit:contain;filter:invert(1)}
+.selo-marca span{font-size:.625rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--muted);padding-top:3px}
+.topo .vai{flex:1 1 auto;min-width:0}
+#resumo{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pend{font-size:.56rem;letter-spacing:.17em;text-transform:uppercase;color:var(--alerta);
+  white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+.pend::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--alerta);
+  animation:pulso 2.4s ease-in-out infinite}
+.pend:empty{display:none}
+@keyframes pulso{0%,100%{opacity:1}50%{opacity:.3}}
 
-.ferramentas{display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding-block:18px}
-.ferramentas input[type=search],.ferramentas select{
-  background:var(--painel);border:1px solid var(--line);border-radius:999px;
-  padding:9px 15px;color:var(--ink)}
-.ferramentas input[type=search]{flex:1 1 180px;min-width:0}
+/* ---------- ferramentas ---------- */
+.ferramentas{display:flex;flex-direction:column;gap:12px;padding-block:22px 18px}
+.linha-ferramenta{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.pills{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;min-width:0;padding-bottom:1px}
+.pills::-webkit-scrollbar{display:none}
+.busca{flex:1 1 220px;min-width:0;background:var(--campo);border:1px solid var(--line);
+  border-radius:999px;padding:10px 17px;color:var(--ink);transition:border-color .18s ease}
+.busca::placeholder{color:rgba(140,139,145,.7)}
+.busca:focus{border-color:var(--ink);outline:none}
 
-/* ---- lista ---- */
+/* ---------- lista ---------- */
 .lista{display:flex;flex-direction:column;gap:1px;background:var(--line-soft);
-  border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;margin-bottom:40px}
-.linha{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:13px;
-  align-items:center;background:var(--paper);padding:11px 13px;text-align:left;width:100%}
-.linha:hover{background:var(--painel)}
-.linha img{width:52px;height:65px;object-fit:cover;border-radius:5px;background:var(--plate)}
-.linha .nome{font-family:var(--fd);font-weight:600;font-size:.98rem}
-.linha .sub{font-size:.72rem;color:var(--muted);margin-top:2px}
-.selo{font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;
-  padding:3px 7px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
-.selo.ok{color:var(--ok);border-color:rgba(86,177,131,.5)}
-.selo.sem{color:var(--muted)}
-.selo.novo{color:var(--alerta);border-color:rgba(217,164,65,.5)}
-.selo.alterado{color:var(--alerta);border-color:rgba(217,164,65,.5)}
+  border:1px solid var(--line-soft);border-radius:14px;overflow:hidden;margin-bottom:64px}
+.linha{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:15px;align-items:center;
+  background:var(--paper);padding:11px 14px;text-align:left;width:100%;
+  transition:background .18s ease}
+.linha:hover{background:rgba(236,236,234,.045)}
+/* a mesma placa clara em que os renders aparecem no catálogo */
+.placa{width:54px;height:67px;border-radius:7px;overflow:hidden;background:var(--plate);
+  flex:0 0 auto;box-shadow:var(--shadow)}
+.placa img{width:100%;height:100%;object-fit:cover}
+.linha .nome{display:block;font-family:var(--font-display);font-weight:600;font-size:1rem;
+  letter-spacing:-.022em;line-height:1.15}
+.linha .sub{display:block;margin-top:5px;font-size:.56rem;letter-spacing:.21em;
+  text-transform:uppercase;color:var(--muted)}
+.selos{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.selo{font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;padding:4px 9px;
+  border-radius:999px;border:1px solid var(--line);white-space:nowrap;color:var(--muted);
+  font-variant-numeric:tabular-nums}
+.selo.ok{color:var(--ink);background:var(--chip)}
+.selo.sem{color:var(--muted);border-style:dashed}
+.selo.novo,.selo.alterado{color:var(--alerta);border-color:rgba(217,164,65,.45)}
+.vazio-lista{padding:60px 0 70px;text-align:center;color:var(--muted);font-weight:300}
 
-/* ---- ficha ---- */
-dialog{border:0;padding:0;background:transparent;max-width:min(620px,94vw);width:100%}
-dialog::backdrop{background:rgba(12,12,14,.8)}
-.ficha{background:var(--painel);border:1px solid var(--line);border-radius:14px;
-  max-height:90svh;display:flex;flex-direction:column;overflow:hidden}
-.ficha-topo{display:flex;align-items:center;gap:12px;padding:16px 18px;
-  border-bottom:1px solid var(--line-soft)}
-.ficha-topo h2{font-size:1.1rem;font-weight:600;flex:1 1 auto;min-width:0}
-.ficha-corpo{padding:18px;overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:15px}
-.ficha-pe{display:flex;gap:9px;flex-wrap:wrap;padding:14px 18px;
-  border-top:1px solid var(--line-soft)}
+/* ---------- ficha ---------- */
+dialog{border:0;padding:0;background:transparent;max-width:min(640px,94vw);width:100%;color:var(--ink)}
+dialog::backdrop{background:color-mix(in srgb, var(--paper) 82%, transparent);backdrop-filter:blur(9px)}
+.ficha{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  box-shadow:var(--shadow-lift);max-height:90svh;display:flex;flex-direction:column;overflow:hidden}
+.ficha-topo{display:flex;align-items:center;gap:12px;padding:20px 22px 0;flex:0 0 auto}
+.ficha-topo h2{font-weight:700;font-size:1.5rem;letter-spacing:-.035em;flex:1 1 auto;min-width:0}
+.ficha-corpo{position:relative;padding:18px 22px 22px;overflow-y:auto;min-height:0;
+  display:flex;flex-direction:column;gap:18px;-webkit-overflow-scrolling:touch}
+/* a palavra-fantasma da ficha do catálogo, de novo aqui */
+.ficha-ghost{position:absolute;top:-.26em;right:-.04em;z-index:0;pointer-events:none;
+  user-select:none;font-family:var(--font-display);font-weight:800;
+  font-size:clamp(3.4rem,13vw,5.4rem);letter-spacing:-.06em;line-height:.78;
+  color:var(--ghost);text-align:right;max-width:130%}
+.ficha-corpo > *{position:relative;z-index:1}
+.ficha-pe{display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding:16px 22px;
+  border-top:1px solid var(--line-soft);flex:0 0 auto;background:var(--paper)}
 .ficha-pe .vai{flex:1 1 auto}
-.dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.foto-area{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
-.foto-area img{width:104px;height:130px;object-fit:cover;border-radius:7px;background:var(--plate)}
-.foto-area .lado{flex:1 1 180px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.dupla{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.foto-area{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.foto-area .placa{width:106px;height:132px;border-radius:9px}
+.foto-area .lado{flex:1 1 190px;display:flex;flex-direction:column;gap:9px;min-width:0}
 .linha-botoes{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.fechar{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);
-  display:grid;place-items:center;font-size:1rem;flex:0 0 auto}
+.fechar{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
+  display:grid;place-items:center;font-size:1rem;line-height:1;flex:0 0 auto;
+  transition:background .18s ease}
 .fechar:hover{background:var(--chip)}
 input[type=file]{display:none}
-.tamgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:7px}
-.tam{display:flex;flex-direction:column;gap:4px}
-.tam b{font-size:.6rem;letter-spacing:.14em;color:var(--muted);text-align:center;font-weight:500}
-.tam input{background:var(--painel);border:1px solid var(--line);border-radius:8px;
-  padding:9px 4px;color:var(--ink);width:100%;text-align:center;-moz-appearance:textfield}
+
+/* grade de tamanhos: a mesma caixinha do "tamanhos em estoque" do catálogo */
+.tamgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:8px}
+.tam{display:flex;flex-direction:column;gap:5px}
+.tam b{font-family:var(--font-display);font-weight:600;font-size:.72rem;letter-spacing:.06em;
+  color:var(--muted);text-align:center}
+.tam input{background:var(--campo);border:1px solid var(--line);border-radius:8px;
+  padding:10px 4px;color:var(--ink);width:100%;text-align:center;
+  font-variant-numeric:tabular-nums;-moz-appearance:textfield;transition:border-color .18s ease,color .18s ease}
 .tam input::-webkit-outer-spin-button,.tam input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .tam input:focus{border-color:var(--ink);outline:none}
-.tam input.tem{border-color:rgba(86,177,131,.55);color:var(--ok)}
-.somatorio{font-size:.72rem;color:var(--muted)}
+.tam input.tem{border-color:var(--ink);background:var(--ink);color:var(--paper);font-weight:500}
+.tam input.tem + b,.tam:has(input.tem) b{color:var(--ink)}
+.somatorio{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .somatorio b{color:var(--ink);font-weight:500}
-.nota{font-size:.75rem;font-weight:300;line-height:1.55;color:var(--muted)}
-.nota code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;
-  background:var(--chip);padding:1px 4px;border-radius:3px}
 .carregando{opacity:.5;pointer-events:none}
-@media (max-width:560px){ .dupla{grid-template-columns:1fr} }
+
+@media (max-width:620px){
+  .dupla{grid-template-columns:1fr}
+  .topo-in{gap:10px}
+  .selo-marca span{display:none}
+  #resumo{display:none}
+  .ficha-pe .btn{flex:1 1 auto}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important}
+}
 </style>
 
 <div id="app"></div>
@@ -137,6 +233,8 @@ const API_PADRAO = "https://lba-admin.lbafitwear.workers.dev";
 const $ = s => document.querySelector(s);
 const app = () => $("#app");
 let estado = { api:"", token:"", catalogo:null, sha:null, sujos:new Set(), novos:new Set() };
+// filtros viraram pílulas, como as do catálogo, então o estado é nosso
+let filtro = { col:"", lig:"" };
 
 /* ---------- utilidades ---------- */
 const semAcento = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"");
@@ -161,14 +259,21 @@ async function chamar(rota, opcoes = {}) {
 /* ---------- 1. endereço da API ---------- */
 
 function telaEndereco(erro) {
-  app().innerHTML = `<div class="wrap porta"><form id="f">
-    <h1>Painel do catálogo</h1>
-    <p class="aviso">Primeiro acesso neste aparelho. Cole o endereço da função que foi publicada na Cloudflare — algo como <code>https://lba-admin.SEU-NOME.workers.dev</code>.</p>
-    <div class="campo"><label for="api">Endereço da função</label>
-      <input id="api" type="url" required placeholder="https://lba-admin.exemplo.workers.dev" autocomplete="off"></div>
-    ${erro ? `<p class="aviso ruim">${escapaHtml(erro)}</p>` : ""}
-    <button class="btn cheio" type="submit">Continuar</button>
-  </form></div>`;
+  app().innerHTML = `<div class="wrap porta"><div class="porta-in">
+    <img class="marca" src="../p/lba.png" alt="LBA Fitwear">
+    <p class="micro" style="margin:26px 0 0">Primeiro acesso</p>
+    <div class="titulo">
+      <div class="porta-ghost" aria-hidden="true">LBA</div>
+      <h1>Onde fica<br><em>a função.</em></h1>
+    </div>
+    <p class="aviso">Cole o endereço publicado na Cloudflare — algo como <code>https://lba-admin.SEU-NOME.workers.dev</code>. Fica guardado neste aparelho.</p>
+    <form id="f">
+      <div class="campo"><label for="api">Endereço da função</label>
+        <input id="api" type="url" required placeholder="https://lba-admin.exemplo.workers.dev" autocomplete="off"></div>
+      ${erro ? `<p class="aviso ruim">${escapaHtml(erro)}</p>` : ""}
+      <button class="btn cheio" type="submit">Continuar</button>
+    </form>
+  </div></div>`;
   $("#f").addEventListener("submit", e => {
     e.preventDefault();
     const v = $("#api").value.trim().replace(/\/+$/,"");
@@ -181,15 +286,22 @@ function telaEndereco(erro) {
 /* ---------- 2. senha ---------- */
 
 function telaSenha(erro) {
-  app().innerHTML = `<div class="wrap porta"><form id="f">
-    <h1>Painel do catálogo</h1>
-    <p class="aviso">Acesso restrito à equipe da LBA.</p>
-    <div class="campo"><label for="senha">Senha</label>
-      <input id="senha" type="password" required autocomplete="current-password" autofocus></div>
-    ${erro ? `<p class="aviso ruim">${escapaHtml(erro)}</p>` : ""}
-    <button class="btn cheio" type="submit" id="entrar">Entrar</button>
-    <button class="btn vazio" type="button" id="trocarApi">Trocar o endereço da função</button>
-  </form></div>`;
+  app().innerHTML = `<div class="wrap porta"><div class="porta-in">
+    <img class="marca" src="../p/lba.png" alt="LBA Fitwear">
+    <p class="micro" style="margin:26px 0 0">Painel interno</p>
+    <div class="titulo">
+      <div class="porta-ghost" aria-hidden="true">LBA</div>
+      <h1>O catálogo<br><em>por dentro.</em></h1>
+    </div>
+    <p class="aviso">Preço, estoque, foto e modelo novo. Acesso restrito à equipe da LBA.</p>
+    <form id="f">
+      <div class="campo"><label for="senha">Senha</label>
+        <input id="senha" type="password" required autocomplete="current-password" autofocus></div>
+      ${erro ? `<p class="aviso ruim">${escapaHtml(erro)}</p>` : ""}
+      <button class="btn cheio" type="submit" id="entrar">Entrar</button>
+      <button class="btn vazio" type="button" id="trocarApi">Trocar o endereço da função</button>
+    </form>
+  </div></div>`;
   $("#trocarApi").addEventListener("click", () => telaEndereco());
   $("#f").addEventListener("submit", async e => {
     e.preventDefault();
@@ -208,7 +320,10 @@ function telaSenha(erro) {
 /* ---------- 3. painel ---------- */
 
 async function abrirPainel() {
-  app().innerHTML = `<div class="wrap porta"><p class="aviso">Carregando o catálogo…</p></div>`;
+  app().innerHTML = `<div class="wrap porta"><div class="porta-in">
+    <img class="marca" src="../p/lba.png" alt="LBA Fitwear">
+    <p class="aviso" style="margin-top:26px">Carregando o catálogo…</p>
+  </div></div>`;
   try {
     const d = await chamar("/api/catalogo");
     // Protege contra meio caminho: painel novo com catálogo do formato antigo
@@ -244,33 +359,37 @@ function temAvulsa(it) {
 function desenharPainel() {
   app().innerHTML = `
     <header class="topo"><div class="wrap topo-in">
-      <h1>Catálogo LBA</h1>
+      <div class="selo-marca"><img src="../p/lba.png" alt="LBA Fitwear"><span>Catálogo</span></div>
       <span class="micro" id="resumo"></span>
       <span class="vai"></span>
       <span class="pend" id="pend"></span>
-      <button class="btn cheio" id="salvar">Salvar alterações</button>
-      <button class="btn vazio" id="sair">Sair</button>
+      <button class="btn cheio mini" id="salvar">Salvar alterações</button>
+      <button class="btn vazio mini" id="sair">Sair</button>
     </div></header>
     <div class="wrap">
       <div class="ferramentas">
-        <input type="search" id="busca" placeholder="Buscar por nome…" autocomplete="off">
-        <select id="filtroCol">
-          <option value="">Todas as coleções</option>
-          ${Object.entries(COLS).map(([k,v]) => `<option value="${k}">${v}</option>`).join("")}
-        </select>
-        <select id="filtroLig">
-          <option value="">À venda e esgotados</option>
-          <option value="ok">Só os à venda</option>
-          <option value="sem">Só os esgotados</option>
-        </select>
-        <button class="btn vazio" id="novo">+ Novo modelo</button>
+        <div class="linha-ferramenta">
+          <input type="search" class="busca" id="busca" placeholder="Buscar por nome…" autocomplete="off">
+          <button class="btn vazio mini" id="novo">+ Novo modelo</button>
+        </div>
+        <div class="linha-ferramenta">
+          <div class="pills" id="pillsCol"></div>
+          <div class="pills" id="pillsLig"></div>
+        </div>
       </div>
       <div class="lista" id="lista"></div>
     </div>`;
   $("#salvar").addEventListener("click", salvar);
   $("#sair").addEventListener("click", sair);
   $("#novo").addEventListener("click", () => abrirFicha(null));
-  ["busca","filtroCol","filtroLig"].forEach(id => $("#"+id).addEventListener("input", desenharLista));
+  $("#busca").addEventListener("input", desenharLista);
+  app().addEventListener("click", ev => {
+    const p = ev.target.closest(".pill");
+    if (!p) return;
+    if (p.dataset.col !== undefined) filtro.col = p.dataset.col;
+    if (p.dataset.lig !== undefined) filtro.lig = p.dataset.lig;
+    desenharLista();
+  });
   desenharLista();
 }
 
@@ -281,10 +400,20 @@ function statusLigacao(it) {
     : { cls:"sem", txt: it.preco > 0 ? "sem estoque" : "esgotado" };
 }
 
+function desenharPills() {
+  $("#pillsCol").innerHTML = [["", "Todas"], ...Object.entries(COLS)].map(([k, v]) =>
+    `<button class="pill" data-col="${k}" aria-pressed="${filtro.col === k}">${v}</button>`).join("");
+  const n = estado.catalogo.itens.length;
+  const nV = estado.catalogo.itens.filter(aVenda).length;
+  $("#pillsLig").innerHTML =
+    `<button class="pill" data-lig="" aria-pressed="${filtro.lig === ""}">Tudo ${n}</button>` +
+    `<button class="pill" data-lig="ok" aria-pressed="${filtro.lig === "ok"}">À venda ${nV}</button>` +
+    `<button class="pill" data-lig="sem" aria-pressed="${filtro.lig === "sem"}">Esgotados ${n - nV}</button>`;
+}
+
 function desenharLista() {
   const busca = ($("#busca")?.value || "").toLowerCase();
-  const fc = $("#filtroCol")?.value || "";
-  const fl = $("#filtroLig")?.value || "";
+  const fc = filtro.col, fl = filtro.lig;
   const itens = estado.catalogo.itens.filter(it => {
     if (busca && !it.name.toLowerCase().includes(busca)) return false;
     if (fc && it.col !== fc) return false;
@@ -295,19 +424,21 @@ function desenharLista() {
   const nVenda = estado.catalogo.itens.filter(aVenda).length;
   $("#resumo").textContent = `${estado.catalogo.itens.length} modelos · ${nVenda} à venda`;
   $("#pend").textContent = pendencias() ? `${pendencias()} não salvo${pendencias() > 1 ? "s" : ""}` : "";
+  desenharPills();
   $("#lista").innerHTML = itens.length ? itens.map(it => {
     const s = statusLigacao(it);
     const marca = estado.novos.has(it.slug) ? `<span class="selo novo">novo</span>`
                 : estado.sujos.has(it.slug) ? `<span class="selo alterado">alterado</span>` : "";
     return `<button class="linha" data-slug="${escapaHtml(it.slug)}">
-      <img src="${SITE}/${escapaHtml(it.img)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+      <span class="placa"><img src="${SITE}/${escapaHtml(it.img)}" alt="" loading="lazy"
+            onerror="this.style.visibility='hidden'"></span>
       <span>
         <span class="nome">${escapaHtml(it.name)}</span>
         <span class="sub">${escapaHtml(it.kind)} · ${COLS[it.col] || it.col}</span>
       </span>
-      <span class="linha-botoes">${marca}<span class="selo ${s.cls}">${s.txt}</span></span>
+      <span class="selos">${marca}<span class="selo ${s.cls}">${s.txt}</span></span>
     </button>`;
-  }).join("") : `<div style="padding:30px;text-align:center" class="aviso">Nenhum modelo nesse filtro.</div>`;
+  }).join("") : `<div class="vazio-lista">Nenhum modelo nesse filtro.</div>`;
   $("#lista").querySelectorAll(".linha").forEach(b =>
     b.addEventListener("click", () => abrirFicha(b.dataset.slug)));
 }
@@ -347,6 +478,9 @@ function abrirFicha(slug) {
   const it = novo
     ? { slug:"", col:"franca", name:"", kind:"Conjunto short", img:"", preco:null, tamanhos:{} }
     : { ...estado.catalogo.itens.find(x => x.slug === slug) };
+  // a mesma palavra-fantasma que o catálogo põe atrás do nome na ficha
+  const fantasma = novo ? "Novo"
+    : it.col === "essenciais" ? it.name.split(" ").pop() : it.name.split(" ")[0];
   const d = $("#ficha");
   d.innerHTML = `
     <div class="ficha">
@@ -355,9 +489,10 @@ function abrirFicha(slug) {
         <button class="fechar" id="x" aria-label="Fechar">&times;</button>
       </div>
       <div class="ficha-corpo">
+        <div class="ficha-ghost" aria-hidden="true">${escapaHtml(fantasma)}</div>
         <div class="foto-area">
-          <img id="previa" src="${it.img ? SITE + "/" + escapaHtml(it.img) : ""}" alt=""
-               onerror="this.style.visibility='hidden'">
+          <span class="placa"><img id="previa" src="${it.img ? SITE + "/" + escapaHtml(it.img) : ""}" alt=""
+               onerror="this.style.visibility='hidden'"></span>
           <div class="lado">
             <p class="micro">Render do produto</p>
             <p class="nota">Proporção 4:5, como os outros. A imagem é reduzida para 860×1075 aqui mesmo, antes de subir.</p>
