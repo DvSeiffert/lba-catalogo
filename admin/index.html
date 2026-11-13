@@ -103,6 +103,16 @@ dialog::backdrop{background:rgba(12,12,14,.8)}
   display:grid;place-items:center;font-size:1rem;flex:0 0 auto}
 .fechar:hover{background:var(--chip)}
 input[type=file]{display:none}
+.tamgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:7px}
+.tam{display:flex;flex-direction:column;gap:4px}
+.tam b{font-size:.6rem;letter-spacing:.14em;color:var(--muted);text-align:center;font-weight:500}
+.tam input{background:var(--painel);border:1px solid var(--line);border-radius:8px;
+  padding:9px 4px;color:var(--ink);width:100%;text-align:center;-moz-appearance:textfield}
+.tam input::-webkit-outer-spin-button,.tam input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.tam input:focus{border-color:var(--ink);outline:none}
+.tam input.tem{border-color:rgba(86,177,131,.55);color:var(--ok)}
+.somatorio{font-size:.72rem;color:var(--muted)}
+.somatorio b{color:var(--ink);font-weight:500}
 .nota{font-size:.75rem;font-weight:300;line-height:1.55;color:var(--muted)}
 .nota code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;
   background:var(--chip);padding:1px 4px;border-radius:3px}
@@ -116,21 +126,20 @@ input[type=file]{display:none}
 
 <script>
 const COLS = { espanha:"Espanha", italia:"Itália", franca:"França", essenciais:"Essenciais" };
+const TAMANHOS = ["PP","P","M","G","GG","XG","U"];
 const TIPOS = ["Conjunto short","Conjunto calça","Macaquinho","Macacão longo","Macacão curto",
                "Corta-vento","Jaqueta","Camiseta","Top","Short","Short-saia","Calça","Legging",
                "Regata","Vestido","Macacão"];
-const API_LOJA = "https://apiappaluno.nextfit.com.br/api/SiteVendaPublico/RecuperarItens/2f668a4a-1ad7-4690-82dd-03e3e6efa141?Descricao=&CodigosItensStr=%5B%5D&page=1&limit=500&sort=%5B%7B%22property%22%3A%22Ordem%22%2C%22direction%22%3A%22asc%22%7D%5D";
 const SITE = "https://lbafitwear.com.br";
 // Endereço da função na Cloudflare. Fica aqui para ninguém precisar digitar.
 const API_PADRAO = "https://lba-admin.lbafitwear.workers.dev";
 
 const $ = s => document.querySelector(s);
 const app = () => $("#app");
-let estado = { api:"", token:"", catalogo:null, sha:null, sujos:new Set(), novos:new Set(), loja:null };
+let estado = { api:"", token:"", catalogo:null, sha:null, sujos:new Set(), novos:new Set() };
 
 /* ---------- utilidades ---------- */
 const semAcento = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"");
-const chaveLoja = s => semAcento(s).replace(/\s+/g," ").trim().toLowerCase();
 const slugar = s => semAcento(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 
 function escapaHtml(s){
@@ -202,33 +211,35 @@ async function abrirPainel() {
   app().innerHTML = `<div class="wrap porta"><p class="aviso">Carregando o catálogo…</p></div>`;
   try {
     const d = await chamar("/api/catalogo");
+    // Protege contra meio caminho: painel novo com catálogo do formato antigo
+    // (quando preço e estoque ainda vinham da loja) apagaria os dois ao gravar.
+    if (!Array.isArray(d.catalogo?.itens) || !d.catalogo.itens.some(i => i && "tamanhos" in i))
+      return telaSenha("O catálogo gravado ainda está no formato antigo. Recarregue a página em um minuto.");
     estado.catalogo = d.catalogo;
     estado.sha = d.sha;
   } catch (err) {
     if (/sess/.test(err.message)) return telaSenha("Sua sessão expirou. Entre de novo.");
     return telaSenha(err.message);
   }
-  carregarLoja();
   desenharPainel();
 }
 
-async function carregarLoja() {
-  try {
-    const d = await fetch(API_LOJA, { cache:"no-store" }).then(r => r.json());
-    const mapa = {};
-    const tam = new Set(["p","m","g","gg","pp","xg"]);
-    for (const row of d.Content) {
-      const t = chaveLoja(row.Item.Descricao).split(" ");
-      const temTam = tam.has(t[t.length-1]);
-      const k = (temTam ? t.slice(0,-1) : t).join(" ");
-      mapa[k] = (mapa[k] || 0) + Math.max(0, row.Item.QtdeEmEstoque);
-    }
-    estado.loja = mapa;
-    if ($("#lista")) desenharLista();
-  } catch(_) { estado.loja = null; }
-}
 
 function pendencias() { return estado.sujos.size + estado.novos.size; }
+
+/* O site mostra o modelo à venda quando ele tem preço e pelo menos uma peça.
+   Mesma regra aqui, para o painel dizer a verdade sobre o que está no ar. */
+function totalPecas(it) {
+  return Object.values(it.tamanhos || {}).reduce((a, q) => a + (q > 0 ? q : 0), 0);
+}
+function aVenda(it) { return it.preco > 0 && totalPecas(it) > 0; }
+const dinheiro = n => (n > 0 ? n.toLocaleString("pt-BR", { style:"currency", currency:"BRL" }) : "—");
+
+/* Os tops avulsos da França têm contagem própria, por modelo: o mesmo top
+   serve o conjunto de short e o de calça. */
+function temAvulsa(it) {
+  return it.col === "franca" && !!(estado.catalogo.avulso || {})[it.kind];
+}
 
 function desenharPainel() {
   app().innerHTML = `
@@ -248,9 +259,9 @@ function desenharPainel() {
           ${Object.entries(COLS).map(([k,v]) => `<option value="${k}">${v}</option>`).join("")}
         </select>
         <select id="filtroLig">
-          <option value="">Qualquer ligação</option>
-          <option value="sem">Sem ligação com a loja</option>
-          <option value="ok">Com ligação</option>
+          <option value="">À venda e esgotados</option>
+          <option value="ok">Só os à venda</option>
+          <option value="sem">Só os esgotados</option>
         </select>
         <button class="btn vazio" id="novo">+ Novo modelo</button>
       </div>
@@ -264,11 +275,10 @@ function desenharPainel() {
 }
 
 function statusLigacao(it) {
-  if (!it.key) return { cls:"sem", txt:"sem ligação" };
-  if (!estado.loja) return { cls:"sem", txt:"ligação: ?" };
-  return it.key in estado.loja
-    ? { cls:"ok", txt:`na loja · ${estado.loja[it.key]} un` }
-    : { cls:"novo", txt:"chave não achada" };
+  const n = totalPecas(it);
+  return aVenda(it)
+    ? { cls:"ok", txt:`${dinheiro(it.preco)} · ${n} un` }
+    : { cls:"sem", txt: it.preco > 0 ? "sem estoque" : "esgotado" };
 }
 
 function desenharLista() {
@@ -278,11 +288,12 @@ function desenharLista() {
   const itens = estado.catalogo.itens.filter(it => {
     if (busca && !it.name.toLowerCase().includes(busca)) return false;
     if (fc && it.col !== fc) return false;
-    if (fl === "sem" && it.key) return false;
-    if (fl === "ok" && !it.key) return false;
+    if (fl === "sem" && aVenda(it)) return false;
+    if (fl === "ok" && !aVenda(it)) return false;
     return true;
   });
-  $("#resumo").textContent = `${estado.catalogo.itens.length} modelos`;
+  const nVenda = estado.catalogo.itens.filter(aVenda).length;
+  $("#resumo").textContent = `${estado.catalogo.itens.length} modelos · ${nVenda} à venda`;
   $("#pend").textContent = pendencias() ? `${pendencias()} não salvo${pendencias() > 1 ? "s" : ""}` : "";
   $("#lista").innerHTML = itens.length ? itens.map(it => {
     const s = statusLigacao(it);
@@ -303,10 +314,38 @@ function desenharLista() {
 
 /* ---------- 4. ficha de um modelo ---------- */
 
+function gradeTam(obj, pref) {
+  const v = obj || {};
+  return TAMANHOS.map(t =>
+    `<label class="tam"><b>${t}</b><input type="number" min="0" step="1" inputmode="numeric"
+      data-tam="${t}" data-g="${pref}" value="${v[t] > 0 ? v[t] : ""}"
+      ${v[t] > 0 ? 'class="tem"' : ""}></label>`).join("");
+}
+function lerGrade(pref) {
+  const o = {};
+  document.querySelectorAll(`#ficha input[data-g="${pref}"]`).forEach(i => {
+    const q = Math.max(0, Math.round(Number(i.value) || 0));
+    if (q > 0) o[i.dataset.tam] = q;
+  });
+  return o;
+}
+function somarGrade(pref) {
+  const o = lerGrade(pref);
+  const n = Object.values(o).reduce((a, q) => a + q, 0);
+  const alvo = $("#soma-" + pref);
+  if (alvo) alvo.innerHTML = n ? `Total: <b>${n}</b> ${n === 1 ? "peça" : "peças"}` : "";
+  document.querySelectorAll(`#ficha input[data-g="${pref}"]`).forEach(i =>
+    i.classList.toggle("tem", Number(i.value) > 0));
+}
+const dinheiroCampo = v => {
+  const n = Number(String(v).replace(/\s/g, "").replace(",", "."));
+  return n > 0 ? Math.round(n * 100) / 100 : null;
+};
+
 function abrirFicha(slug) {
   const novo = !slug;
   const it = novo
-    ? { slug:"", col:"franca", name:"", kind:"Conjunto short", key:"", img:"" }
+    ? { slug:"", col:"franca", name:"", kind:"Conjunto short", img:"", preco:null, tamanhos:{} }
     : { ...estado.catalogo.itens.find(x => x.slug === slug) };
   const d = $("#ficha");
   d.innerHTML = `
@@ -346,13 +385,24 @@ function abrirFicha(slug) {
             <input id="f-slug" value="${escapaHtml(it.slug)}" placeholder="lyon-short" ${novo?"":"readonly"}></div>
         </div>
 
-        <div class="campo"><label for="f-key">Nome do produto na loja (sem o tamanho)</label>
-          <input id="f-key" value="${escapaHtml(it.key || "")}" placeholder="conjunto short lyon" autocomplete="off">
-          <div class="linha-botoes">
-            <button class="btn vazio" id="testar">Testar na loja</button>
-            <span class="nota" id="statusKey"></span>
-          </div>
-          <p class="nota">É o nome exato cadastrado na NextFit, em minúsculas, sem acento e <strong>sem o tamanho</strong>. Sem isso o card nasce como “Esgotado”. Deixe vazio de propósito para peça de arquivo.</p>
+        <div class="dupla">
+          <div class="campo"><label for="f-preco">Preço</label>
+            <input id="f-preco" inputmode="decimal" value="${it.preco > 0 ? it.preco : ""}" placeholder="285,00"></div>
+          <div class="campo"><label for="f-de">Preço antigo, se em promoção</label>
+            <input id="f-de" inputmode="decimal" value="${it.de > 0 ? it.de : ""}" placeholder="vazio = sem promoção"></div>
+        </div>
+
+        <div class="campo">
+          <label>Peças em estoque, por tamanho</label>
+          <div class="tamgrid">${gradeTam(it.tamanhos, "t")}</div>
+          <p class="nota">Tamanho vazio ou em zero não aparece no site. <span class="somatorio" id="soma-t"></span></p>
+          <p class="nota">Sem preço, ou sem nenhuma peça, o modelo entra como <strong>Esgotado</strong>: sai da aba “À venda” e aparece só em “Ver tudo”.</p>
+        </div>
+
+        <div class="campo" id="caixaAvulsa" hidden>
+          <label>Tops avulsos deste modelo, por tamanho</label>
+          <div class="tamgrid">${gradeTam((estado.catalogo.topEstoque || {})[it.name], "p")}</div>
+          <p class="nota">Só a França vende peça por peça. Esta contagem é dos <strong>tops do modelo</strong>, não deste conjunto — o mesmo top serve o de short e o de calça. A calça ou o short vêm do estoque acima. <span class="somatorio" id="soma-p"></span></p>
         </div>
       </div>
       <div class="ficha-pe">
@@ -386,16 +436,18 @@ function abrirFicha(slug) {
     }
   });
 
-  $("#testar").addEventListener("click", async () => {
-    const k = chaveLoja($("#f-key").value);
-    $("#f-key").value = k;
-    const s = $("#statusKey");
-    if (!k) { s.textContent = "vazio — vai aparecer como peça de arquivo"; return; }
-    if (!estado.loja) { s.textContent = "não consegui falar com a loja agora"; return; }
-    s.textContent = k in estado.loja
-      ? `encontrado · ${estado.loja[k]} peças em estoque`
-      : "não existe na loja com esse nome";
-  });
+  // a caixa dos tops só vale para conjunto da França que se vende separado
+  function sincronizarAvulsa() {
+    const vale = $("#f-col").value === "franca" && !!(estado.catalogo.avulso || {})[$("#f-kind").value];
+    $("#caixaAvulsa").hidden = !vale;
+  }
+  $("#f-col").addEventListener("change", sincronizarAvulsa);
+  $("#f-kind").addEventListener("change", sincronizarAvulsa);
+  sincronizarAvulsa();
+
+  $("#ficha").querySelectorAll("input[data-g]").forEach(i =>
+    i.addEventListener("input", () => somarGrade(i.dataset.g)));
+  somarGrade("t"); somarGrade("p");
 
   if (!novo) $("#remover").addEventListener("click", () => {
     if (!confirmarNaPagina($("#remover"), "Remover mesmo?")) return;
@@ -405,14 +457,20 @@ function abrirFicha(slug) {
   });
 
   $("#aplicar").addEventListener("click", async () => {
+    const preco = dinheiroCampo($("#f-preco").value);
+    const de = dinheiroCampo($("#f-de").value);
     const dados = {
       slug: slugar($("#f-slug").value),
       col: $("#f-col").value,
       name: $("#f-name").value.trim(),
       kind: $("#f-kind").value,
-      key: chaveLoja($("#f-key").value) || null,
-      img: imgNova
+      img: imgNova,
+      preco,
+      tamanhos: lerGrade("t")
     };
+    if (de && preco && de > preco) dados.de = de;
+    if (de && preco && de <= preco) return alertaFicha("O preço antigo precisa ser maior que o preço de hoje.");
+    if (de && !preco) return alertaFicha("Pôs o preço antigo, mas faltou o preço de hoje.");
     if (!dados.name) return alertaFicha("Falta o nome.");
     if (!dados.slug) return alertaFicha("Falta o identificador do arquivo.");
     if (novo && estado.catalogo.itens.some(x => x.slug === dados.slug))
@@ -431,12 +489,19 @@ function abrirFicha(slug) {
       return alertaFicha("A foto não subiu: " + err.message);
     }
 
+    // os tops são do modelo, não do conjunto: gravados pelo nome
+    if (!$("#caixaAvulsa").hidden && dados.name) {
+      const te = estado.catalogo.topEstoque || (estado.catalogo.topEstoque = {});
+      const g = lerGrade("p");
+      if (Object.keys(g).length) te[dados.name] = g; else delete te[dados.name];
+    }
+
     if (novo) { estado.catalogo.itens.push(dados); estado.novos.add(dados.slug); }
     else {
       const i = estado.catalogo.itens.findIndex(x => x.slug === it.slug);
-      const antigo = estado.catalogo.itens[i];
-      estado.catalogo.itens[i] = { ...antigo, ...dados };
-      if (antigo.spin) estado.catalogo.itens[i].spin = antigo.spin;
+      const final = { ...estado.catalogo.itens[i], ...dados };
+      if (final.de == null) delete final.de;   // saiu da promoção
+      estado.catalogo.itens[i] = final;
       estado.sujos.add(dados.slug);
     }
     d.close(); desenharLista();
@@ -496,6 +561,12 @@ async function salvar() {
     return;
   }
   b.disabled = true; b.textContent = "Salvando…";
+  // top de modelo que não existe mais no catálogo só ocuparia espaço
+  if (estado.catalogo.topEstoque) {
+    const vivos = new Set(estado.catalogo.itens.filter(temAvulsa).map(x => x.name));
+    for (const nome of Object.keys(estado.catalogo.topEstoque))
+      if (!vivos.has(nome)) delete estado.catalogo.topEstoque[nome];
+  }
   try {
     const d = await chamar("/api/catalogo", {
       method:"PUT",
@@ -503,7 +574,7 @@ async function salvar() {
     });
     estado.sha = d.sha;
     estado.sujos.clear(); estado.novos.clear();
-    b.textContent = "Salvo · no ar em ~2 min";
+    b.textContent = "Salvo · já no ar";
     setTimeout(() => { b.textContent = "Salvar alterações"; b.disabled = false; }, 6000);
     desenharLista();
   } catch (err) {
@@ -515,7 +586,7 @@ async function salvar() {
 
 function sair() {
   if (pendencias() && !confirm(`Há ${pendencias()} alteração(ões) sem salvar. Sair mesmo?`)) return;
-  estado = { api: estado.api, token:"", catalogo:null, sha:null, sujos:new Set(), novos:new Set(), loja:null };
+  estado = { api: estado.api, token:"", catalogo:null, sha:null, sujos:new Set(), novos:new Set() };
   try { sessionStorage.removeItem("lba_token"); } catch(_) {}
   telaSenha();
 }

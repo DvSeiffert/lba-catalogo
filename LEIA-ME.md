@@ -31,15 +31,20 @@ Não apague. Certificado HTTPS é do Let's Encrypt, renovado sozinho.
 Site de catálogo estático. Uma pasta, sem build, sem dependências.
 
 ```
-index.html     a página inteira (HTML + CSS + JS + dados embutidos)
-p/             78 renders 3D otimizados + o logo
-v/             os dois giros 360° (Bari e Valência) + posters
+index.html          a página inteira (HTML + CSS + JS)
+dados/catalogo.json os modelos, com preço e estoque — a fonte da verdade
+admin/              o painel (index.html) e o Worker da Cloudflare
+p/                  renders 3D otimizados + o logo + a foto do hero
+v/                  os dois giros 360° (Bari e Valência) + posters
 ```
 
 ## Como atualizar o site
 
-Já está publicado no GitHub Pages, servido do branch `main` deste
-repositório. Para colocar qualquer mudança no ar:
+**O caminho normal é o painel**, em https://lbafitwear.com.br/admin/ —
+preço, estoque, nome, foto e modelo novo, tudo por lá, e a mudança
+aparece no site na hora. Ver `admin/LEIA-ME-WORKER.md`.
+
+Para mexer no HTML, no CSS ou no texto da página, aí sim é no arquivo:
 
 ```bash
 git add -A && git commit -m "atualiza catálogo" && git push
@@ -50,10 +55,6 @@ O Pages reconstrói sozinho em 1 ou 2 minutos.
 Se um dia quiser trocar de hospedagem, qualquer serviço de arquivo
 estático serve (Netlify, Vercel, Cloudflare Pages) — é só apontar para
 esta pasta. Não precisa de servidor nem de etapa de build.
-
-Para usar um domínio próprio (ex.: catalogo.lbafitwear.com.br), aponte
-um CNAME para `dvseiffert.github.io` e cadastre o domínio em
-Settings → Pages no repositório.
 
 ## De onde vem o catálogo
 
@@ -71,40 +72,49 @@ A função guarda a resposta na borda por 60 segundos e derruba esse cache
 assim que o painel grava. Isso evita bater no GitHub a cada visita sem
 atrasar a atualização.
 
+O site só aceita o formato atual: para ser usada, a resposta precisa ter
+itens com o campo `tamanhos`. Se vier algo mais antigo, ele passa para a
+fonte seguinte em vez de mostrar tudo esgotado. O painel tem a mesma
+trava, e se recusa a abrir — gravar por cima apagaria preço e estoque.
+
 > Foto recém-enviada é o único caso que ainda depende do build: o arquivo
 > só existe no site depois dele. Até lá, a `<img>` cai para o
 > `raw.githubusercontent.com`, então a imagem aparece do mesmo jeito.
 
-## Estoque
+## Estoque e preço
 
-A página tenta ler o estoque direto da API da loja NextFit ao carregar:
+Tudo vem de `dados/catalogo.json`, gravado pelo painel. O catálogo não
+fala mais com a loja NextFit — foi **desvinculado em 13/11/2026**. Preço,
+promoção e quantidade por tamanho moram em cada item:
 
-- deu certo → o cabeçalho mostra **estoque ao vivo**, com preços,
-  tamanhos e quantidades do momento;
-- falhou (sem internet, ou a API mudou) → cai no snapshot embutido
-  de 11 nov 2026 e o cabeçalho diz **estoque de 11 nov 2026**.
+```json
+{
+ "slug": "lyon-short", "col": "franca", "name": "Lyon",
+ "kind": "Conjunto short", "img": "p/lyon-short.jpg",
+ "preco": 285.0,
+ "tamanhos": { "P": 3, "M": 3, "G": 2, "GG": 1 }
+}
+```
 
-Ou seja: hospedado, ele se atualiza sozinho. Você nunca precisa mexer
-em preço ou disponibilidade na mão.
+- `preco` é o que se cobra hoje.
+- `de` é opcional: o preço antigo. Só existe quando há promoção, e o card
+  mostra o riscado e o selo de desconto. Tem de ser maior que `preco`.
+- `tamanhos` guarda a quantidade de cada tamanho. Tamanho ausente ou em
+  zero não aparece no site.
 
-> A API é `apiappaluno.nextfit.com.br/.../RecuperarItens/<id-da-loja>`.
-> O id da loja está no topo do `<script>` do `index.html`, em `API` e `STORE`.
+A regra de **à venda** é uma só, igual no site e no painel: tem `preco`
+maior que zero **e** pelo menos uma peça em `tamanhos`. Faltando um dos
+dois, o modelo aparece como **Esgotado** — fica fora da aba “À venda”,
+sem preço e sem tamanhos, e o botão vira “Avise-me quando voltar”. Era
+assim que as peças de arquivo funcionavam antes, com `key: null`.
 
-## Como o catálogo se liga à loja
+O cabeçalho mostra a data de `atualizado`, que o painel grava sozinho a
+cada gravação.
 
-Cada render tem uma chave (`key`) na constante `CATALOG`, dentro do
-`index.html`. Ela é o nome do produto na loja **sem o tamanho**, em
-minúsculas e sem acento:
-
-| Render             | key na loja                   |
-|--------------------|-------------------------------|
-| `p/lyon-short.jpg` | `conjunto short lyon`         |
-| `p/lyon-calca.jpg` | `conjunto calca lyon`         |
-| `p/granada.jpg`    | `corta vento granada`         |
-| `p/top-high.jpg`   | `top high`                    |
-
-Render com `key: null` não tem estoque na loja: aparece só na aba
-**Ver tudo**, dessaturado e marcado como **Esgotado**.
+> O que a loja fazia sozinho agora é trabalho do painel: quando vender
+> uma peça, baixe a quantidade lá. Em troca, o catálogo manda em si
+> mesmo — preço, promoção e peça de arquivo não dependem mais de como o
+> produto está cadastrado em outro sistema.
 
 ## Foto do hero
 
@@ -124,9 +134,11 @@ vendo a foto antiga em cache.
 
 > Cuidado para não confundir: `p/ronda.jpg`, `p/lyon-short.jpg` e afins
 > são os renders 3D dos produtos, não fotos de modelo. Apagar qualquer
-> um deles deixa um card do catálogo sem imagem. Se a modelo ficar mal enquadrada, ajuste o
-`object-position` de `.hero-photo img` no `index.html` — são dois
-valores, um para desktop e um dentro do `@media (max-width:1000px)`.
+> um deles deixa um card do catálogo sem imagem.
+
+Se a modelo ficar mal enquadrada, ajuste o `object-position` de
+`.hero-photo img` no `index.html` — são dois valores, um para desktop e
+um dentro do `@media (max-width:1000px)`.
 
 As bordas da foto derretem no fundo por gradiente, não por recorte. Por
 isso a foto precisa ter margem sobrando nas laterais: o degradê come os
@@ -140,14 +152,16 @@ claras porque essa é a cor do fundo dos próprios renders.
 
 ## Peças avulsas (coleção França)
 
-Os conjuntos da França também são vendidos peça por peça. Isso não vem
-da loja — está fixo no `index.html`, na constante `AVULSO`:
+Os conjuntos da França também são vendidos peça por peça. Os preços
+estão em `avulso`, no `catalogo.json`:
 
-```js
-const AVULSO = {
-  "Conjunto calça": [{ n:"Top", art:"o top", v:120 }, { n:"Calça", art:"a calça", v:195 }],
-  "Conjunto short": [{ n:"Top", art:"o top", v:120 }, { n:"Short", art:"o short", v:165 }]
-};
+```json
+"avulso": {
+ "Conjunto calça": [{"n":"Top","art":"o top","v":120},
+                    {"n":"Calça","art":"a calça","v":195}],
+ "Conjunto short": [{"n":"Top","art":"o top","v":120},
+                    {"n":"Short","art":"o short","v":165}]
+}
 ```
 
 Vale para qualquer item com `col: "franca"` cujo `kind` esteja nessa
@@ -155,38 +169,43 @@ lista — hoje, 11 dos 13 modelos. Os dois macacões (Marselha e
 Estrasburgo) ficam de fora porque não dá para separar.
 
 As avulsas somam exatamente o preço do conjunto (120+195=315,
-120+165=285), e o site diz isso na ficha. Se você mudar um preço e a
-soma deixar de bater, a frase some sozinha — não vira informação falsa.
+120+165=285), e o site diz isso na ficha. Se um preço mudar e a soma
+deixar de bater, a frase some sozinha — não vira informação falsa.
 
-Como a loja não cadastra as avulsas, cada uma abre o WhatsApp com a
-mensagem já escrita. Para liberar avulsas em outra coleção, troque o
-`i.col === "franca"` da função `avulsasDe`.
+Cada avulsa abre o WhatsApp com a mensagem já escrita. Para liberar
+avulsas em outra coleção, troque o `i.col === "franca"` da função
+`avulsasDe`, no `index.html`.
 
 ### Tamanhos das avulsas
 
-A ficha mostra quais tamanhos existem de cada peça solta. As duas metades
-vêm de lugares diferentes:
+A ficha mostra quais tamanhos existem de cada peça solta:
 
-- **Short / calça** — é o próprio conjunto, então sai da API da loja, ao
-  vivo. Não precisa manutenção.
-- **Top** — a loja não cadastra top avulso, então vem da constante
-  `TOP_ESTOQUE` no `index.html`, transcrita da aba França da planilha
-  *Controle de Estoque*. **Isso não se atualiza sozinho:** quando o
-  estoque de tops mudar, edite a constante.
+- **Short / calça** — é o próprio conjunto, então sai do `tamanhos` do
+  item.
+- **Top** — tem contagem própria, em `topEstoque`, indexada pelo **nome
+  do modelo** (`Lyon`), não pelo conjunto: o mesmo top serve o conjunto
+  de short e o de calça. No painel, a ficha de um conjunto da França
+  mostra essa grade logo abaixo da do conjunto, e o aviso lembra que ela
+  é do modelo. Ao salvar, o painel descarta nome que não existe mais no
+  catálogo.
 
-O mesmo top serve o conjunto de short e o de calça do modelo — por isso
-`TOP_ESTOQUE` é indexado pelo nome do modelo (`Lyon`), não pelo conjunto.
-Na planilha isso se confirma: o total de tops é igual a short + calça em
-15 dos 16 modelos.
+Na planilha *Controle de Estoque* isso se confirma: o total de tops é
+igual a short + calça em 15 dos 16 modelos.
 
 ## Quando entrar coleção nova
 
-1. Exporte os renders em 1080×1350 e jogue em `p/` com um nome-slug
-   (`p/nova-peca.jpg`).
-2. Em `index.html`, procure `const CATALOG =` e acrescente o item:
-   `{"slug":"nova-peca","col":"franca","name":"Nova Peça","kind":"Conjunto short","key":"conjunto short nova peca","img":"p/nova-peca.jpg"}`
-3. `col` aceita: `espanha`, `italia`, `franca`, `essenciais`.
-4. Se a peça tiver vídeo 360°, coloque o mp4 em `v/` e adicione
-   `"spin":"nome-do-arquivo"` (sem a extensão).
+Pelo painel, em `/admin/`: **+ Novo modelo**. Ele pede a foto (reduz para
+860×1075 ali mesmo), o nome, a coleção, o tipo, o preço e o estoque por
+tamanho — e grava direto no repositório. Não precisa mexer em arquivo.
 
-Preço e tamanhos não precisam ser escritos — vêm da loja.
+Na mão, se for preciso, acrescente o item em `dados/catalogo.json`:
+
+```json
+{"slug":"nova-peca","col":"franca","name":"Nova Peça","kind":"Conjunto short",
+ "img":"p/nova-peca.jpg","preco":285.0,"tamanhos":{"P":2,"M":2}}
+```
+
+- `col` aceita: `espanha`, `italia`, `franca`, `essenciais`.
+- Render em 1080×1350, em `p/`, com nome-slug.
+- Se a peça tiver vídeo 360°, coloque o mp4 em `v/` e acrescente
+  `"spin":"nome-do-arquivo"` (sem a extensão).
