@@ -42,7 +42,9 @@ v/                  os dois giros 360° (Bari e Valência) + posters
 
 **O caminho normal é o painel**, em https://lbafitwear.com.br/admin/ —
 preço, estoque, nome, foto e modelo novo, tudo por lá, e a mudança
-aparece no site na hora. Ver `admin/LEIA-ME-WORKER.md`.
+aparece no site na hora. Ele tem duas abas: **Lista**, modelo a modelo, e
+**Planilha**, a grade de quantidades no formato da *Controle de Estoque*.
+Ver `admin/LEIA-ME-WORKER.md`.
 
 Para mexer no HTML, no CSS ou no texto da página, aí sim é no arquivo:
 

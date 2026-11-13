@@ -187,6 +187,60 @@ dialog::backdrop{background:color-mix(in srgb, var(--paper) 82%, transparent);ba
 .fechar:hover{background:var(--chip)}
 input[type=file]{display:none}
 
+/* ---------- planilha ---------- */
+/* Mesma leitura da Controle de Estoque: produto, tipo, uma coluna por
+   tamanho e o total da linha, agrupado por coleção com subtotal. */
+/* Rola por dentro, nos dois sentidos: é o que deixa o cabeçalho, a coluna
+   do produto e o total geral congelados. Com a rolagem no eixo da página o
+   sticky do cabeçalho não pega, porque o eixo horizontal já cria um
+   contexto de rolagem aqui. */
+.planilha-rolo{overflow:auto;max-height:calc(100svh - 258px);min-height:260px;
+  border:1px solid var(--line-soft);border-radius:14px;margin-bottom:14px;
+  -webkit-overflow-scrolling:touch;background:var(--paper);overscroll-behavior:contain}
+.planilha{border-collapse:separate;border-spacing:0;width:100%;min-width:600px;
+  font-variant-numeric:tabular-nums}
+.planilha th,.planilha td{padding:8px 10px;text-align:center;white-space:nowrap;
+  border-bottom:1px solid var(--line-soft)}
+.planilha thead th{position:sticky;top:0;z-index:3;
+  background:var(--paper);font-weight:400;font-size:.55rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+.planilha .prod{text-align:left;position:sticky;left:0;z-index:2;background:var(--paper);
+  min-width:148px;max-width:188px;white-space:normal}
+.planilha thead .prod{z-index:4}
+.planilha tbody .prod b{font-family:var(--font-display);font-weight:600;font-size:.9rem;
+  letter-spacing:-.02em;display:block}
+.planilha .tipo{text-align:left;color:var(--muted);font-size:.74rem;font-weight:300;
+  max-width:210px;white-space:normal}
+.planilha tr.grupo td{position:sticky;left:0;background:var(--paper);text-align:left;
+  padding-top:22px;padding-bottom:7px;font-size:.56rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+.planilha tr.item:hover td,.planilha tr.item:hover .prod{background:rgba(236,236,234,.045)}
+.planilha tr.soma td{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);border-bottom:0;padding-top:11px;padding-bottom:16px}
+.planilha tr.soma .prod{background:var(--paper)}
+.planilha tr.soma b{color:var(--ink);font-weight:500;letter-spacing:0;font-size:.88rem}
+/* o total geral acompanha a rolagem, como a barra de soma de uma planilha */
+.planilha tr.geral td{position:sticky;bottom:0;z-index:3;background:var(--paper);
+  border-top:1px solid var(--line);border-bottom:0;color:var(--ink);padding-bottom:11px}
+.planilha tr.geral .prod{z-index:4}
+.cel{width:52px;background:transparent;border:1px solid transparent;border-radius:7px;
+  padding:7px 2px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums;
+  -moz-appearance:textfield;transition:border-color .15s ease,background .15s ease,color .15s ease}
+.cel::-webkit-outer-spin-button,.cel::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.cel:hover{border-color:var(--line)}
+.cel:focus{border-color:var(--ink);background:var(--campo);color:var(--ink);outline:none}
+.cel.tem{color:var(--ink);background:var(--chip);border-color:var(--line-soft)}
+.total-linha{font-size:.84rem;color:var(--muted)}
+.total-linha.tem{color:var(--ink)}
+/* linha do top avulso: é do modelo, não de um conjunto */
+.planilha tr.top .prod b{font-weight:400;font-size:.82rem;color:var(--muted);
+  font-family:var(--font-ui);letter-spacing:0}
+.planilha tr.top .prod b::before{content:"↳ ";color:var(--muted)}
+.sem-preco{display:inline-block;margin-left:7px;font-size:.5rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--alerta);border:1px solid rgba(217,164,65,.45);
+  border-radius:999px;padding:2px 6px;vertical-align:1px}
+.legenda{margin:-46px 0 64px;display:flex;gap:16px;flex-wrap:wrap}
+
 /* grade de tamanhos: a mesma caixinha do "tamanhos em estoque" do catálogo */
 .tamgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:8px}
 .tam{display:flex;flex-direction:column;gap:5px}
@@ -235,6 +289,7 @@ const app = () => $("#app");
 let estado = { api:"", token:"", catalogo:null, sha:null, sujos:new Set(), novos:new Set() };
 // filtros viraram pílulas, como as do catálogo, então o estado é nosso
 let filtro = { col:"", lig:"" };
+let aba = "lista";   // "lista" ou "planilha"
 
 /* ---------- utilidades ---------- */
 const semAcento = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"");
@@ -356,6 +411,44 @@ function temAvulsa(it) {
   return it.col === "franca" && !!(estado.catalogo.avulso || {})[it.kind];
 }
 
+/* A planilha mostra as quatro colunas da Controle de Estoque e, além delas,
+   qualquer tamanho que esteja em uso. Tamanho fora da tabela não se perde:
+   a gravação mexe numa célula de cada vez e preserva o resto. */
+function colunasTam() {
+  const usados = new Set(["P", "M", "G", "GG"]);
+  const olhar = o => { for (const [t, q] of Object.entries(o || {})) if (q > 0) usados.add(t); };
+  estado.catalogo.itens.forEach(i => olhar(i.tamanhos));
+  Object.values(estado.catalogo.topEstoque || {}).forEach(olhar);
+  return TAMANHOS.filter(t => usados.has(t));
+}
+
+// só leitura: não cria nada, para a planilha não encher o catálogo de vazios
+function caixaDe(ref) {
+  if (ref.top) return (estado.catalogo.topEstoque || {})[ref.top] || {};
+  const it = estado.catalogo.itens.find(x => x.slug === ref.slug);
+  return (it && it.tamanhos) || {};
+}
+
+function gravarCelula(ref, tam, q) {
+  if (ref.top) {
+    const te = estado.catalogo.topEstoque || (estado.catalogo.topEstoque = {});
+    const c = te[ref.top] || (te[ref.top] = {});
+    if (q > 0) c[tam] = q; else delete c[tam];
+    if (!Object.keys(c).length) delete te[ref.top];
+    // o top é do modelo: marca os conjuntos que o usam
+    estado.catalogo.itens.filter(x => x.name === ref.top && temAvulsa(x))
+      .forEach(x => estado.sujos.add(x.slug));
+    return;
+  }
+  const it = estado.catalogo.itens.find(x => x.slug === ref.slug);
+  if (!it) return;
+  const c = it.tamanhos || (it.tamanhos = {});
+  if (q > 0) c[tam] = q; else delete c[tam];
+  estado.sujos.add(it.slug);
+}
+
+function somaDe(o) { return Object.values(o || {}).reduce((a, q) => a + (q > 0 ? q : 0), 0); }
+
 function desenharPainel() {
   app().innerHTML = `
     <header class="topo"><div class="wrap topo-in">
@@ -369,6 +462,7 @@ function desenharPainel() {
     <div class="wrap">
       <div class="ferramentas">
         <div class="linha-ferramenta">
+          <div class="pills" id="pillsAba"></div>
           <input type="search" class="busca" id="busca" placeholder="Buscar por nome…" autocomplete="off">
           <button class="btn vazio mini" id="novo">+ Novo modelo</button>
         </div>
@@ -377,20 +471,21 @@ function desenharPainel() {
           <div class="pills" id="pillsLig"></div>
         </div>
       </div>
-      <div class="lista" id="lista"></div>
+      <div id="conteudo"></div>
     </div>`;
   $("#salvar").addEventListener("click", salvar);
   $("#sair").addEventListener("click", sair);
   $("#novo").addEventListener("click", () => abrirFicha(null));
-  $("#busca").addEventListener("input", desenharLista);
+  $("#busca").addEventListener("input", desenharConteudo);
   app().addEventListener("click", ev => {
     const p = ev.target.closest(".pill");
     if (!p) return;
     if (p.dataset.col !== undefined) filtro.col = p.dataset.col;
     if (p.dataset.lig !== undefined) filtro.lig = p.dataset.lig;
-    desenharLista();
+    if (p.dataset.aba !== undefined) aba = p.dataset.aba;
+    desenharConteudo();
   });
-  desenharLista();
+  desenharConteudo();
 }
 
 function statusLigacao(it) {
@@ -401,6 +496,9 @@ function statusLigacao(it) {
 }
 
 function desenharPills() {
+  $("#pillsAba").innerHTML =
+    `<button class="pill" data-aba="lista" aria-pressed="${aba === "lista"}">Lista</button>` +
+    `<button class="pill" data-aba="planilha" aria-pressed="${aba === "planilha"}">Planilha</button>`;
   $("#pillsCol").innerHTML = [["", "Todas"], ...Object.entries(COLS)].map(([k, v]) =>
     `<button class="pill" data-col="${k}" aria-pressed="${filtro.col === k}">${v}</button>`).join("");
   const n = estado.catalogo.itens.length;
@@ -411,20 +509,35 @@ function desenharPills() {
     `<button class="pill" data-lig="sem" aria-pressed="${filtro.lig === "sem"}">Esgotados ${n - nV}</button>`;
 }
 
-function desenharLista() {
+function itensFiltrados() {
   const busca = ($("#busca")?.value || "").toLowerCase();
   const fc = filtro.col, fl = filtro.lig;
-  const itens = estado.catalogo.itens.filter(it => {
+  return estado.catalogo.itens.filter(it => {
     if (busca && !it.name.toLowerCase().includes(busca)) return false;
     if (fc && it.col !== fc) return false;
     if (fl === "sem" && aVenda(it)) return false;
     if (fl === "ok" && !aVenda(it)) return false;
     return true;
   });
+}
+
+function marcarPendencias() {
+  const n = pendencias();
+  $("#pend").textContent = n ? `${n} não salvo${n > 1 ? "s" : ""}` : "";
+}
+
+function desenharConteudo() {
   const nVenda = estado.catalogo.itens.filter(aVenda).length;
   $("#resumo").textContent = `${estado.catalogo.itens.length} modelos · ${nVenda} à venda`;
-  $("#pend").textContent = pendencias() ? `${pendencias()} não salvo${pendencias() > 1 ? "s" : ""}` : "";
+  marcarPendencias();
   desenharPills();
+  if (aba === "planilha") desenharPlanilha(); else desenharLista();
+}
+
+function desenharLista() {
+  const itens = itensFiltrados();
+  const alvo = $("#conteudo");
+  alvo.innerHTML = `<div class="lista" id="lista"></div>`;
   $("#lista").innerHTML = itens.length ? itens.map(it => {
     const s = statusLigacao(it);
     const marca = estado.novos.has(it.slug) ? `<span class="selo novo">novo</span>`
@@ -441,6 +554,143 @@ function desenharLista() {
   }).join("") : `<div class="vazio-lista">Nenhum modelo nesse filtro.</div>`;
   $("#lista").querySelectorAll(".linha").forEach(b =>
     b.addEventListener("click", () => abrirFicha(b.dataset.slug)));
+}
+
+/* ---------- 3b. a aba de planilha ---------- */
+
+const ORDEM_COL = ["essenciais", "franca", "italia", "espanha"];
+
+/* Mesma ordem da Controle de Estoque: por coleção, depois modelo, depois
+   tipo — e o top avulso logo abaixo da última peça do modelo. */
+function linhasPlanilha(itens) {
+  const blocos = [];
+  for (const col of ORDEM_COL) {
+    const grupo = itens.filter(i => i.col === col).sort((a, b) =>
+      a.name.localeCompare(b.name, "pt-BR") || a.kind.localeCompare(b.kind, "pt-BR"));
+    if (!grupo.length) continue;
+    const linhas = [];
+    grupo.forEach((it, n) => {
+      linhas.push({ item: it });
+      const prox = grupo[n + 1];
+      if (temAvulsa(it) && (!prox || prox.name !== it.name)) linhas.push({ top: it.name });
+    });
+    blocos.push({ col, linhas });
+  }
+  return blocos;
+}
+
+function desenharPlanilha() {
+  const cols = colunasTam();
+  const blocos = linhasPlanilha(itensFiltrados());
+  if (!blocos.length) {
+    $("#conteudo").innerHTML = `<div class="vazio-lista">Nenhum modelo nesse filtro.</div>`;
+    return;
+  }
+
+  const celula = (ref, caixa, t) => {
+    const q = caixa[t] > 0 ? caixa[t] : "";
+    return `<td><input class="cel${q === "" ? "" : " tem"}" type="number" min="0" step="1"
+      inputmode="numeric" ${ref} data-tam="${t}" value="${q}"></td>`;
+  };
+  const somaLinha = (rot, grupo) =>
+    `<tr class="soma${grupo ? "" : " geral"}" data-grupo="${grupo}">
+       <td class="prod">${rot}</td><td></td>
+       ${cols.map(t => `<td data-col-sum="${t}"></td>`).join("")}
+       <td data-col-sum="__"></td></tr>`;
+
+  const corpo = blocos.map(b => {
+    const nome = COLS[b.col] || b.col;
+    const linhas = b.linhas.map(l => {
+      if (l.top) {
+        const ref = `data-top="${escapaHtml(l.top)}"`;
+        const caixa = (estado.catalogo.topEstoque || {})[l.top] || {};
+        return `<tr class="top" data-col="${b.col}" data-top="${escapaHtml(l.top)}">
+          <td class="prod"><b>${escapaHtml(l.top)}</b></td>
+          <td class="tipo">top avulso</td>
+          ${cols.map(t => celula(ref, caixa, t)).join("")}
+          <td class="total-linha">—</td></tr>`;
+      }
+      const it = l.item;
+      const ref = `data-slug="${escapaHtml(it.slug)}"`;
+      return `<tr class="item" data-col="${b.col}" data-slug="${escapaHtml(it.slug)}">
+        <td class="prod"><b>${escapaHtml(it.name)}</b></td>
+        <td class="tipo">${escapaHtml(it.kind)}${
+          it.preco > 0 ? "" : `<span class="sem-preco">sem preço</span>`}</td>
+        ${cols.map(t => celula(ref, it.tamanhos || {}, t)).join("")}
+        <td class="total-linha">—</td></tr>`;
+    }).join("");
+    return `<tr class="grupo"><td colspan="${cols.length + 3}">${nome}</td></tr>`
+      + linhas + somaLinha("Total " + nome, b.col);
+  }).join("");
+
+  $("#conteudo").innerHTML = `
+    <div class="planilha-rolo"><table class="planilha">
+      <thead><tr>
+        <th class="prod">Produto</th><th class="tipo">Tipo</th>
+        ${cols.map(t => `<th>${t}</th>`).join("")}
+        <th>Total</th>
+      </tr></thead>
+      <tbody>${corpo}${blocos.length > 1 ? somaLinha("Total geral", "") : ""}</tbody>
+    </table></div>
+    <p class="nota" style="margin:0 0 60px">Escreva direto na célula. Seta para cima e para baixo
+    andam na mesma coluna, como numa planilha. Nada vai para o site antes de <strong>Salvar
+    alterações</strong>. Modelo marcado <span class="sem-preco">sem preço</span> fica como Esgotado
+    mesmo com peça em estoque.</p>`;
+
+  ligarPlanilha();
+  recalcularPlanilha();
+}
+
+function ligarPlanilha() {
+  // nasce junto com a tabela: escutar o #conteudo, que é fixo, empilharia
+  // um ouvinte a cada troca de aba
+  const alvo = $("#conteudo .planilha-rolo");
+  alvo.addEventListener("input", ev => {
+    const c = ev.target.closest(".cel");
+    if (!c) return;
+    const q = Math.max(0, Math.round(Number(c.value) || 0));
+    gravarCelula(c.dataset, c.dataset.tam, q);
+    c.classList.toggle("tem", q > 0);
+    marcarPendencias();
+    recalcularPlanilha();
+    // a conta de "à venda" muda junto, mas sem redesenhar a tabela
+    const nVenda = estado.catalogo.itens.filter(aVenda).length;
+    $("#resumo").textContent = `${estado.catalogo.itens.length} modelos · ${nVenda} à venda`;
+    desenharPills();
+  });
+  alvo.addEventListener("keydown", ev => {
+    const c = ev.target.closest(".cel");
+    if (!c) return;
+    const passo = (ev.key === "ArrowDown" || ev.key === "Enter") ? 1 : ev.key === "ArrowUp" ? -1 : 0;
+    if (!passo) return;
+    ev.preventDefault();
+    const coluna = [...alvo.querySelectorAll(`.cel[data-tam="${c.dataset.tam}"]`)];
+    const prox = coluna[coluna.indexOf(c) + passo];
+    if (prox) { prox.focus(); prox.select(); }
+  });
+}
+
+function recalcularPlanilha() {
+  const cols = colunasTam();
+  const linhas = [...document.querySelectorAll("#conteudo tr.item, #conteudo tr.top")];
+  for (const tr of linhas) {
+    const caixa = caixaDe(tr.dataset);
+    const tot = cols.reduce((a, t) => a + (caixa[t] > 0 ? caixa[t] : 0), 0);
+    const cel = tr.querySelector(".total-linha");
+    cel.textContent = tot || "—";
+    cel.classList.toggle("tem", tot > 0);
+  }
+  for (const tr of document.querySelectorAll("#conteudo tr.soma")) {
+    const g = tr.dataset.grupo;
+    const caixas = linhas.filter(x => !g || x.dataset.col === g).map(x => caixaDe(x.dataset));
+    let geral = 0;
+    for (const td of tr.querySelectorAll("[data-col-sum]")) {
+      if (td.dataset.colSum === "__") { td.innerHTML = `<b>${geral}</b>`; continue; }
+      const n = caixas.reduce((a, c) => a + (c[td.dataset.colSum] > 0 ? c[td.dataset.colSum] : 0), 0);
+      geral += n;
+      td.textContent = n || "—";
+    }
+  }
 }
 
 /* ---------- 4. ficha de um modelo ---------- */
@@ -588,7 +838,7 @@ function abrirFicha(slug) {
     if (!confirmarNaPagina($("#remover"), "Remover mesmo?")) return;
     estado.catalogo.itens = estado.catalogo.itens.filter(x => x.slug !== it.slug);
     estado.sujos.add(it.slug);
-    d.close(); desenharLista();
+    d.close(); desenharConteudo();
   });
 
   $("#aplicar").addEventListener("click", async () => {
@@ -640,7 +890,7 @@ function abrirFicha(slug) {
       estado.catalogo.itens[i] = final;
       estado.sujos.add(dados.slug);
     }
-    d.close(); desenharLista();
+    d.close(); desenharConteudo();
   });
 
   d.showModal();
@@ -712,7 +962,7 @@ async function salvar() {
     estado.sujos.clear(); estado.novos.clear();
     b.textContent = "Salvo · já no ar";
     setTimeout(() => { b.textContent = "Salvar alterações"; b.disabled = false; }, 6000);
-    desenharLista();
+    desenharConteudo();
   } catch (err) {
     b.disabled = false; b.textContent = "Salvar alterações";
     if (/sess/.test(err.message)) return telaSenha("Sua sessão expirou. Entre de novo.");

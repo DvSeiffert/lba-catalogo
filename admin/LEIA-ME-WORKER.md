@@ -103,7 +103,28 @@ Um modelo só aparece na aba **À venda** se tiver preço e pelo menos uma
 peça em estoque. Sem um dos dois, ele vira peça de arquivo: fica em "Ver
 tudo", marcado como Esgotado.
 
-Nos conjuntos da **França** aparece uma grade a mais, a dos tops
+## As duas abas
+
+**Lista** é modelo a modelo: abre a ficha, troca a foto, mexe em tudo.
+
+**Planilha** é a grade, no formato da *Controle de Estoque*: produto,
+tipo, uma coluna por tamanho e o total da linha, agrupado por coleção com
+subtotal e total geral. Serve para a baixa do dia a dia — escreve direto
+na célula, seta para cima e para baixo andam na mesma coluna. O cabeçalho,
+a coluna do produto e o total geral ficam congelados enquanto rola.
+
+As colunas são P, M, G e GG, como na planilha. Se algum modelo tiver
+outro tamanho (PP, XG, U), a coluna dele aparece sozinha e some quando
+zera — nenhum tamanho fica escondido.
+
+A linha com a seta `↳` é o **top avulso** da França. Ela é do modelo, não
+de um conjunto, então aparece uma vez só por modelo.
+
+Os filtros de coleção e de situação valem nas duas abas, e as duas
+gravam no mesmo lugar: nada vai para o site antes de **Salvar
+alterações**.
+
+Nos conjuntos da **França** aparece uma grade a mais na ficha, a dos tops
 avulsos. Ela é do modelo, não do conjunto — o mesmo top serve o de short
 e o de calça, então mudar num muda no outro. A calça e o short saem do
 estoque do próprio conjunto.
