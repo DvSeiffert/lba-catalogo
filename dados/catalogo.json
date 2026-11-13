@@ -62,7 +62,7 @@
    "kind": "Conjunto calça",
    "img": "p/cordoba.jpg",
    "preco": 267.75,
-   "de": 315.0,
+   "de": 315,
    "tamanhos": {
     "P": 1,
     "M": 1
@@ -74,7 +74,7 @@
    "name": "Granada",
    "kind": "Corta-vento",
    "img": "p/granada-mwf05wy1.jpg",
-   "preco": 215.0,
+   "preco": 215,
    "tamanhos": {
     "P": 6,
     "M": 9,
@@ -140,7 +140,7 @@
    "kind": "Conjunto calça",
    "img": "p/leon.jpg",
    "preco": 267.75,
-   "de": 315.0,
+   "de": 315,
    "tamanhos": {
     "P": 1
    }
@@ -224,7 +224,7 @@
    "kind": "Conjunto short",
    "img": "p/ronda.jpg",
    "preco": 242.25,
-   "de": 285.0,
+   "de": 285,
    "tamanhos": {
     "M": 1
    }
@@ -373,7 +373,7 @@
    "kind": "Conjunto short",
    "img": "p/luca-mwf3q557.jpg",
    "preco": 242.25,
-   "de": 285.0,
+   "de": 285,
    "tamanhos": {
     "M": 1
    }
@@ -430,7 +430,7 @@
    "kind": "Conjunto short",
    "img": "p/siena.jpg",
    "preco": 242.25,
-   "de": 285.0,
+   "de": 285,
    "tamanhos": {
     "P": 2,
     "M": 1
@@ -461,7 +461,7 @@
    "kind": "Conjunto calça",
    "img": "p/trento-preto.jpg",
    "preco": 267.75,
-   "de": 315.0,
+   "de": 315,
    "tamanhos": {
     "G": 1
    }
@@ -500,7 +500,7 @@
    "kind": "Conjunto short",
    "img": "p/verona.jpg",
    "preco": 242.25,
-   "de": 285.0,
+   "de": 285,
    "tamanhos": {
     "G": 1
    }
@@ -511,7 +511,7 @@
    "name": "Annecy",
    "kind": "Conjunto short",
    "img": "p/annecy.jpg",
-   "preco": 285.0,
+   "preco": 285,
    "tamanhos": {
     "P": 1,
     "M": 1
@@ -523,7 +523,7 @@
    "name": "Cannes",
    "kind": "Conjunto calça",
    "img": "p/cannes.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "P": 1,
     "M": 2,
@@ -536,7 +536,7 @@
    "name": "Colmar",
    "kind": "Conjunto calça",
    "img": "p/colmar-calca.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "P": 2,
     "M": 2,
@@ -549,7 +549,7 @@
    "name": "Colmar",
    "kind": "Conjunto short",
    "img": "p/colmar-short.jpg",
-   "preco": 285.0,
+   "preco": 285,
    "tamanhos": {
     "P": 1,
     "M": 2
@@ -570,7 +570,7 @@
    "name": "Lille",
    "kind": "Conjunto calça",
    "img": "p/lille.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "P": 2,
     "M": 2
@@ -582,7 +582,7 @@
    "name": "Lyon",
    "kind": "Conjunto calça",
    "img": "p/lyon-calca.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "M": 3,
     "G": 1,
@@ -595,7 +595,7 @@
    "name": "Lyon",
    "kind": "Conjunto short",
    "img": "p/lyon-short.jpg",
-   "preco": 285.0,
+   "preco": 285,
    "tamanhos": {
     "P": 3,
     "M": 3,
@@ -609,7 +609,7 @@
    "name": "Marselha",
    "kind": "Macacão longo",
    "img": "p/marselha.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "P": 1,
     "G": 1,
@@ -622,7 +622,7 @@
    "name": "Montpellier",
    "kind": "Conjunto calça",
    "img": "p/montpellier-calca.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "M": 2
    }
@@ -633,7 +633,7 @@
    "name": "Montpellier",
    "kind": "Conjunto short",
    "img": "p/montpellier-short.jpg",
-   "preco": 285.0,
+   "preco": 285,
    "tamanhos": {
     "P": 2,
     "M": 2
@@ -645,7 +645,7 @@
    "name": "Paris",
    "kind": "Conjunto calça",
    "img": "p/paris.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "M": 3
    }
@@ -656,7 +656,7 @@
    "name": "Provença",
    "kind": "Conjunto calça",
    "img": "p/provenca.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "P": 2,
     "M": 1
@@ -685,7 +685,7 @@
    "preco": 259.9,
    "tamanhos": {
     "P": 2,
-    "M": 4,
+    "M": 3,
     "G": 2,
     "GG": 2
    }
@@ -709,7 +709,7 @@
    "name": "Macacão Flare",
    "kind": "Macacão",
    "img": "p/macacao-flare.jpg",
-   "preco": 315.0,
+   "preco": 315,
    "tamanhos": {
     "P": 2,
     "M": 4,
@@ -738,7 +738,7 @@
    "preco": 149.9,
    "tamanhos": {
     "P": 2,
-    "M": 6,
+    "M": 5,
     "G": 2
    }
   },
@@ -790,7 +790,7 @@
    "preco": 139.9,
    "tamanhos": {
     "P": 2,
-    "M": 6,
+    "M": 5,
     "G": 2
    }
   },
