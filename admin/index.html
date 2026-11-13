@@ -121,6 +121,8 @@ const TIPOS = ["Conjunto short","Conjunto calça","Macaquinho","Macacão longo",
                "Regata","Vestido","Macacão"];
 const API_LOJA = "https://apiappaluno.nextfit.com.br/api/SiteVendaPublico/RecuperarItens/2f668a4a-1ad7-4690-82dd-03e3e6efa141?Descricao=&CodigosItensStr=%5B%5D&page=1&limit=500&sort=%5B%7B%22property%22%3A%22Ordem%22%2C%22direction%22%3A%22asc%22%7D%5D";
 const SITE = "https://lbafitwear.com.br";
+// Endereço da função na Cloudflare. Fica aqui para ninguém precisar digitar.
+const API_PADRAO = "https://lba-admin.lbafitwear.workers.dev";
 
 const $ = s => document.querySelector(s);
 const app = () => $("#app");
@@ -518,6 +520,7 @@ addEventListener("beforeunload", e => { if (pendencias()) e.preventDefault(); })
 
 (function inicio() {
   try { estado.api = localStorage.getItem("lba_api") || ""; } catch(_) {}
+  if (!estado.api) estado.api = API_PADRAO;
   if (!estado.api) return telaEndereco();
   try { estado.token = sessionStorage.getItem("lba_token") || ""; } catch(_) {}
   if (estado.token) return abrirPainel();
