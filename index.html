@@ -372,6 +372,9 @@ const SNAPSHOT = {"conjunto short luca":{"price":242.25,"orig":285.0,"sizes":{"M
 const SNAP_DATE = "11 nov 2026";
 const API = "https://apiappaluno.nextfit.com.br/api/SiteVendaPublico/RecuperarItens/2f668a4a-1ad7-4690-82dd-03e3e6efa141?Descricao=&CodigosItensStr=%5B%5D&page=1&limit=500&sort=%5B%7B%22property%22%3A%22Ordem%22%2C%22direction%22%3A%22asc%22%7D%5D";
 const WA = "5561992650920";
+// Foto recém-enviada ainda não está no site publicado: o GitHub Pages precisa
+// reconstruir. Até lá, a imagem vem do próprio repositório.
+const RAW = "https://raw.githubusercontent.com/DvSeiffert/lba-catalogo/main/";
 const COLS = { todas:"Todas", espanha:"Espanha", italia:"Itália", franca:"França", essenciais:"Essenciais" };
 const ORDER = ["essenciais","franca","italia","espanha"];
 const SIZE_ORDER = ["PP","P","M","G","GG","XG","U"];
@@ -443,7 +446,8 @@ function card(i){
        ${!e ? `<span class="badge off">Esgotado</span>`
             : ap ? `<span class="badge">Vende separado</span>`
             : i.spin ? `<span class="badge">360°</span>` : ""}
-       <img src="${i.img}" alt="${labelOf(i)} — LBA Fitwear" loading="lazy" decoding="async">
+       <img src="${i.img}" alt="${labelOf(i)} — LBA Fitwear" loading="lazy" decoding="async"
+            data-raw="${RAW}${i.img}" onerror="this.onerror=null;this.src=this.dataset.raw">
        ${i.spin ? `<video src="v/${i.spin}.mp4" muted loop playsinline preload="none"></video>` : ""}
      </div>
      <div class="meta">
@@ -492,7 +496,8 @@ function openSheet(i){
        <div class="sheet-img">
          ${i.spin
            ? `<video src="v/${i.spin}.mp4" poster="${i.img}" muted loop playsinline autoplay aria-label="${i.name} girando em 360 graus"></video>`
-           : `<img src="${i.img}" alt="${label} — LBA Fitwear">`}
+           : `<img src="${i.img}" alt="${label} — LBA Fitwear"
+                   data-raw="${RAW}${i.img}" onerror="this.onerror=null;this.src=this.dataset.raw">`}
        </div>
        <div class="sheet-body">
          <div class="sheet-ghost" aria-hidden="true">${ghostWord}</div>
@@ -585,14 +590,25 @@ document.addEventListener("click", ev => {
   render();
 });
 
+// A função enxerga o repositório na hora. O arquivo estático só muda depois
+// que o GitHub Pages reconstrói, então fica como reserva — e é o que vale
+// dentro do artifact, onde buscar outro domínio é bloqueado.
+const CATALOGO_AO_VIVO = "https://lba-admin.lbafitwear.workers.dev/catalogo.json";
+
 async function carregarCatalogo(){
-  const r = await fetch("dados/catalogo.json", { cache: "no-cache" });
-  if(!r.ok) throw new Error("catalogo.json " + r.status);
-  const d = await r.json();
-  CATALOG = Array.isArray(d.itens) ? d.itens : [];
+  let d = null;
+  for(const fonte of [CATALOGO_AO_VIVO, "dados/catalogo.json"]){
+    try{
+      const r = await fetch(fonte, { cache: "no-cache" });
+      if(!r.ok) continue;
+      const j = await r.json();
+      if(Array.isArray(j.itens) && j.itens.length){ d = j; break; }
+    }catch(_){ /* tenta a próxima fonte */ }
+  }
+  if(!d) throw new Error("catálogo indisponível");
+  CATALOG = d.itens;
   AVULSO = d.avulso || {};
   TOP_ESTOQUE = d.topEstoque || {};
-  if(!CATALOG.length) throw new Error("catálogo vazio");
 }
 
 (async () => {

@@ -18,7 +18,7 @@
 const HORAS_SESSAO = 8;
 
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     const origem = env.ORIGEM || "*";
     if (req.method === "OPTIONS") return corsOk(origem);
 
@@ -26,6 +26,10 @@ export default {
     const rota = url.pathname.replace(/\/+$/, "");
 
     try {
+      // Rota pública: é o que o site lê. Serve para o catálogo mudar na hora,
+      // sem esperar o GitHub Pages reconstruir. Não exige sessão — devolve
+      // exatamente o que já é público no repositório.
+      if (rota === "/catalogo.json" && req.method === "GET") return await catalogoPublico(req, env, ctx);
       if (rota === "/api/login" && req.method === "POST") return await login(req, env, origem);
       if (rota === "/api/catalogo" && req.method === "GET") return await lerCatalogo(req, env, origem);
       if (rota === "/api/catalogo" && req.method === "PUT") return await gravarCatalogo(req, env, origem);
@@ -120,6 +124,40 @@ async function lerCatalogo(req, env, origem) {
   return json({ catalogo: JSON.parse(conteudo), sha }, 200, origem);
 }
 
+/* O site lê daqui. Guardado na borda por 60s para não bater no GitHub a cada
+   visita — e o cache é derrubado na hora em que o painel grava, então uma
+   alteração aparece imediatamente. */
+function urlPublica(req) {
+  const u = new URL(req.url);
+  u.pathname = "/catalogo.json";
+  u.search = "";
+  return u.toString();
+}
+
+async function catalogoPublico(req, env, ctx) {
+  const cache = caches.default;
+  const chave = new Request(urlPublica(req), { method: "GET" });
+  const guardado = await cache.match(chave);
+  if (guardado) return guardado;
+
+  const { conteudo } = await lerArquivo(env, "dados/catalogo.json");
+  if (!conteudo) return json({ erro: "catálogo não encontrado" }, 404, "*");
+
+  const r = new Response(conteudo, {
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "public, max-age=60",
+      "access-control-allow-origin": "*"
+    }
+  });
+  if (ctx && ctx.waitUntil) ctx.waitUntil(cache.put(chave, r.clone()));
+  return r;
+}
+
+async function derrubarCache(req) {
+  try { await caches.default.delete(new Request(urlPublica(req), { method: "GET" })); } catch (_) {}
+}
+
 async function gravarCatalogo(req, env, origem) {
   await exigeSessao(req, env);
   const { catalogo, sha } = await req.json();
@@ -136,6 +174,7 @@ async function gravarCatalogo(req, env, origem) {
   const base64 = btoa(unescape(encodeURIComponent(texto)));
   const r = await gravarArquivo(env, "dados/catalogo.json", base64,
     `Painel: atualiza o catálogo (${catalogo.itens.length} itens)`, atual.sha);
+  await derrubarCache(req);   // o site passa a ver a mudança na próxima visita
   return json({ ok: true, sha: r.content.sha, commit: r.commit.sha.slice(0, 7) }, 200, origem);
 }
 
