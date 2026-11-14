@@ -840,7 +840,7 @@
    "name": "Nice",
    "kind": "Macaquinho",
    "img": "p/nice.jpg",
-   "preco": null,
+   "preco": 289.9,
    "tamanhos": {
     "P": 2,
     "M": 1,
@@ -853,7 +853,7 @@
    "name": "Nantes",
    "kind": "Macaquinho",
    "img": "p/nantes.jpg",
-   "preco": null,
+   "preco": 289.9,
    "tamanhos": {
     "P": 2,
     "M": 2
@@ -865,7 +865,7 @@
    "name": "Limoges",
    "kind": "Macaquinho",
    "img": "p/limoges.jpg",
-   "preco": null,
+   "preco": 289.9,
    "tamanhos": {
     "P": 2,
     "M": 2
