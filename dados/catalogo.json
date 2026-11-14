@@ -833,6 +833,211 @@
     "M": 4,
     "G": 2
    }
+  },
+  {
+   "slug": "nice",
+   "col": "franca",
+   "name": "Nice",
+   "kind": "Macaquinho",
+   "img": "p/nice.jpg",
+   "preco": null,
+   "tamanhos": {
+    "P": 2,
+    "M": 1,
+    "G": 1
+   }
+  },
+  {
+   "slug": "nantes",
+   "col": "franca",
+   "name": "Nantes",
+   "kind": "Macaquinho",
+   "img": "p/nantes.jpg",
+   "preco": null,
+   "tamanhos": {
+    "P": 2,
+    "M": 2
+   }
+  },
+  {
+   "slug": "limoges",
+   "col": "franca",
+   "name": "Limoges",
+   "kind": "Macaquinho",
+   "img": "p/limoges.jpg",
+   "preco": null,
+   "tamanhos": {
+    "P": 2,
+    "M": 2
+   }
+  },
+  {
+   "slug": "carcassonne-short",
+   "col": "franca",
+   "name": "Carcassonne",
+   "kind": "Conjunto short",
+   "img": "p/carcassonne-short.jpg",
+   "preco": 285,
+   "tamanhos": {
+    "P": 2,
+    "M": 2
+   }
+  },
+  {
+   "slug": "carcassonne-calca",
+   "col": "franca",
+   "name": "Carcassonne",
+   "kind": "Conjunto calça",
+   "img": "p/carcassonne-calca.jpg",
+   "preco": 315,
+   "tamanhos": {
+    "P": 2,
+    "M": 2
+   }
+  },
+  {
+   "slug": "toulouse-short",
+   "col": "franca",
+   "name": "Toulouse",
+   "kind": "Conjunto short",
+   "img": "p/toulouse-short.jpg",
+   "preco": 285,
+   "tamanhos": {
+    "P": 2,
+    "M": 2,
+    "G": 1
+   }
+  },
+  {
+   "slug": "dijon-short",
+   "col": "franca",
+   "name": "Dijon",
+   "kind": "Conjunto short",
+   "img": "p/dijon-short.jpg",
+   "preco": 285,
+   "tamanhos": {
+    "P": 3,
+    "M": 3
+   }
+  },
+  {
+   "slug": "provenca-short",
+   "col": "franca",
+   "name": "Provença",
+   "kind": "Conjunto short",
+   "img": "p/provenca-short.jpg",
+   "preco": 285,
+   "tamanhos": {
+    "P": 1,
+    "M": 1
+   }
+  },
+  {
+   "slug": "annecy-calca",
+   "col": "franca",
+   "name": "Annecy",
+   "kind": "Conjunto calça",
+   "img": "p/annecy-calca.jpg",
+   "preco": 315,
+   "tamanhos": {
+    "P": 1,
+    "M": 1
+   }
+  },
+  {
+   "slug": "reims-short",
+   "col": "franca",
+   "name": "Reims",
+   "kind": "Conjunto short",
+   "img": "p/reims-short.jpg",
+   "preco": 285,
+   "tamanhos": {
+    "M": 1
+   }
+  },
+  {
+   "slug": "reims-calca",
+   "col": "franca",
+   "name": "Reims",
+   "kind": "Conjunto calça",
+   "img": "p/reims-calca.jpg",
+   "preco": 315,
+   "tamanhos": {
+    "M": 1
+   }
+  },
+  {
+   "slug": "orleans-short",
+   "col": "franca",
+   "name": "Orléans",
+   "kind": "Conjunto short",
+   "img": "p/orleans-short.jpg",
+   "preco": 285,
+   "tamanhos": {
+    "P": 1,
+    "M": 1
+   }
+  },
+  {
+   "slug": "orleans-calca",
+   "col": "franca",
+   "name": "Orléans",
+   "kind": "Conjunto calça",
+   "img": "p/orleans-calca.jpg",
+   "preco": 315,
+   "tamanhos": {
+    "P": 2,
+    "M": 2
+   }
+  },
+  {
+   "slug": "metz-short",
+   "col": "franca",
+   "name": "Metz",
+   "kind": "Conjunto short",
+   "img": "p/metz-short.jpg",
+   "preco": 285,
+   "tamanhos": {
+    "P": 2,
+    "M": 2
+   }
+  },
+  {
+   "slug": "metz-calca",
+   "col": "franca",
+   "name": "Metz",
+   "kind": "Conjunto calça",
+   "img": "p/metz-calca.jpg",
+   "preco": 315,
+   "tamanhos": {
+    "P": 2,
+    "M": 2,
+    "G": 1
+   }
+  },
+  {
+   "slug": "cannes-short",
+   "col": "franca",
+   "name": "Cannes Rosa",
+   "kind": "Conjunto short",
+   "img": "p/cannes-short.jpg",
+   "preco": 285,
+   "tamanhos": {
+    "P": 3,
+    "M": 3
+   }
+  },
+  {
+   "slug": "bordeaux-calca",
+   "col": "franca",
+   "name": "Bordeaux",
+   "kind": "Conjunto calça",
+   "img": "p/bordeaux-calca.jpg",
+   "preco": 315,
+   "tamanhos": {
+    "M": 3,
+    "G": 2
+   }
   }
  ],
  "avulso": {
@@ -896,6 +1101,39 @@
   "Provença": {
    "P": 3,
    "M": 2
+  },
+  "Carcassonne": {
+   "P": 4,
+   "M": 4
+  },
+  "Toulouse": {
+   "P": 2,
+   "M": 2,
+   "G": 1
+  },
+  "Dijon": {
+   "P": 3,
+   "M": 3
+  },
+  "Reims": {
+   "M": 2
+  },
+  "Orléans": {
+   "P": 3,
+   "M": 3
+  },
+  "Metz": {
+   "P": 4,
+   "M": 4,
+   "G": 1
+  },
+  "Bordeaux": {
+   "M": 3,
+   "G": 2
+  },
+  "Cannes Rosa": {
+   "P": 3,
+   "M": 3
   }
  }
 }
