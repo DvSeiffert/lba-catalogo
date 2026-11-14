@@ -1038,6 +1038,18 @@
     "M": 3,
     "G": 2
    }
+  },
+  {
+   "slug": "estrasburgo-curto",
+   "col": "franca",
+   "name": "Estrasburgo",
+   "kind": "Macaquinho",
+   "img": "p/estrasburgo-curto.jpg",
+   "preco": 289.9,
+   "tamanhos": {
+    "P": 1,
+    "M": 1
+   }
   }
  ],
  "avulso": {
