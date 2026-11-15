@@ -13,6 +13,14 @@
  *   REPO          (texto)  DvSeiffert/lba-catalogo
  *   BRANCH        (texto)  main
  *   ORIGEM        (texto)  https://lbafitwear.com.br
+ *
+ * Provador virtual:
+ *   GEMINI_KEY      (secret) chave da API do Gemini
+ *   PROVADOR_TESTE  (secret) senha da via de teste, opcional
+ *   PROVADOR_LIGADO (texto)  1 liga, 0 desliga e some o botão do site
+ *   PROVADOR_DIA    (texto)  teto de gerações por dia, hoje 40
+ *   PROVADOR_IP_DIA (texto)  teto por IP por dia, hoje 20
+ *   PROVADOR        (KV)     espaço lba-provador, onde ficam os contadores
  */
 
 const HORAS_SESSAO = 8;
@@ -20,16 +28,20 @@ const HORAS_SESSAO = 8;
 export default {
   async fetch(req, env, ctx) {
     const origem = env.ORIGEM || "*";
-    if (req.method === "OPTIONS") return corsOk(origem);
-
     const url = new URL(req.url);
     const rota = url.pathname.replace(/\/+$/, "");
+    // CORS não protege nada — quem chama fora do navegador o ignora. Ele só
+    // decide quem consegue chamar de dentro de uma página. As rotas públicas
+    // abrem para qualquer origem; as do painel seguem presas à ORIGEM.
+    const PUBLICAS = ["/catalogo.json", "/api/provador", "/api/provar"];
+    if (req.method === "OPTIONS") return corsOk(PUBLICAS.includes(rota) ? "*" : origem);
 
     try {
       // Rota pública: é o que o site lê. Serve para o catálogo mudar na hora,
       // sem esperar o GitHub Pages reconstruir. Não exige sessão — devolve
       // exatamente o que já é público no repositório.
       if (rota === "/catalogo.json" && req.method === "GET") return await catalogoPublico(req, env, ctx);
+      if (rota === "/api/provador" && req.method === "GET") return json(await estadoProvador(env), 200, "*");
       if (rota === "/api/login" && req.method === "POST") return await login(req, env, origem);
       if (rota === "/api/catalogo" && req.method === "GET") return await lerCatalogo(req, env, origem);
       if (rota === "/api/catalogo" && req.method === "PUT") return await gravarCatalogo(req, env, origem);
@@ -113,6 +125,67 @@ async function gravarArquivo(env, caminho, base64, mensagem, sha) {
   const r = await fetch(gh(env, caminho), { method: "PUT", headers: cabecalhos(env), body: JSON.stringify(corpo) });
   if (!r.ok) throw new Error(`GitHub ${r.status} ao gravar ${caminho}: ${(await r.text()).slice(0, 300)}`);
   return await r.json();
+}
+
+/* ---------------- provador: travas e estado ---------------- */
+
+/* Os contadores vivem em KV, não no limitador nativo dos Workers: aquele se
+   configura por Wrangler, e este Worker é mantido colando código no painel.
+   KV é eventualmente consistente, então a contagem pode escorregar um pouco
+   para cima — é uma proteção de gasto, não contabilidade. */
+
+const DIAS_CONTADOR = 48 * 3600;        // chaves de trava: dois dias bastam
+const DIAS_REGISTRO = 9 * 24 * 3600;    // contagem que o painel mostra: nove
+
+const hojeSP = () => new Date().toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" });
+const numero = (v, padrao) => { const n = parseInt(v, 10); return Number.isFinite(n) ? n : padrao; };
+
+function provadorLigado(env) {
+  return String(env.PROVADOR_LIGADO || "0") === "1" && !!env.PROVADOR && !!env.GEMINI_KEY;
+}
+
+async function somar(env, chave, limite, validade) {
+  const atual = numero(await env.PROVADOR.get(chave), 0);
+  if (atual >= limite) return false;
+  await env.PROVADOR.put(chave, String(atual + 1), { expirationTtl: validade });
+  return true;
+}
+
+async function estadoProvador(env) {
+  if (!provadorLigado(env)) return { ligado: false, restante: 0 };
+  try {
+    const teto = numero(env.PROVADOR_DIA, 0);
+    const usado = numero(await env.PROVADOR.get("dia:" + hojeSP()), 0);
+    return { ligado: true, restante: Math.max(0, teto - usado) };
+  } catch (_) {
+    // KV fora do ar: recusa em vez de liberar. Provador parado é melhor que
+    // conta em aberto.
+    return { ligado: false, restante: 0 };
+  }
+}
+
+/* Reserva antes de a chamada sair, porque chamada que sai pode custar. */
+async function reservarVaga(env, ip) {
+  if (!provadorLigado(env)) return { ok: false, motivo: "desligado" };
+  const d = hojeSP();
+  try {
+    if (!(await somar(env, `ip:${d}:${ip}`, numero(env.PROVADOR_IP_DIA, 0), DIAS_CONTADOR)))
+      return { ok: false, motivo: "ip" };
+    if (!(await somar(env, `dia:${d}`, numero(env.PROVADOR_DIA, 0), DIAS_CONTADOR)))
+      return { ok: false, motivo: "teto" };
+    return { ok: true };
+  } catch (_) {
+    return { ok: false, motivo: "kv" };
+  }
+}
+
+/* Só contagem, nada pessoal: nem foto, nem IP, nem nada que identifique. */
+async function registrar(env, campo) {
+  try {
+    const k = `conta:${hojeSP()}:${campo}`;
+    const n = numero(await env.PROVADOR.get(k), 0);
+    await env.PROVADOR.put(k, String(n + 1), { expirationTtl: DIAS_REGISTRO });
+  } catch (_) { /* contagem não vale derrubar a resposta */ }
 }
 
 /* ---------------- rotas ---------------- */
