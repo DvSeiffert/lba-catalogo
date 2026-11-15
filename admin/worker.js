@@ -249,7 +249,9 @@ async function chamarGemini(env, fotoB64, renderB64, item) {
       response_format: { type: "image", aspect_ratio: "3:4", image_size: "1K" }
     })
   });
-  if (!r.ok) return { imagem: null, detalhe: `http ${r.status}: ${(await r.text()).slice(0, 200)}` };
+  // Erro de transporte não é recusa de conteúdo. Misturar os dois faria a
+  // cliente ver "tenta outra foto" quando o problema é cota ou faturamento.
+  if (!r.ok) return { imagem: null, falha: true, detalhe: `http ${r.status}: ${(await r.text()).slice(0, 200)}` };
   const d = await r.json().catch(() => null);
   for (const passo of (d && d.steps) || []) {
     if (passo.type !== "model_output") continue;
@@ -257,8 +259,8 @@ async function chamarGemini(env, fotoB64, renderB64, item) {
       if (bloco.type === "image" && bloco.data) return { imagem: bloco.data, detalhe: "" };
     }
   }
-  // Sem bloco de imagem é o que acontece numa recusa de filtro.
-  return { imagem: null, detalhe: "sem imagem na resposta" };
+  // Resposta boa, sem bloco de imagem: aí sim é recusa de filtro.
+  return { imagem: null, falha: false, detalhe: "sem imagem na resposta" };
 }
 
 async function provar(req, env, ctx) {
@@ -272,6 +274,13 @@ async function provar(req, env, ctx) {
     return json({ erro: "faltou a foto", codigo: "falhou" }, 400, O);
   if (foto.length > 4_000_000)
     return json({ erro: "imagem grande demais", codigo: "falhou" }, 400, O);
+
+  /* A peça é conferida ANTES de reservar vaga. Reservar primeiro deixaria
+     qualquer um derrubar o provador pelo dia inteiro com 40 requisições de
+     slug inválido, sem gastar um centavo — e sem nenhuma chamada sair. Ler
+     o catálogo é de graça: vem do cache de borda. */
+  const alvo = await renderDe(req, env, ctx, slug);
+  if (!alvo) return json({ erro: "peça indisponível para provar", codigo: "slug" }, 404, O);
 
   // Via de teste: teto próprio, para afinar o texto sem fechar o provador.
   const ehTeste = !!env.PROVADOR_TESTE && teste === env.PROVADOR_TESTE;
@@ -290,13 +299,12 @@ async function provar(req, env, ctx) {
     }
   }
 
-  const alvo = await renderDe(req, env, ctx, slug);
-  if (!alvo) return json({ erro: "peça indisponível para provar", codigo: "slug" }, 404, O);
-
-  const { imagem, detalhe } = await chamarGemini(env, foto, alvo.base64, alvo.item);
+  const { imagem, falha, detalhe } = await chamarGemini(env, foto, alvo.base64, alvo.item);
   if (!imagem) {
-    await registrar(env, "recusas");
-    return json({ erro: "não consegui gerar com essa foto", codigo: "recusado", detalhe }, 200, O);
+    await registrar(env, falha ? "falhas" : "recusas");
+    return falha
+      ? json({ erro: "o provador está com problema", codigo: "falhou", detalhe }, 502, O)
+      : json({ erro: "não consegui gerar com essa foto", codigo: "recusado" }, 200, O);
   }
   await registrar(env, "provas");
   return json({ imagem }, 200, O);
