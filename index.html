@@ -448,6 +448,42 @@ function reduzirFoto(arquivo){
   });
 }
 
+/* A marca é composta aqui, no navegador: o Worker não tem canvas, e fazer
+   isso no servidor exigiria recurso pago ou um codificador em WASM. Quem
+   souber o que está fazendo contorna — ela serve contra o desatento, que é
+   o caso real. O arquivo que a cliente baixa é sempre o marcado. */
+function marcar(dataUrl){
+  return new Promise(pronto => {
+    const base = new Image();
+    base.onload = () => {
+      try{
+        const c = document.createElement("canvas");
+        c.width = base.naturalWidth; c.height = base.naturalHeight;
+        const x = c.getContext("2d");
+        x.drawImage(base, 0, 0);
+        const logo = new Image();
+        logo.onload = () => {
+          try{
+            const l = Math.round(c.width * 0.09);
+            const a = Math.round(l * (logo.naturalHeight / logo.naturalWidth));
+            const m = Math.round(c.width * 0.035);
+            // O logo do arquivo é escuro; sobre foto ele some. Inverte para
+            // claro e põe uma sombra, para ler em fundo claro ou escuro.
+            x.globalAlpha = 0.85;
+            if("filter" in x) x.filter = "invert(1) drop-shadow(0 1px 2px rgba(0,0,0,.45))";
+            x.drawImage(logo, c.width - l - m, c.height - a - m, l, a);
+            pronto(c.toDataURL("image/jpeg", 0.9));
+          }catch(_){ pronto(dataUrl); }
+        };
+        logo.onerror = () => pronto(dataUrl);
+        logo.src = "p/lba.png";
+      }catch(_){ pronto(dataUrl); }
+    };
+    base.onerror = () => pronto(dataUrl);
+    base.src = dataUrl;
+  });
+}
+
 const ERRO_PROVA = {
   desligado: "O provador está fora do ar agora. Chama no WhatsApp que a gente te ajuda a escolher.",
   teto: "O provador chegou ao limite de hoje. Ele volta amanhã — e o WhatsApp continua aqui do lado.",
@@ -714,10 +750,10 @@ function abrirProvador(i){
       ${e ? `<p class="note">${brl(e.price)} · tamanhos ${sz.map(x => x.s).join(", ")}</p>` : ""}
       <div class="prov-acoes">
         ${botaoWA}
+        <a class="btn ghost" id="baixar" download="lba-${i.slug}.jpg" href="${dataUrl}">Baixar</a>
         <button class="btn ghost" id="deNovo" type="button">Tentar outra foto</button>
       </div>`);
     dlg.querySelector("#deNovo").addEventListener("click", telaEscolher);
-    return dlg.querySelector(".prov-par img");
   }
 
   async function gerar(arquivo){
@@ -736,12 +772,9 @@ function abrirProvador(i){
       // Só desconta quando a imagem chega: recusa e falha não são culpa dela.
       gastarCotaLocal();
       if(PROVADOR) PROVADOR.restante = Math.max(0, PROVADOR.restante - 1);
-      mostrarProva(telaPronta, "data:image/jpeg;base64," + d.imagem, i);
+      telaPronta(await marcar("data:image/jpeg;base64," + d.imagem));
     }catch(_){ telaErro("falhou"); }
   }
-
-  // Ponto de entrada da marca d'água (Tarefa 4). Por ora mostra como veio.
-  function mostrarProva(tela, dataUrl){ tela(dataUrl); }
 
   telaEscolher();
   dlg.showModal();
