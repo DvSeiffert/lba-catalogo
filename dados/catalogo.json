@@ -551,7 +551,6 @@
    "img": "p/colmar-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 1,
     "M": 2
    }
   },
@@ -853,7 +852,7 @@
    "img": "p/nantes.jpg",
    "preco": 289.9,
    "tamanhos": {
-    "P": 2,
+    "P": 1,
     "M": 1
    }
   },
@@ -1087,7 +1086,7 @@
    "G": 1
   },
   "Colmar": {
-   "P": 2,
+   "P": 1,
    "M": 2,
    "G": 3
   },
