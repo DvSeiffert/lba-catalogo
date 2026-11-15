@@ -42,6 +42,7 @@ export default {
       // exatamente o que já é público no repositório.
       if (rota === "/catalogo.json" && req.method === "GET") return await catalogoPublico(req, env, ctx);
       if (rota === "/api/provador" && req.method === "GET") return json(await estadoProvador(env), 200, "*");
+      if (rota === "/api/provar" && req.method === "POST") return await provar(req, env, ctx);
       if (rota === "/api/login" && req.method === "POST") return await login(req, env, origem);
       if (rota === "/api/catalogo" && req.method === "GET") return await lerCatalogo(req, env, origem);
       if (rota === "/api/catalogo" && req.method === "PUT") return await gravarCatalogo(req, env, origem);
@@ -186,6 +187,119 @@ async function registrar(env, campo) {
     const n = numero(await env.PROVADOR.get(k), 0);
     await env.PROVADOR.put(k, String(n + 1), { expirationTtl: DIAS_REGISTRO });
   } catch (_) { /* contagem não vale derrubar a resposta */ }
+}
+
+/* ---------------- provador: a geração ---------------- */
+
+const MODELO = "gemini-nano-banana-2.1";
+
+function paraBase64(buffer) {
+  const u = new Uint8Array(buffer);
+  let texto = "";
+  const passo = 0x8000;   // de uma vez só, String.fromCharCode estoura a pilha
+  for (let i = 0; i < u.length; i += passo) {
+    texto += String.fromCharCode.apply(null, u.subarray(i, i + passo));
+  }
+  return btoa(texto);
+}
+
+/* O navegador manda só o slug. Quem decide qual arquivo ler é o Worker,
+   pelo catálogo: dois dos itens têm img diferente de p/<slug>.jpg porque o
+   painel renomeia ao trocar a foto, e aceitar caminho de fora transformaria
+   esta rota pública num leitor de arquivo do repositório. */
+async function renderDe(req, env, ctx, slug) {
+  if (!/^[a-z0-9-]{2,60}$/.test(slug || "")) return null;
+  const resposta = await catalogoPublico(req, env, ctx);
+  if (!resposta.ok) return null;
+  const catalogo = await resposta.json();
+  const item = (catalogo.itens || []).find(x => x.slug === slug);
+  if (!item) return null;
+  const pecas = Object.values(item.tamanhos || {}).reduce((a, q) => a + (q > 0 ? q : 0), 0);
+  if (!(item.preco > 0) || !pecas) return null;              // peça de arquivo não se prova
+  if (!/^p\/[a-z0-9-]+\.jpg$/.test(item.img || "")) return null;
+  const img = await fetch(`https://raw.githubusercontent.com/${env.REPO}/${env.BRANCH}/${item.img}`);
+  if (!img.ok) return null;
+  return { base64: paraBase64(await img.arrayBuffer()), item };
+}
+
+/* O texto é a única alavanca de fidelidade que um modelo de imagem geral
+   oferece: ele nomeia a peça e lista o que não pode mudar. */
+function pedido(item) {
+  return [
+    `Foto de catálogo de moda fitness.`,
+    `A primeira imagem é uma pessoa. A segunda é a peça "${item.kind} ${item.name}" da marca LBA, fotografada sem corpo, sobre fundo claro.`,
+    `Vista a pessoa da primeira imagem com exatamente essa peça.`,
+    `Preserve da segunda imagem, sem alterar: as cores exatas, a ordem e a posição de cada faixa, listra, recorte ou detalhe, o formato do decote e das alças, a altura do cós e o comprimento da peça.`,
+    `Preserve da primeira imagem: o rosto, o cabelo, o tom de pele, o corpo e a pose da pessoa.`,
+    `Resultado em corpo inteiro, fundo de estúdio claro e liso, luz suave e uniforme, sem texto e sem marca d'água.`
+  ].join(" ");
+}
+
+async function chamarGemini(env, fotoB64, renderB64, item) {
+  const r = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+    method: "POST",
+    headers: { "x-goog-api-key": env.GEMINI_KEY, "content-type": "application/json" },
+    body: JSON.stringify({
+      model: MODELO,
+      input: [
+        { type: "image", mime_type: "image/jpeg", data: fotoB64 },
+        { type: "image", mime_type: "image/jpeg", data: renderB64 },
+        { type: "text", text: pedido(item) }
+      ],
+      response_format: { type: "image", aspect_ratio: "3:4", image_size: "1K" }
+    })
+  });
+  if (!r.ok) return { imagem: null, detalhe: `http ${r.status}: ${(await r.text()).slice(0, 200)}` };
+  const d = await r.json().catch(() => null);
+  for (const passo of (d && d.steps) || []) {
+    if (passo.type !== "model_output") continue;
+    for (const bloco of passo.content || []) {
+      if (bloco.type === "image" && bloco.data) return { imagem: bloco.data, detalhe: "" };
+    }
+  }
+  // Sem bloco de imagem é o que acontece numa recusa de filtro.
+  return { imagem: null, detalhe: "sem imagem na resposta" };
+}
+
+async function provar(req, env, ctx) {
+  const O = "*";
+  if (!provadorLigado(env))
+    return json({ erro: "o provador está desligado", codigo: "desligado" }, 503, O);
+
+  const corpo = await req.json().catch(() => ({}));
+  const { slug, foto, teste } = corpo;
+  if (!foto || typeof foto !== "string")
+    return json({ erro: "faltou a foto", codigo: "falhou" }, 400, O);
+  if (foto.length > 4_000_000)
+    return json({ erro: "imagem grande demais", codigo: "falhou" }, 400, O);
+
+  // Via de teste: teto próprio, para afinar o texto sem fechar o provador.
+  const ehTeste = !!env.PROVADOR_TESTE && teste === env.PROVADOR_TESTE;
+  if (ehTeste) {
+    try {
+      if (!(await somar(env, `teste:${hojeSP()}`, 100, DIAS_CONTADOR)))
+        return json({ erro: "teto de teste atingido", codigo: "teto" }, 429, O);
+    } catch (_) {
+      return json({ erro: "contador indisponível", codigo: "teto" }, 503, O);
+    }
+  } else {
+    const vaga = await reservarVaga(env, req.headers.get("cf-connecting-ip") || "sem-ip");
+    if (!vaga.ok) {
+      const codigo = vaga.motivo === "kv" ? "teto" : vaga.motivo;
+      return json({ erro: "limite atingido", codigo }, codigo === "desligado" ? 503 : 429, O);
+    }
+  }
+
+  const alvo = await renderDe(req, env, ctx, slug);
+  if (!alvo) return json({ erro: "peça indisponível para provar", codigo: "slug" }, 404, O);
+
+  const { imagem, detalhe } = await chamarGemini(env, foto, alvo.base64, alvo.item);
+  if (!imagem) {
+    await registrar(env, "recusas");
+    return json({ erro: "não consegui gerar com essa foto", codigo: "recusado", detalhe }, 200, O);
+  }
+  await registrar(env, "provas");
+  return json({ imagem }, 200, O);
 }
 
 /* ---------------- rotas ---------------- */
