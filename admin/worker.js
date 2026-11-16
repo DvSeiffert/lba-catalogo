@@ -44,6 +44,7 @@ export default {
       if (rota === "/api/provador" && req.method === "GET") return json(await estadoProvador(env), 200, "*");
       if (rota === "/api/provar" && req.method === "POST") return await provar(req, env, ctx);
       if (rota === "/api/login" && req.method === "POST") return await login(req, env, origem);
+      if (rota === "/api/contagem" && req.method === "GET") return await contagemProvador(req, env, origem);
       if (rota === "/api/catalogo" && req.method === "GET") return await lerCatalogo(req, env, origem);
       if (rota === "/api/catalogo" && req.method === "PUT") return await gravarCatalogo(req, env, origem);
       if (rota === "/api/foto" && req.method === "POST") return await gravarFoto(req, env, origem);
@@ -187,6 +188,30 @@ async function registrar(env, campo) {
     const n = numero(await env.PROVADOR.get(k), 0);
     await env.PROVADOR.put(k, String(n + 1), { expirationTtl: DIAS_REGISTRO });
   } catch (_) { /* contagem não vale derrubar a resposta */ }
+}
+
+/* Sete dias de contagem, para o painel. Exige sessão: não é segredo, mas
+   também não é assunto de visitante. */
+async function contagemProvador(req, env, origem) {
+  await exigeSessao(req, env);
+  const estado = await estadoProvador(env);
+  const teto = numero(env.PROVADOR_DIA, 0);
+  const dias = [];
+  try {
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(Date.now() - i * 86400e3)
+        .toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" });
+      const [provas, recusas, falhas] = await Promise.all([
+        env.PROVADOR.get(`conta:${d}:provas`),
+        env.PROVADOR.get(`conta:${d}:recusas`),
+        env.PROVADOR.get(`conta:${d}:falhas`)
+      ]);
+      dias.push({ dia: d, provas: numero(provas, 0), recusas: numero(recusas, 0), falhas: numero(falhas, 0) });
+    }
+  } catch (_) {
+    return json({ erro: "contagem indisponível" }, 503, origem);
+  }
+  return json({ ligado: estado.ligado, restante: estado.restante, teto, dias }, 200, origem);
 }
 
 /* ---------------- provador: a geração ---------------- */

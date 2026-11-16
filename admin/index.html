@@ -134,6 +134,16 @@ img{display:block}
 .busca::placeholder{color:rgba(140,139,145,.7)}
 .busca:focus{border-color:var(--ink);outline:none}
 
+/* ---------- linha do provador ---------- */
+.provador-linha{display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  padding:11px 14px;margin-bottom:16px;border:1px solid var(--line-soft);
+  border-radius:11px;background:rgba(236,236,234,.03);
+  font-size:.78rem;font-weight:300;color:var(--muted)}
+.provador-linha b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+.provador-linha .ponto{width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:var(--ok)}
+.provador-linha.parado .ponto{background:var(--muted)}
+.provador-linha .vai{flex:1 1 auto}
+
 /* ---------- lista ---------- */
 .lista{display:flex;flex-direction:column;gap:1px;background:var(--line-soft);
   border:1px solid var(--line-soft);border-radius:14px;overflow:hidden;margin-bottom:64px}
@@ -471,6 +481,7 @@ function desenharPainel() {
           <div class="pills" id="pillsLig"></div>
         </div>
       </div>
+      <div id="linhaProvador"></div>
       <div id="conteudo"></div>
     </div>`;
   $("#salvar").addEventListener("click", salvar);
@@ -486,6 +497,28 @@ function desenharPainel() {
     desenharConteudo();
   });
   desenharConteudo();
+  linhaProvador();
+}
+
+/* O provador tem custo por uso, então o painel mostra o gasto do dia sem
+   ninguém precisar abrir a Cloudflare. Só contagem: nada pessoal. */
+async function linhaProvador() {
+  const alvo = $("#linhaProvador");
+  if (!alvo) return;
+  let d;
+  try { d = await chamar("/api/contagem"); } catch (_) { return; }
+  const hoje = (d.dias && d.dias[0]) || { provas: 0, recusas: 0, falhas: 0 };
+  const semana = (d.dias || []).reduce((a, x) => a + x.provas, 0);
+  const pedacos = [`<b>${hoje.provas}</b> ${hoje.provas === 1 ? "prova" : "provas"} hoje`];
+  if (hoje.recusas) pedacos.push(`<b>${hoje.recusas}</b> ${hoje.recusas === 1 ? "recusa" : "recusas"}`);
+  if (hoje.falhas) pedacos.push(`<b>${hoje.falhas}</b> com erro`);
+  pedacos.push(`<b>${semana}</b> nos últimos sete dias`);
+  alvo.innerHTML = `<div class="provador-linha${d.ligado ? "" : " parado"}">
+      <span class="ponto"></span>
+      <span>Provador · ${pedacos.join(" · ")}</span>
+      <span class="vai"></span>
+      <span>${d.ligado ? `restam <b>${d.restante}</b> de <b>${d.teto}</b> hoje` : "desligado"}</span>
+    </div>`;
 }
 
 function statusLigacao(it) {
