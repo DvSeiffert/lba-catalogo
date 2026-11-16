@@ -153,6 +153,71 @@ async function somar(env, chave, limite, validade) {
   return true;
 }
 
+/* O KV é eventualmente consistente: uma gravação leva até 60 segundos para
+   ser vista, inclusive por quem gravou. Sozinho, ele deixa passar uma
+   rajada inteira dentro dessa janela, porque todo mundo lê o mesmo valor
+   velho. O Cache API é forte dentro do mesmo colo, e rajada quase sempre
+   cai em um ou dois colos — então ele fecha a maior parte do buraco.
+
+   Isto estreita a janela de 60 segundos para milissegundos; não a fecha.
+   O teto duro de verdade é a cota por chave do lado do Google. */
+const urlContador = chave => `https://contador.lba/${encodeURIComponent(chave)}`;
+
+async function somarColo(chave, limite) {
+  try {
+    const cache = caches.default;
+    const pedido = new Request(urlContador(chave));
+    const guardado = await cache.match(pedido);
+    const atual = guardado ? numero(await guardado.text(), 0) : 0;
+    if (atual >= limite) return false;
+    await cache.put(pedido, new Response(String(atual + 1), {
+      headers: { "cache-control": "max-age=86400" }
+    }));
+    return true;
+  } catch (_) {
+    return true;   // o KV ainda guarda o total do dia
+  }
+}
+
+async function devolverVagaColo(chave) {
+  try {
+    const cache = caches.default;
+    const pedido = new Request(urlContador(chave));
+    const guardado = await cache.match(pedido);
+    const atual = guardado ? numero(await guardado.text(), 0) : 0;
+    if (atual > 0) await cache.put(pedido, new Response(String(atual - 1), {
+      headers: { "cache-control": "max-age=86400" }
+    }));
+  } catch (_) {}
+}
+
+/* O IP é dado pessoal e a política diz que não guardamos nenhum. A trava
+   continua funcionando com o resumo: mesma conexão dá a mesma chave, e a
+   chave não volta a ser um endereço. */
+async function hashIp(ip, dia) {
+  const d = await crypto.subtle.digest("SHA-256", enc.encode(`${dia}|${ip}`));
+  return b64url(d).slice(0, 22);
+}
+
+/* IPv6 residencial costuma dar um /64 inteiro para a casa, e trocar de
+   endereço dentro dele é de graça. Agrupar pelo prefixo faz a trava valer
+   por conexão, não por endereço sorteado. */
+function chaveIp(ip) {
+  if (!ip) return "sem-ip";
+  if (!ip.includes(":")) return ip;
+  return ip.split(":").slice(0, 4).join(":") + "::/64";
+}
+
+/* Navegador não forja Origin. Quem vem de outra página é recusado; quem vem
+   de fora do navegador não manda Origin e segue limitado pelas travas, que
+   é o que o desenho sempre quis. */
+function origemDeNavegador(req, env) {
+  const o = req.headers.get("origin");
+  if (!o) return true;
+  const permitidas = [env.ORIGEM, "https://dvseiffert.github.io"].filter(Boolean);
+  return permitidas.includes(o);
+}
+
 async function estadoProvador(env) {
   if (!provadorLigado(env)) return { ligado: false, restante: 0 };
   try {
@@ -170,15 +235,38 @@ async function estadoProvador(env) {
 async function reservarVaga(env, ip) {
   if (!provadorLigado(env)) return { ok: false, motivo: "desligado" };
   const d = hojeSP();
+  const teto = numero(env.PROVADOR_DIA, 0);
   try {
-    if (!(await somar(env, `ip:${d}:${ip}`, numero(env.PROVADOR_IP_DIA, 0), DIAS_CONTADOR)))
-      return { ok: false, motivo: "ip" };
-    if (!(await somar(env, `dia:${d}`, numero(env.PROVADOR_DIA, 0), DIAS_CONTADOR)))
+    // o teto global primeiro, e no colo antes do KV: é o que guarda a conta
+    if (!(await somarColo(`dia:${d}`, teto))) {
+      await registrar(env, "teto");
       return { ok: false, motivo: "teto" };
-    return { ok: true };
+    }
+    if (!(await somar(env, `dia:${d}`, teto, DIAS_CONTADOR))) {
+      await devolverVagaColo(`dia:${d}`);
+      await registrar(env, "teto");
+      return { ok: false, motivo: "teto" };
+    }
+    const chave = await hashIp(chaveIp(ip), d);
+    if (!(await somar(env, `ip:${d}:${chave}`, numero(env.PROVADOR_IP_DIA, 0), DIAS_CONTADOR))) {
+      await devolverVaga(env, d);   // o teto do dia não paga pela trava dela
+      return { ok: false, motivo: "ip" };
+    }
+    return { ok: true, dia: d };
   } catch (_) {
     return { ok: false, motivo: "kv" };
   }
+}
+
+/* Chamada que o Google recusou na porta não custou nada, então não é justo
+   que ela queime uma vaga do dia. */
+async function devolverVaga(env, dia) {
+  await devolverVagaColo(`dia:${dia}`);
+  try {
+    const k = `dia:${dia}`;
+    const atual = numero(await env.PROVADOR.get(k), 0);
+    if (atual > 0) await env.PROVADOR.put(k, String(atual - 1), { expirationTtl: DIAS_CONTADOR });
+  } catch (_) {}
 }
 
 /* Só contagem, nada pessoal: nem foto, nem IP, nem nada que identifique. */
@@ -217,6 +305,19 @@ async function contagemProvador(req, env, origem) {
 /* ---------------- provador: a geração ---------------- */
 
 const MODELO = "gemini-nano-banana-2.1";
+/* O navegador manda no máximo uns 550 KB em base64 depois de reduzir. O
+   limite antigo, de 4 MB, deixava alguém pedir imagem enorme e multiplicar
+   o custo de cada chamada sem furar a contagem. */
+const CORPO_MAX = 760_000;
+
+/* Base64 que não começa com assinatura de imagem não chega a ser chamada:
+   o Google recusaria na porta, de graça para quem mandou e queimando uma
+   vaga do dia. */
+function pareceImagem(b64) {
+  if (typeof b64 !== "string" || b64.length < 512) return false;
+  if (!/^[A-Za-z0-9+/]{64}/.test(b64)) return false;
+  return b64.startsWith("/9j/") || b64.startsWith("iVBORw0") || b64.startsWith("UklGR");
+}
 
 function paraBase64(buffer) {
   const u = new Uint8Array(buffer);
@@ -276,16 +377,21 @@ async function chamarGemini(env, fotoB64, renderB64, item) {
   });
   // Erro de transporte não é recusa de conteúdo. Misturar os dois faria a
   // cliente ver "tenta outra foto" quando o problema é cota ou faturamento.
-  if (!r.ok) return { imagem: null, falha: true, detalhe: `http ${r.status}: ${(await r.text()).slice(0, 200)}` };
+  if (!r.ok) return {
+    imagem: null, falha: true, status: r.status,
+    detalhe: `http ${r.status}: ${(await r.text()).slice(0, 200)}`
+  };
   const d = await r.json().catch(() => null);
-  for (const passo of (d && d.steps) || []) {
+  // 200 com corpo que não se lê é problema nosso, não recusa de conteúdo
+  if (!d) return { imagem: null, falha: true, status: r.status, detalhe: "resposta ilegivel" };
+  for (const passo of d.steps || []) {
     if (passo.type !== "model_output") continue;
     for (const bloco of passo.content || []) {
       if (bloco.type === "image" && bloco.data) return { imagem: bloco.data, detalhe: "" };
     }
   }
   // Resposta boa, sem bloco de imagem: aí sim é recusa de filtro.
-  return { imagem: null, falha: false, detalhe: "sem imagem na resposta" };
+  return { imagem: null, falha: false, status: r.status, detalhe: "sem imagem na resposta" };
 }
 
 async function provar(req, env, ctx) {
@@ -293,12 +399,15 @@ async function provar(req, env, ctx) {
   if (!provadorLigado(env))
     return json({ erro: "o provador está desligado", codigo: "desligado" }, 503, O);
 
+  if (!origemDeNavegador(req, env))
+    return json({ erro: "origem não autorizada", codigo: "falhou" }, 403, O);
+
   const corpo = await req.json().catch(() => ({}));
   const { slug, foto, teste } = corpo;
-  if (!foto || typeof foto !== "string")
-    return json({ erro: "faltou a foto", codigo: "falhou" }, 400, O);
-  if (foto.length > 4_000_000)
-    return json({ erro: "imagem grande demais", codigo: "falhou" }, 400, O);
+  if (foto && foto.length > CORPO_MAX)
+    return json({ erro: "imagem grande demais", codigo: "leitura" }, 413, O);
+  if (!pareceImagem(foto))
+    return json({ erro: "isso não parece uma foto", codigo: "leitura" }, 400, O);
 
   /* A peça é conferida ANTES de reservar vaga. Reservar primeiro deixaria
      qualquer um derrubar o provador pelo dia inteiro com 40 requisições de
@@ -309,6 +418,7 @@ async function provar(req, env, ctx) {
 
   // Via de teste: teto próprio, para afinar o texto sem fechar o provador.
   const ehTeste = !!env.PROVADOR_TESTE && teste === env.PROVADOR_TESTE;
+  let vaga = { ok: true };
   if (ehTeste) {
     try {
       if (!(await somar(env, `teste:${hojeSP()}`, 100, DIAS_CONTADOR)))
@@ -317,18 +427,21 @@ async function provar(req, env, ctx) {
       return json({ erro: "contador indisponível", codigo: "teto" }, 503, O);
     }
   } else {
-    const vaga = await reservarVaga(env, req.headers.get("cf-connecting-ip") || "sem-ip");
+    vaga = await reservarVaga(env, req.headers.get("cf-connecting-ip") || "");
     if (!vaga.ok) {
       const codigo = vaga.motivo === "kv" ? "teto" : vaga.motivo;
       return json({ erro: "limite atingido", codigo }, codigo === "desligado" ? 503 : 429, O);
     }
   }
 
-  const { imagem, falha, detalhe } = await chamarGemini(env, foto, alvo.base64, alvo.item);
+  const { imagem, falha, status, detalhe } = await chamarGemini(env, foto, alvo.base64, alvo.item);
   if (!imagem) {
     await registrar(env, falha ? "falhas" : "recusas");
+    // 4xx do Google é recusa na porta: não gerou, não custou, devolve a vaga
+    if (falha && !ehTeste && vaga.dia && status >= 400 && status < 500) await devolverVaga(env, vaga.dia);
+    // o detalhe nomeia projeto e cota: fica na via de teste, não no público
     return falha
-      ? json({ erro: "o provador está com problema", codigo: "falhou", detalhe }, 502, O)
+      ? json({ erro: "o provador está com problema", codigo: "falhou", ...(ehTeste ? { detalhe } : {}) }, 502, O)
       : json({ erro: "não consegui gerar com essa foto", codigo: "recusado" }, 200, O);
   }
   await registrar(env, "provas");
@@ -430,6 +543,10 @@ function corsOk(origem) {
 function json(obj, status, origem) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8", ...cabecalhosCors(origem) }
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      ...cabecalhosCors(origem)
+    }
   });
 }

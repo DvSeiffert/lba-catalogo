@@ -163,7 +163,13 @@ liga-desliga são variáveis no painel da Cloudflare — ver
 
 O painel mostra, numa linha acima da lista, quantas provas saíram hoje,
 quantas foram recusadas e quanto resta do teto. É só contagem: nenhuma
-foto, nenhum IP.
+foto, e o contador por conexão guarda um resumo embaralhado do IP, que
+muda todo dia e expira em 48 horas.
+
+> O teto do Worker estreita a janela de abuso, mas não é atômico: o KV da
+> Cloudflare leva até 60 segundos para propagar uma gravação. O teto duro
+> de verdade é a **cota por chave no Google Cloud**, e ela precisa estar
+> configurada. Sem ela, uma rajada simultânea passa do limite.
 
 A foto da cliente vai para o Google e não é guardada por nós. Isso está
 dito na própria camada e em `privacidade.html`.

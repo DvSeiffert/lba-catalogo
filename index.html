@@ -434,14 +434,23 @@ function reduzirFoto(arquivo){
   return new Promise((ok, falha) => {
     const img = new Image();
     img.onload = () => {
-      const escala = Math.min(1024 / Math.max(img.width, img.height), 1);
-      const c = document.createElement("canvas");
-      c.width = Math.round(img.width * escala);
-      c.height = Math.round(img.height * escala);
-      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      const url = c.toDataURL("image/jpeg", 0.85);
-      URL.revokeObjectURL(img.src);
-      ok({ url, base64: url.split(",")[1] });
+      // Sem o try, um estouro de memória no canvas escapa do executor e a
+      // promessa nunca termina: a tela fica parada, sem mensagem nenhuma.
+      try{
+        const escala = Math.min(1024 / Math.max(img.width, img.height), 1);
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * escala);
+        c.height = Math.round(img.height * escala);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        const url = c.toDataURL("image/jpeg", 0.85);
+        URL.revokeObjectURL(img.src);
+        const base64 = url.split(",")[1];
+        if(!base64 || base64.length < 512) return falha(new Error("imagem vazia"));
+        ok({ url, base64 });
+      }catch(err){
+        URL.revokeObjectURL(img.src);
+        falha(err);
+      }
     };
     img.onerror = () => { URL.revokeObjectURL(img.src); falha(new Error("imagem")); };
     img.src = URL.createObjectURL(arquivo);
@@ -487,6 +496,7 @@ function marcar(dataUrl){
 const ERRO_PROVA = {
   desligado: "O provador está fora do ar agora. Chama no WhatsApp que a gente te ajuda a escolher.",
   teto: "O provador chegou ao limite de hoje. Ele volta amanhã — e o WhatsApp continua aqui do lado.",
+  suaCota: "Você já usou suas três provas de hoje. Amanhã tem mais — e, se já se decidiu, é só chamar no WhatsApp.",
   ip: "Vieram muitas provas da sua rede hoje. Tenta amanhã, ou chama no WhatsApp.",
   recusado: "Não consegui gerar com essa foto, e isso não é culpa sua — acontece. Tenta uma de corpo inteiro, em pé e bem iluminada.",
   slug: "Essa peça não está disponível para provar agora.",
@@ -674,13 +684,23 @@ function openSheet(i){
 
 /* ---------- provador ---------- */
 
-function abrirProvador(i){
+let geracaoAtual = 0;   // só a geração mais nova pode pintar na tela
+let gerando = false;
+
+async function abrirProvador(i){
+  // Abrir outra camada invalida a geração que ainda estiver voando: o
+  // resultado da peça anterior não pode pintar sobre esta.
+  geracaoAtual++;
+  gerando = false;
   const dlg = $("prov");
   const e = entry(i), sz = sizesOf(e), label = labelOf(i);
   const waMsg = encodeURIComponent(`Oi! Vim pelo site. Quero comprar: ${label}.`);
   // Peça com giro 360° também compara com o render estático: o vídeo não
   // serve de referência lado a lado.
   const render = i.img;
+  // Foto recém-trocada pelo painel ainda não existe no site publicado. Sem a
+  // reserva, "A peça" vira uma caixa vazia logo abaixo de "a peça é esta".
+  const reserva = `data-raw="${RAW}${i.img}" onerror="this.onerror=null;this.src=this.dataset.raw"`;
   const botaoWA = `<a class="btn solid" href="https://wa.me/${WA}?text=${waMsg}" target="_blank" rel="noopener">Pedir no WhatsApp</a>`;
   const moldura = dentro =>
     `<div class="prov"><button class="close" aria-label="Fechar">&times;</button>
@@ -705,10 +725,16 @@ function abrirProvador(i){
     if(b) b.addEventListener("click", telaEscolher);
   }
 
-  function telaEscolher(){
+  async function telaEscolher(){
+    // o teto pode ter batido depois que a página carregou
+    try{
+      const r = await fetch(API_PROVADOR + "/api/provador", { cache:"no-store" });
+      const d = r.ok ? await r.json() : null;
+      PROVADOR = d && d.ligado ? d : null;
+    }catch(_){ /* fica com o que já tínhamos */ }
     const restam = cotaLocal();
     if(!PROVADOR || PROVADOR.restante <= 0) return telaErro(PROVADOR ? "teto" : "desligado");
-    if(restam <= 0) return telaErro("teto");
+    if(restam <= 0) return telaErro("suaCota");
     pinta(`<h3>Veja em você</h3>
       <p class="note">Manda uma foto sua de corpo inteiro, em pé, e eu mostro
         como esta peça fica. Leva uns 20 segundos.</p>
@@ -732,7 +758,7 @@ function abrirProvador(i){
   function telaEspera(){
     pinta(`<h3>Provando…</h3>
       <div class="prov-espera">
-        <div class="cx"><img src="${render}" alt=""></div>
+        <div class="cx"><img src="${render}" alt="" ${reserva}></div>
         <p class="note">Isso leva uns 20 segundos. Não feche a página.</p>
       </div>`);
   }
@@ -742,7 +768,7 @@ function abrirProvador(i){
       <div class="prov-par">
         <figure><div class="cx"><img src="${dataUrl}" alt="Simulação de ${label}"></div>
           <figcaption>A prova</figcaption></figure>
-        <figure><div class="cx"><img src="${render}" alt="${label}"></div>
+        <figure><div class="cx"><img src="${render}" alt="${label}" ${reserva}></div>
           <figcaption>A peça</figcaption></figure>
       </div>
       <p class="prov-verdade">A prova é uma simulação. A peça é esta, do lado
@@ -760,27 +786,51 @@ function abrirProvador(i){
     let foto;
     try{ foto = await reduzirFoto(arquivo); }
     catch(_){ return telaErro("leitura"); }
+
+    const meu = ++geracaoAtual;
+    // Uma geração que já foi paga não pode pintar sobre uma camada mais nova,
+    // nem sobre um diálogo que ela fechou no meio da espera.
+    const meuTurno = () => meu === geracaoAtual && dlg.open;
+    gerando = true;
     telaEspera();
+
+    const corta = new AbortController();
+    const relogio = setTimeout(() => corta.abort(), 90000);
     try{
       const r = await fetch(API_PROVADOR + "/api/provar", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ slug: i.slug, foto: foto.base64 })
+        body: JSON.stringify({ slug: i.slug, foto: foto.base64 }),
+        signal: corta.signal
       });
       const d = await r.json().catch(() => ({}));
-      if(!r.ok || !d.imagem) return telaErro(d.codigo || "falhou");
+      if(!r.ok || !d.imagem){
+        if(meuTurno()) telaErro(d.codigo || "falhou");
+        return;
+      }
       // Só desconta quando a imagem chega: recusa e falha não são culpa dela.
       gastarCotaLocal();
       if(PROVADOR) PROVADOR.restante = Math.max(0, PROVADOR.restante - 1);
-      telaPronta(await marcar("data:image/jpeg;base64," + d.imagem));
-    }catch(_){ telaErro("falhou"); }
+      const marcada = await marcar("data:image/jpeg;base64," + d.imagem);
+      if(meuTurno()) telaPronta(marcada);
+    }catch(_){
+      if(meuTurno()) telaErro("falhou");
+    }finally{
+      clearTimeout(relogio);
+      if(meu === geracaoAtual) gerando = false;
+    }
   }
 
-  telaEscolher();
   dlg.showModal();
+  await telaEscolher();
 }
 
-$("prov").addEventListener("click", ev => { if(ev.target.id === "prov") $("prov").close(); });
+// Enquanto está gerando, um toque fora ou um Esc jogariam fora uma imagem
+// que já foi paga. A cliente ainda fecha pelo × , que é deliberado.
+$("prov").addEventListener("click", ev => {
+  if(ev.target.id === "prov" && !gerando) $("prov").close();
+});
+$("prov").addEventListener("cancel", ev => { if(gerando) ev.preventDefault(); });
 
 const MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
 function dataBonita(iso){

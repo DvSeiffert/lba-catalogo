@@ -98,9 +98,14 @@ li{margin-bottom:7px}
   <section>
     <h2>O que fica registrado</h2>
     <p>Do provador guardamos só contagem do dia: quantas provas saíram,
-      quantas foram recusadas, e se o limite diário foi atingido. Nenhuma
-      foto, nenhum endereço de IP, nada que identifique uma pessoa.</p>
+      quantas foram recusadas, quantas deram erro e em que dias o limite
+      diário foi atingido. Nenhuma foto, e nada que identifique uma pessoa.</p>
     <p>Serve para sabermos se vale a pena manter e ampliar a ferramenta.</p>
+    <p>Existe ainda um <strong>contador por conexão</strong>, que impede uma
+      mesma origem de esgotar o provador sozinha. Ele não guarda o seu
+      endereço de IP: guarda um resumo embaralhado dele, que muda todo dia e
+      do qual não se volta ao endereço. Esse contador se apaga sozinho em 48
+      horas.</p>
   </section>
 
   <section>
