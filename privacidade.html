@@ -1,0 +1,147 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacidade — LBA Fitwear</title>
+<meta name="description" content="O que a LBA Fitwear faz, e não faz, com os seus dados no catálogo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Jost:wght@300;400;500&display=swap">
+
+<style>
+/* Mesmos tokens do index.html. Mudou lá, muda aqui. */
+:root{
+  --paper:#0C0C0E; --ink:#ECECEA; --muted:#8C8B91;
+  --line:rgba(236,236,234,.16); --line-soft:rgba(236,236,234,.08);
+  --ghost:rgba(236,236,234,.12); --chip:rgba(236,236,234,.08);
+  --font-display:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-ui:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);
+  font-weight:400;margin:0;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{width:100%;max-width:720px;margin-inline:auto;
+  padding-left:max(20px,env(safe-area-inset-left,0px));
+  padding-right:max(20px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
+img{display:block}
+.micro{font-size:.625rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+.topo{border-bottom:1px solid var(--line-soft)}
+.topo-in{display:flex;align-items:center;gap:11px;min-height:68px;padding-block:10px}
+.topo img{height:28px;width:auto;object-fit:contain;filter:invert(1)}
+.topo a{font-size:.625rem;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;color:var(--muted);margin-left:auto;border:1px solid var(--line);
+  border-radius:999px;padding:8px 15px;transition:background .18s ease,color .18s ease}
+.topo a:hover{background:var(--chip);color:var(--ink)}
+
+.abre{position:relative;isolation:isolate;padding-block:clamp(44px,8vw,80px) 10px}
+.fantasma{position:absolute;top:-.16em;right:-.04em;z-index:-1;pointer-events:none;
+  user-select:none;font-family:var(--font-display);font-weight:800;
+  font-size:clamp(4rem,16vw,7rem);letter-spacing:-.07em;line-height:.76;color:var(--ghost)}
+h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.045em;
+  font-size:clamp(2.1rem,7vw,3.1rem);line-height:.9;margin:14px 0 0}
+h1 em{font-style:normal;color:var(--muted)}
+.resumo{margin:22px 0 0;font-weight:300;line-height:1.65;color:var(--muted);
+  font-size:clamp(.96rem,1.6vw,1.08rem);max-width:46ch}
+
+h2{font-family:var(--font-display);font-weight:600;letter-spacing:-.025em;
+  font-size:1.18rem;margin:0 0 10px}
+section{padding-block:30px;border-top:1px solid var(--line-soft)}
+section:first-of-type{border-top:0}
+p{margin:0 0 13px;font-weight:300;line-height:1.72;color:var(--muted);max-width:62ch}
+p:last-child{margin-bottom:0}
+strong{color:var(--ink);font-weight:500}
+ul{margin:0 0 13px;padding-left:19px;color:var(--muted);font-weight:300;line-height:1.72;max-width:62ch}
+li{margin-bottom:7px}
+.destaque{border:1px solid var(--line);border-radius:12px;
+  background:rgba(236,236,234,.045);padding:17px 18px;margin-bottom:14px}
+.destaque p{color:var(--ink)}
+
+.pe{border-top:1px solid var(--line);margin-top:34px;padding-block:30px 48px}
+.pe p{font-size:.78rem;line-height:1.7}
+</style>
+
+<header class="topo"><div class="wrap topo-in">
+  <img src="p/lba.png" alt="LBA Fitwear">
+  <a href="./">Voltar ao catálogo</a>
+</div></header>
+
+<main class="wrap">
+  <div class="abre">
+    <div class="fantasma" aria-hidden="true">LBA</div>
+    <p class="micro">Privacidade</p>
+    <h1>O que a gente<br><em>não guarda.</em></h1>
+    <p class="resumo">Este catálogo não tem cadastro, não tem carrinho e não
+      tem rastreador. A lista curta abaixo é tudo o que existe.</p>
+  </div>
+
+  <section>
+    <h2>O provador virtual</h2>
+    <div class="destaque">
+      <p>A foto que você envia no provador vai para o <strong>Google</strong>,
+        que é quem gera a imagem, e volta para a sua tela. Ela não é gravada
+        por nós em servidor nenhum, nem fica em cache, nem é usada para mais
+        nada.</p>
+    </div>
+    <p>A imagem gerada também não é guardada: ela existe no seu navegador
+      enquanto a aba estiver aberta. Se quiser ficar com ela, use o botão de
+      baixar — o arquivo é seu.</p>
+    <p><strong>Envie uma foto sua.</strong> Não envie foto de outra pessoa,
+      e principalmente não envie foto de criança ou adolescente.</p>
+    <p>Para o provador não ser usado como brinquedo infinito, o seu navegador
+      guarda uma contagem de quantas provas você fez hoje. É um número, não
+      um identificador: não dá para saber quem você é a partir dele, e ele
+      some quando você limpa os dados do site.</p>
+  </section>
+
+  <section>
+    <h2>O que fica registrado</h2>
+    <p>Do provador guardamos só contagem do dia: quantas provas saíram,
+      quantas foram recusadas, quantas deram erro e em que dias o limite
+      diário foi atingido. Nenhuma foto, e nada que identifique uma pessoa.</p>
+    <p>Serve para sabermos se vale a pena manter e ampliar a ferramenta.</p>
+    <p>Existe ainda um <strong>contador por conexão</strong>, que impede uma
+      mesma origem de esgotar o provador sozinha. Ele não guarda o seu
+      endereço de IP: guarda um resumo embaralhado dele, que muda todo dia e
+      do qual não se volta ao endereço. Esse contador se apaga sozinho em 48
+      horas.</p>
+  </section>
+
+  <section>
+    <h2>Cookies e rastreadores</h2>
+    <p>Nenhum. Não há Google Analytics, nem pixel do Facebook, nem cookie de
+      publicidade neste site. Por isso também não existe aquela barrinha de
+      consentimento.</p>
+    <p>O site carrega as fontes do Google Fonts, e esse carregamento faz o seu
+      navegador se conectar ao Google como faria com qualquer imagem externa.
+      Nada além disso é enviado por nós.</p>
+  </section>
+
+  <section>
+    <h2>Quando você fala com a gente</h2>
+    <p>Todo pedido acontece no WhatsApp. O que você escreve lá fica na conversa,
+      como em qualquer conversa de WhatsApp, e é o que usamos para combinar
+      tamanho, pagamento e entrega. Não exportamos esses dados para lugar
+      nenhum nem montamos lista de disparo com eles.</p>
+  </section>
+
+  <section>
+    <h2>Seus direitos</h2>
+    <p>Pela Lei Geral de Proteção de Dados, você pode pedir acesso, correção
+      ou exclusão dos seus dados. Como o site não guarda dado pessoal, na
+      prática isso se resume ao histórico da sua conversa no WhatsApp — é só
+      pedir por lá e a gente apaga.</p>
+    <ul>
+      <li>Controladora: <strong>LBA Fitwear</strong>, CNPJ 24.973.823/0001-61,
+        Brasília, DF.</li>
+      <li>Contato: <a href="https://wa.me/5561992650920">(61) 99265-0920</a>.</li>
+      <li>Operador do provador: Google, que processa a foto e a devolve.</li>
+    </ul>
+  </section>
+
+  <div class="pe">
+    <p>Última revisão em 14 de novembro de 2026. Se algo nesta página mudar,
+      a data muda junto.</p>
+  </div>
+</main>

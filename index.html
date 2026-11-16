@@ -266,6 +266,44 @@ dialog::backdrop{background:color-mix(in srgb, var(--paper) 82%, transparent);ba
 }
 .close:hover{background:var(--chip)}
 
+/* ---------- provador ---------- */
+.prov{position:relative;background:var(--paper);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow-lift);max-height:90svh;
+  display:flex;flex-direction:column;overflow:hidden}
+.prov-corpo{padding:clamp(22px,3vw,34px);overflow-y:auto;min-height:0;
+  -webkit-overflow-scrolling:touch}
+.prov h3{font-family:var(--font-display);font-weight:700;letter-spacing:-.035em;
+  font-size:clamp(1.5rem,3.4vw,2rem);line-height:1;margin:10px 0 0}
+.prov .note{max-width:50ch}
+.prov-acoes{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}
+.prov-acoes .btn{flex:0 0 auto}
+/* o resultado ao lado do render: a prova é simulação, a peça é o render */
+.prov-par{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.prov-par figure{margin:0;min-width:0}
+.prov-par .cx{border-radius:11px;overflow:hidden;background:var(--plate);
+  aspect-ratio:4/5;box-shadow:var(--shadow)}
+.prov-par img{width:100%;height:100%;object-fit:cover}
+.prov-par figcaption{margin-top:8px;font-size:.56rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted)}
+.prov-verdade{margin-top:14px;padding:11px 13px;border:1px solid var(--line);
+  border-radius:10px;background:rgba(236,236,234,.045);
+  font-size:.78rem;font-weight:300;line-height:1.6;color:var(--ink)}
+.prov-espera{display:flex;flex-direction:column;align-items:center;gap:15px;
+  padding:34px 0 26px;text-align:center}
+.prov-espera .cx{width:min(190px,54vw);aspect-ratio:4/5;border-radius:11px;
+  overflow:hidden;background:var(--plate);animation:respira 2.2s ease-in-out infinite}
+.prov-espera img{width:100%;height:100%;object-fit:cover}
+@keyframes respira{0%,100%{opacity:1}50%{opacity:.55}}
+.prov-aviso{margin-top:16px;font-size:.74rem;font-weight:300;line-height:1.6;
+  color:var(--muted);max-width:52ch}
+.prov-aviso a{text-decoration:none;border-bottom:1px solid var(--line)}
+.prov-aviso a:hover{color:var(--ink)}
+.prov input[type=file]{display:none}
+.prov-erro{margin-top:18px;padding:13px 15px;border-radius:10px;
+  border:1px solid rgba(217,164,65,.4);background:rgba(217,164,65,.08);
+  font-size:.82rem;font-weight:300;line-height:1.6;color:var(--ink);max-width:52ch}
+@media (max-width:560px){ .prov-par{grid-template-columns:1fr} }
+
 /* ---------- rodapé ---------- */
 .foot{border-top:1px solid var(--line);padding-block:38px 46px}
 .foot-in{display:flex;gap:30px;flex-wrap:wrap;justify-content:space-between;align-items:flex-start}
@@ -360,17 +398,111 @@ dialog::backdrop{background:color-mix(in srgb, var(--paper) 82%, transparent);ba
         <p>(61) 99265-0920</p>
       </div>
     </div>
-    <p class="legal">CNPJ 24.973.823/0001-61 · Pedidos e pagamento pelo WhatsApp. <span id="stamp"></span> · <a href="admin/" class="painel-link">Painel</a></p>
+    <p class="legal">CNPJ 24.973.823/0001-61 · Pedidos e pagamento pelo WhatsApp. <span id="stamp"></span> · <a href="privacidade.html" class="painel-link">Privacidade</a> · <a href="admin/" class="painel-link">Painel</a></p>
   </div>
 </footer>
 
 <dialog id="sheet" aria-label="Detalhe da peça"></dialog>
+<dialog id="prov" aria-label="Provador virtual"></dialog>
 
 <script>
 let CATALOG = [];
 // Data em que o painel gravou o catálogo pela última vez.
 let ATUALIZADO = "";
 const WA = "5561992650920";
+// O provador só existe se a função responder e estiver ligada. Dentro do
+// artifact e na cópia local buscar outro domínio é bloqueado, então ela não
+// responde e o botão simplesmente não nasce.
+const API_PROVADOR = "https://lba-admin.lbafitwear.workers.dev";
+let PROVADOR = null;
+
+const COTA_DIA = 3;
+const hojeSP = () => new Date().toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" });
+const chaveCota = () => "lba_provas_" + hojeSP();
+function usadasHoje(){
+  try{ return parseInt(localStorage.getItem(chaveCota()), 10) || 0; }catch(_){ return 0; }
+}
+// O limite que a cliente sente é por navegador. O limite por IP fica alto, no
+// servidor, porque operadora de celular põe muita gente atrás do mesmo IP.
+function cotaLocal(){ return Math.max(0, COTA_DIA - usadasHoje()); }
+function gastarCotaLocal(){
+  try{ localStorage.setItem(chaveCota(), String(usadasHoje() + 1)); }catch(_){}
+}
+
+// Foto de pessoa, não render de peça: lado maior em 1024 e sem pintar fundo.
+function reduzirFoto(arquivo){
+  return new Promise((ok, falha) => {
+    const img = new Image();
+    img.onload = () => {
+      // Sem o try, um estouro de memória no canvas escapa do executor e a
+      // promessa nunca termina: a tela fica parada, sem mensagem nenhuma.
+      try{
+        const escala = Math.min(1024 / Math.max(img.width, img.height), 1);
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * escala);
+        c.height = Math.round(img.height * escala);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        const url = c.toDataURL("image/jpeg", 0.85);
+        URL.revokeObjectURL(img.src);
+        const base64 = url.split(",")[1];
+        if(!base64 || base64.length < 512) return falha(new Error("imagem vazia"));
+        ok({ url, base64 });
+      }catch(err){
+        URL.revokeObjectURL(img.src);
+        falha(err);
+      }
+    };
+    img.onerror = () => { URL.revokeObjectURL(img.src); falha(new Error("imagem")); };
+    img.src = URL.createObjectURL(arquivo);
+  });
+}
+
+/* A marca é composta aqui, no navegador: o Worker não tem canvas, e fazer
+   isso no servidor exigiria recurso pago ou um codificador em WASM. Quem
+   souber o que está fazendo contorna — ela serve contra o desatento, que é
+   o caso real. O arquivo que a cliente baixa é sempre o marcado. */
+function marcar(dataUrl){
+  return new Promise(pronto => {
+    const base = new Image();
+    base.onload = () => {
+      try{
+        const c = document.createElement("canvas");
+        c.width = base.naturalWidth; c.height = base.naturalHeight;
+        const x = c.getContext("2d");
+        x.drawImage(base, 0, 0);
+        const logo = new Image();
+        logo.onload = () => {
+          try{
+            const l = Math.round(c.width * 0.09);
+            const a = Math.round(l * (logo.naturalHeight / logo.naturalWidth));
+            const m = Math.round(c.width * 0.035);
+            // O logo do arquivo é escuro; sobre foto ele some. Inverte para
+            // claro e põe uma sombra, para ler em fundo claro ou escuro.
+            x.globalAlpha = 0.85;
+            if("filter" in x) x.filter = "invert(1) drop-shadow(0 1px 2px rgba(0,0,0,.45))";
+            x.drawImage(logo, c.width - l - m, c.height - a - m, l, a);
+            pronto(c.toDataURL("image/jpeg", 0.9));
+          }catch(_){ pronto(dataUrl); }
+        };
+        logo.onerror = () => pronto(dataUrl);
+        logo.src = "p/lba.png";
+      }catch(_){ pronto(dataUrl); }
+    };
+    base.onerror = () => pronto(dataUrl);
+    base.src = dataUrl;
+  });
+}
+
+const ERRO_PROVA = {
+  desligado: "O provador está fora do ar agora. Chama no WhatsApp que a gente te ajuda a escolher.",
+  teto: "O provador chegou ao limite de hoje. Ele volta amanhã — e o WhatsApp continua aqui do lado.",
+  suaCota: "Você já usou suas três provas de hoje. Amanhã tem mais — e, se já se decidiu, é só chamar no WhatsApp.",
+  ip: "Vieram muitas provas da sua rede hoje. Tenta amanhã, ou chama no WhatsApp.",
+  recusado: "Não consegui gerar com essa foto, e isso não é culpa sua — acontece. Tenta uma de corpo inteiro, em pé e bem iluminada.",
+  slug: "Essa peça não está disponível para provar agora.",
+  falhou: "Deu problema no caminho. Tenta de novo em alguns segundos.",
+  leitura: "Não consegui ler essa imagem. Escolhe outra, em JPG ou PNG."
+};
 // Foto recém-enviada ainda não está no site publicado: o GitHub Pages precisa
 // reconstruir. Até lá, a imagem vem do próprio repositório.
 const RAW = "https://raw.githubusercontent.com/DvSeiffert/lba-catalogo/main/";
@@ -540,12 +672,165 @@ function openSheet(i){
                 </div>`}
          <div class="actions">
            <a class="btn solid" href="https://wa.me/${WA}?text=${waMsg}" target="_blank" rel="noopener">${!e ? "Avise-me quando voltar" : ap ? "Pedir o conjunto completo" : "Pedir no WhatsApp"}</a>
+           ${PROVADOR && e ? `<button class="btn ghost" id="provarBtn" type="button">Provar em mim</button>` : ""}
          </div>
        </div>
      </div>`;
   dlg.querySelector(".close").addEventListener("click", () => dlg.close());
+  const bProv = dlg.querySelector("#provarBtn");
+  if(bProv) bProv.addEventListener("click", () => abrirProvador(i));
   dlg.showModal();
 }
+
+/* ---------- provador ---------- */
+
+let geracaoAtual = 0;   // só a geração mais nova pode pintar na tela
+let gerando = false;
+
+async function abrirProvador(i){
+  // Abrir outra camada invalida a geração que ainda estiver voando: o
+  // resultado da peça anterior não pode pintar sobre esta.
+  geracaoAtual++;
+  gerando = false;
+  const dlg = $("prov");
+  const e = entry(i), sz = sizesOf(e), label = labelOf(i);
+  const waMsg = encodeURIComponent(`Oi! Vim pelo site. Quero comprar: ${label}.`);
+  // Peça com giro 360° também compara com o render estático: o vídeo não
+  // serve de referência lado a lado.
+  const render = i.img;
+  // Foto recém-trocada pelo painel ainda não existe no site publicado. Sem a
+  // reserva, "A peça" vira uma caixa vazia logo abaixo de "a peça é esta".
+  const reserva = `data-raw="${RAW}${i.img}" onerror="this.onerror=null;this.src=this.dataset.raw"`;
+  const botaoWA = `<a class="btn solid" href="https://wa.me/${WA}?text=${waMsg}" target="_blank" rel="noopener">Pedir no WhatsApp</a>`;
+  const moldura = dentro =>
+    `<div class="prov"><button class="close" aria-label="Fechar">&times;</button>
+       <div class="prov-corpo">
+         <span class="micro">Provador · ${labelOf(i)}</span>
+         ${dentro}
+       </div></div>`;
+
+  function pinta(html){
+    dlg.innerHTML = moldura(html);
+    dlg.querySelector(".close").addEventListener("click", () => dlg.close());
+  }
+
+  function telaErro(codigo){
+    pinta(`<h3>Não deu desta vez</h3>
+      <div class="prov-erro">${ERRO_PROVA[codigo] || ERRO_PROVA.falhou}</div>
+      <div class="prov-acoes">${botaoWA}
+        ${codigo === "recusado" || codigo === "leitura" || codigo === "falhou"
+          ? `<button class="btn ghost" id="deNovo" type="button">Tentar outra foto</button>` : ""}
+      </div>`);
+    const b = dlg.querySelector("#deNovo");
+    if(b) b.addEventListener("click", telaEscolher);
+  }
+
+  async function telaEscolher(){
+    // o teto pode ter batido depois que a página carregou
+    try{
+      const r = await fetch(API_PROVADOR + "/api/provador", { cache:"no-store" });
+      const d = r.ok ? await r.json() : null;
+      PROVADOR = d && d.ligado ? d : null;
+    }catch(_){ /* fica com o que já tínhamos */ }
+    const restam = cotaLocal();
+    if(!PROVADOR || PROVADOR.restante <= 0) return telaErro(PROVADOR ? "teto" : "desligado");
+    if(restam <= 0) return telaErro("suaCota");
+    pinta(`<h3>Veja em você</h3>
+      <p class="note">Manda uma foto sua de corpo inteiro, em pé, e eu mostro
+        como esta peça fica. Leva uns 20 segundos.</p>
+      <p class="prov-aviso">A foto vai para o <strong>Google</strong>, que gera a
+        imagem, e não fica guardada em lugar nenhum nosso. <strong>Use uma foto
+        sua.</strong> <a href="privacidade.html" target="_blank" rel="noopener">Como
+        tratamos isso</a>.</p>
+      <div class="prov-acoes">
+        <button class="btn solid" id="escolher" type="button">Escolher foto</button>
+        ${botaoWA}
+      </div>
+      <p class="prov-aviso">${restam} ${restam === 1 ? "prova" : "provas"} hoje.</p>
+      <input type="file" id="arq" accept="image/*">`);
+    dlg.querySelector("#escolher").addEventListener("click", () => dlg.querySelector("#arq").click());
+    dlg.querySelector("#arq").addEventListener("change", ev => {
+      const f = ev.target.files[0];
+      if(f) gerar(f);
+    });
+  }
+
+  function telaEspera(){
+    pinta(`<h3>Provando…</h3>
+      <div class="prov-espera">
+        <div class="cx"><img src="${render}" alt="" ${reserva}></div>
+        <p class="note">Isso leva uns 20 segundos. Não feche a página.</p>
+      </div>`);
+  }
+
+  function telaPronta(dataUrl){
+    pinta(`<h3>Ficou assim</h3>
+      <div class="prov-par">
+        <figure><div class="cx"><img src="${dataUrl}" alt="Simulação de ${label}"></div>
+          <figcaption>A prova</figcaption></figure>
+        <figure><div class="cx"><img src="${render}" alt="${label}" ${reserva}></div>
+          <figcaption>A peça</figcaption></figure>
+      </div>
+      <p class="prov-verdade">A prova é uma simulação. A peça é esta, do lado
+        direito — é ela que chega até você.</p>
+      ${e ? `<p class="note">${brl(e.price)} · tamanhos ${sz.map(x => x.s).join(", ")}</p>` : ""}
+      <div class="prov-acoes">
+        ${botaoWA}
+        <a class="btn ghost" id="baixar" download="lba-${i.slug}.jpg" href="${dataUrl}">Baixar</a>
+        <button class="btn ghost" id="deNovo" type="button">Tentar outra foto</button>
+      </div>`);
+    dlg.querySelector("#deNovo").addEventListener("click", telaEscolher);
+  }
+
+  async function gerar(arquivo){
+    let foto;
+    try{ foto = await reduzirFoto(arquivo); }
+    catch(_){ return telaErro("leitura"); }
+
+    const meu = ++geracaoAtual;
+    // Uma geração que já foi paga não pode pintar sobre uma camada mais nova,
+    // nem sobre um diálogo que ela fechou no meio da espera.
+    const meuTurno = () => meu === geracaoAtual && dlg.open;
+    gerando = true;
+    telaEspera();
+
+    const corta = new AbortController();
+    const relogio = setTimeout(() => corta.abort(), 90000);
+    try{
+      const r = await fetch(API_PROVADOR + "/api/provar", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ slug: i.slug, foto: foto.base64 }),
+        signal: corta.signal
+      });
+      const d = await r.json().catch(() => ({}));
+      if(!r.ok || !d.imagem){
+        if(meuTurno()) telaErro(d.codigo || "falhou");
+        return;
+      }
+      // Só desconta quando a imagem chega: recusa e falha não são culpa dela.
+      gastarCotaLocal();
+      if(PROVADOR) PROVADOR.restante = Math.max(0, PROVADOR.restante - 1);
+      const marcada = await marcar("data:image/jpeg;base64," + d.imagem);
+      if(meuTurno()) telaPronta(marcada);
+    }catch(_){
+      if(meuTurno()) telaErro("falhou");
+    }finally{
+      clearTimeout(relogio);
+      if(meu === geracaoAtual) gerando = false;
+    }
+  }
+
+  dlg.showModal();
+  await telaEscolher();
+}
+
+// Enquanto está gerando, um toque fora ou um Esc jogariam fora uma imagem
+// que já foi paga. A cliente ainda fecha pelo × , que é deliberado.
+$("prov").addEventListener("click", ev => {
+  if(ev.target.id === "prov" && !gerando) $("prov").close();
+});
+$("prov").addEventListener("cancel", ev => { if(gerando) ev.preventDefault(); });
 
 const MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
 function dataBonita(iso){
@@ -608,6 +893,13 @@ async function carregarCatalogo(){
   }
   setStatus();
   render();
+  // Depois do primeiro desenho: se a função responder ligada, os botões
+  // aparecem na próxima vez que uma ficha abrir.
+  try{
+    const r = await fetch(API_PROVADOR + "/api/provador", { cache: "no-store" });
+    const d = r.ok ? await r.json() : null;
+    PROVADOR = d && d.ligado ? d : null;
+  }catch(_){ PROVADOR = null; }
 })();
 
 $("verColecao").addEventListener("click", () => {

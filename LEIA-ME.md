@@ -146,6 +146,38 @@ As bordas da foto derretem no fundo por gradiente, não por recorte. Por
 isso a foto precisa ter margem sobrando nas laterais: o degradê come os
 primeiros 56% da largura dela no desktop.
 
+## Provador virtual
+
+Na ficha de cada peça à venda há um botão **Provar em mim**: a visitante
+sobe uma foto dela e recebe uma imagem dela vestindo a peça, ao lado do
+render real. O pedido continua no WhatsApp.
+
+Quem gera é o Gemini (`gemini-nano-banana-2.1`), chamado pelo Worker —
+a chave nunca chega ao navegador. Cada prova custa cerca de **R$ 0,20**,
+e geração de imagem **não tem camada gratuita**.
+
+Três travas, todas no Worker: 3 por dia por navegador, 20 por dia por IP
+e **40 por dia no total**, que é o teto que protege a conta. O teto e o
+liga-desliga são variáveis no painel da Cloudflare — ver
+`admin/LEIA-ME-WORKER.md`. `PROVADOR_LIGADO=0` apaga o botão do site.
+
+O painel mostra, numa linha acima da lista, quantas provas saíram hoje,
+quantas foram recusadas e quanto resta do teto. É só contagem: nenhuma
+foto, e o contador por conexão guarda um resumo embaralhado do IP, que
+muda todo dia e expira em 48 horas.
+
+> O teto do Worker estreita a janela de abuso, mas não é atômico: o KV da
+> Cloudflare leva até 60 segundos para propagar uma gravação. O teto duro
+> de verdade é a **cota por chave no Google Cloud**, e ela precisa estar
+> configurada. Sem ela, uma rajada simultânea passa do limite.
+
+A foto da cliente vai para o Google e não é guardada por nós. Isso está
+dito na própria camada e em `privacidade.html`.
+
+> A prova é uma simulação, e a ficha diz isso ao lado do resultado. Com
+> foto cortada, o modelo inventa pernas e pose: o que sai é alguém
+> parecida com a cliente, não a foto dela com a roupa trocada.
+
 ## Tema
 
 O site é escuro sempre, em qualquer aparelho — fundo `#0C0C0E`, fixo no

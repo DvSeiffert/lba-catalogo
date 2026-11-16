@@ -129,6 +129,52 @@ avulsos. Ela é do modelo, não do conjunto — o mesmo top serve o de short
 e o de calça, então mudar num muda no outro. A calça e o short saem do
 estoque do próprio conjunto.
 
+## O provador virtual
+
+Ligado em 14/11/2026. Ele chama o Gemini e **cada prova custa dinheiro**
+— cerca de R$ 0,20, e geração de imagem não tem camada gratuita.
+
+### O que precisa estar configurado
+
+| Nome | Tipo | Valor | Para quê |
+|------|------|-------|----------|
+| `GEMINI_KEY` | Segredo | a chave da API | gerar a imagem |
+| `PROVADOR_LIGADO` | Texto | `1` ou `0` | liga e desliga |
+| `PROVADOR_DIA` | Texto | `40` | teto de provas por dia |
+| `PROVADOR_IP_DIA` | Texto | `20` | teto por conexão por dia |
+| `PROVADOR_TESTE` | Segredo | opcional | via de teste, teto próprio de 100 |
+| `PROVADOR` | KV | espaço `lba-provador` | onde ficam os contadores |
+
+A chave sai de `aistudio.google.com`, **com faturamento ligado no mesmo
+projeto da chave**. Projeto errado é o engano mais fácil de cometer: a
+chave fica em "Nível gratuito" e toda chamada volta com erro de cota.
+
+O espaço KV se cria em Workers KV → *Crie um namespace de KV*, e se liga
+ao Worker em Settings → Associações, com o nome `PROVADOR`.
+
+### Como desligar
+
+`PROVADOR_LIGADO` para `0` e Implantar. O botão **some das fichas** na
+hora, porque o site pergunta o estado antes de mostrá-lo. É o freio de
+mão: use sem medo se a conta assustar ou a prova sair ruim.
+
+### Como mudar o teto
+
+`PROVADOR_DIA`, no mesmo lugar. Quarenta por dia são uns R$ 215 por mês
+no pior caso. Se bater no teto com frequência, é sinal bom.
+
+> **O teto do Worker não é atômico.** O KV da Cloudflare leva até 60
+> segundos para propagar uma gravação, então uma rajada simultânea pode
+> passar do limite. O contador no cache da borda estreita muito essa
+> janela, mas quem realmente trava é a **cota por chave no Google Cloud**
+> — configure um limite de requisições por dia e por minuto na API
+> Generative Language. Sem isso, o teto é uma promessa, não uma garantia.
+
+### Onde ver o gasto
+
+Na linha acima da lista, no próprio painel: provas de hoje, recusas,
+erros, o total da semana e quanto resta do teto.
+
 ## Depois de salvar
 
 As alterações viram um commit no repositório e **aparecem no site na
