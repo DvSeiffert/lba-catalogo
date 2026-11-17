@@ -1,5 +1,5 @@
 {
- "atualizado": "2026-11-15",
+ "atualizado": "2026-11-17",
  "itens": [
   {
    "slug": "avila",
@@ -697,9 +697,9 @@
    "img": "p/legging-cos-reto.jpg",
    "preco": 169.9,
    "tamanhos": {
-    "P": 2,
     "G": 3,
-    "M": 3
+    "P": 1,
+    "M": 4
    }
   },
   {
