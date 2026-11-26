@@ -63,7 +63,9 @@
    "img": "p/cordoba.jpg",
    "preco": 267.75,
    "de": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1
+   }
   },
   {
    "slug": "granada",
