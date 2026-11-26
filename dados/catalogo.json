@@ -571,7 +571,9 @@
    "kind": "Macacão longo",
    "img": "p/marselha.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "GG": 1
+   }
   },
   {
    "slug": "montpellier-calca",
