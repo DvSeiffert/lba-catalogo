@@ -1,5 +1,5 @@
 {
- "atualizado": "2026-11-17",
+ "atualizado": "2026-11-26",
  "itens": [
   {
    "slug": "avila",
@@ -63,10 +63,7 @@
    "img": "p/cordoba.jpg",
    "preco": 267.75,
    "de": 315,
-   "tamanhos": {
-    "P": 1,
-    "M": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "granada",
@@ -75,11 +72,7 @@
    "kind": "Corta-vento",
    "img": "p/granada-mwf05wy1.jpg",
    "preco": 215,
-   "tamanhos": {
-    "P": 5,
-    "M": 9,
-    "G": 4
-   }
+   "tamanhos": {}
   },
   {
    "slug": "ibiza-azul",
@@ -107,9 +100,7 @@
    "img": "p/ibiza-marinho.jpg",
    "preco": 246.42,
    "de": 289.9,
-   "tamanhos": {
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "ibiza-preto",
@@ -119,10 +110,7 @@
    "img": "p/ibiza-preto.jpg",
    "preco": 246.42,
    "de": 289.9,
-   "tamanhos": {
-    "P": 1,
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "ibiza-verde",
@@ -141,9 +129,7 @@
    "img": "p/leon.jpg",
    "preco": 267.75,
    "de": 315,
-   "tamanhos": {
-    "P": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "madri",
@@ -225,9 +211,7 @@
    "img": "p/ronda.jpg",
    "preco": 242.25,
    "de": 285,
-   "tamanhos": {
-    "M": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "sevilha",
@@ -374,9 +358,7 @@
    "img": "p/luca-mwf3q557.jpg",
    "preco": 242.25,
    "de": 285,
-   "tamanhos": {
-    "M": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "milao-it",
@@ -431,10 +413,7 @@
    "img": "p/siena.jpg",
    "preco": 242.25,
    "de": 285,
-   "tamanhos": {
-    "P": 2,
-    "M": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "trento-amarelo",
@@ -462,9 +441,7 @@
    "img": "p/trento-preto.jpg",
    "preco": 267.75,
    "de": 315,
-   "tamanhos": {
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "trento-verde",
@@ -501,9 +478,7 @@
    "img": "p/verona.jpg",
    "preco": 242.25,
    "de": 285,
-   "tamanhos": {
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "annecy",
@@ -513,7 +488,6 @@
    "img": "p/annecy.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 1,
     "M": 1
    }
   },
@@ -524,11 +498,7 @@
    "kind": "Conjunto calça",
    "img": "p/cannes.jpg",
    "preco": 315,
-   "tamanhos": {
-    "P": 1,
-    "M": 2,
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "colmar-calca",
@@ -538,9 +508,7 @@
    "img": "p/colmar-calca.jpg",
    "preco": 315,
    "tamanhos": {
-    "P": 2,
-    "M": 2,
-    "G": 2
+    "M": 1
    }
   },
   {
@@ -551,7 +519,7 @@
    "img": "p/colmar-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "M": 2
+    "M": 1
    }
   },
   {
@@ -570,10 +538,7 @@
    "kind": "Conjunto calça",
    "img": "p/lille.jpg",
    "preco": 315,
-   "tamanhos": {
-    "P": 2,
-    "M": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "lyon-calca",
@@ -582,11 +547,7 @@
    "kind": "Conjunto calça",
    "img": "p/lyon-calca.jpg",
    "preco": 315,
-   "tamanhos": {
-    "M": 3,
-    "G": 1,
-    "GG": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "lyon-short",
@@ -595,12 +556,7 @@
    "kind": "Conjunto short",
    "img": "p/lyon-short.jpg",
    "preco": 285,
-   "tamanhos": {
-    "P": 3,
-    "M": 3,
-    "G": 2,
-    "GG": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "marselha",
@@ -609,11 +565,7 @@
    "kind": "Macacão longo",
    "img": "p/marselha.jpg",
    "preco": 315,
-   "tamanhos": {
-    "P": 1,
-    "G": 1,
-    "GG": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "montpellier-calca",
@@ -622,9 +574,7 @@
    "kind": "Conjunto calça",
    "img": "p/montpellier-calca.jpg",
    "preco": 315,
-   "tamanhos": {
-    "M": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "montpellier-short",
@@ -633,10 +583,7 @@
    "kind": "Conjunto short",
    "img": "p/montpellier-short.jpg",
    "preco": 285,
-   "tamanhos": {
-    "P": 2,
-    "M": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "paris",
@@ -645,9 +592,7 @@
    "kind": "Conjunto calça",
    "img": "p/paris.jpg",
    "preco": 315,
-   "tamanhos": {
-    "M": 3
-   }
+   "tamanhos": {}
   },
   {
    "slug": "provenca",
@@ -657,8 +602,7 @@
    "img": "p/provenca.jpg",
    "preco": 315,
    "tamanhos": {
-    "P": 2,
-    "M": 1
+    "P": 1
    }
   },
   {
@@ -668,12 +612,7 @@
    "kind": "Calça",
    "img": "p/calca-flare.jpg",
    "preco": 199.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 1,
-    "G": 1,
-    "GG": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "jaqueta-slim",
@@ -682,12 +621,7 @@
    "kind": "Jaqueta",
    "img": "p/jaqueta-slim.jpg",
    "preco": 259.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 3,
-    "G": 2,
-    "GG": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "legging-cos-reto",
@@ -696,11 +630,7 @@
    "kind": "Legging",
    "img": "p/legging-cos-reto.jpg",
    "preco": 169.9,
-   "tamanhos": {
-    "G": 3,
-    "P": 1,
-    "M": 4
-   }
+   "tamanhos": {}
   },
   {
    "slug": "macacao-flare",
@@ -709,11 +639,7 @@
    "kind": "Macacão",
    "img": "p/macacao-flare.jpg",
    "preco": 315,
-   "tamanhos": {
-    "P": 2,
-    "M": 4,
-    "G": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "regata-lua",
@@ -722,10 +648,7 @@
    "kind": "Regata",
    "img": "p/regata-lua.jpg",
    "preco": 129.9,
-   "tamanhos": {
-    "M": 5,
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "short-com-bolso",
@@ -734,11 +657,7 @@
    "kind": "Short",
    "img": "p/short-com-bolso.jpg",
    "preco": 149.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 5,
-    "G": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "short-cos-estreito",
@@ -747,11 +666,7 @@
    "kind": "Short",
    "img": "p/short-cos-estreito.jpg",
    "preco": 109.9,
-   "tamanhos": {
-    "P": 4,
-    "M": 5,
-    "G": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "short-saia-beach",
@@ -760,10 +675,7 @@
    "kind": "Short-saia",
    "img": "p/short-saia-beach.jpg",
    "preco": 159.9,
-   "tamanhos": {
-    "P": 3,
-    "M": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "top-alca-vazada",
@@ -772,11 +684,7 @@
    "kind": "Top",
    "img": "p/top-alca-vazada.jpg",
    "preco": 139.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 5,
-    "G": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "top-costas-nuas",
@@ -785,11 +693,7 @@
    "kind": "Top",
    "img": "p/top-costas-nuas.jpg",
    "preco": 139.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 5,
-    "G": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "top-high",
@@ -798,12 +702,7 @@
    "kind": "Top",
    "img": "p/top-high.jpg",
    "preco": 129.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 3,
-    "G": 2,
-    "GG": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "top-alca-dupla",
@@ -812,11 +711,7 @@
    "kind": "Top",
    "img": "p/top-alca-dupla.jpg",
    "preco": 129.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 1,
-    "G": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "vestido-beach",
@@ -825,11 +720,7 @@
    "kind": "Vestido",
    "img": "p/vestido-beach.jpg",
    "preco": 179.9,
-   "tamanhos": {
-    "P": 3,
-    "M": 4,
-    "G": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "nice",
@@ -838,11 +729,7 @@
    "kind": "Macaquinho",
    "img": "p/nice.jpg",
    "preco": 289.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 1,
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "nantes",
@@ -851,10 +738,7 @@
    "kind": "Macaquinho",
    "img": "p/nantes.jpg",
    "preco": 289.9,
-   "tamanhos": {
-    "P": 1,
-    "M": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "limoges",
@@ -863,10 +747,7 @@
    "kind": "Macaquinho",
    "img": "p/limoges.jpg",
    "preco": 289.9,
-   "tamanhos": {
-    "P": 2,
-    "M": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "carcassonne-short",
@@ -875,10 +756,7 @@
    "kind": "Conjunto short",
    "img": "p/carcassonne-short.jpg",
    "preco": 285,
-   "tamanhos": {
-    "P": 2,
-    "M": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "carcassonne-calca",
@@ -887,10 +765,7 @@
    "kind": "Conjunto calça",
    "img": "p/carcassonne-calca.jpg",
    "preco": 315,
-   "tamanhos": {
-    "P": 1,
-    "M": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "toulouse-short",
@@ -899,11 +774,7 @@
    "kind": "Conjunto short",
    "img": "p/toulouse-short.jpg",
    "preco": 285,
-   "tamanhos": {
-    "P": 2,
-    "M": 2,
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "dijon-short",
@@ -913,8 +784,7 @@
    "img": "p/dijon-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 3,
-    "M": 3
+    "P": 1
    }
   },
   {
@@ -925,8 +795,7 @@
    "img": "p/provenca-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 1,
-    "M": 1
+    "P": 1
    }
   },
   {
@@ -936,10 +805,7 @@
    "kind": "Conjunto calça",
    "img": "p/annecy-calca.jpg",
    "preco": 315,
-   "tamanhos": {
-    "P": 1,
-    "M": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "reims-short",
@@ -971,7 +837,6 @@
    "img": "p/orleans-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 1,
     "M": 1
    }
   },
@@ -983,8 +848,7 @@
    "img": "p/orleans-calca.jpg",
    "preco": 315,
    "tamanhos": {
-    "P": 2,
-    "M": 2
+    "M": 1
    }
   },
   {
@@ -994,10 +858,7 @@
    "kind": "Conjunto short",
    "img": "p/metz-short.jpg",
    "preco": 285,
-   "tamanhos": {
-    "P": 2,
-    "M": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "metz-calca",
@@ -1006,11 +867,7 @@
    "kind": "Conjunto calça",
    "img": "p/metz-calca.jpg",
    "preco": 315,
-   "tamanhos": {
-    "P": 2,
-    "M": 2,
-    "G": 1
-   }
+   "tamanhos": {}
   },
   {
    "slug": "cannes-short",
@@ -1020,8 +877,7 @@
    "img": "p/cannes-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 3,
-    "M": 3
+    "P": 1
    }
   },
   {
@@ -1031,10 +887,7 @@
    "kind": "Conjunto calça",
    "img": "p/bordeaux-calca.jpg",
    "preco": 315,
-   "tamanhos": {
-    "M": 3,
-    "G": 2
-   }
+   "tamanhos": {}
   },
   {
    "slug": "estrasburgo-curto",
@@ -1043,10 +896,7 @@
    "kind": "Macaquinho",
    "img": "p/estrasburgo-curto.jpg",
    "preco": 289.9,
-   "tamanhos": {
-    "P": 1,
-    "M": 1
-   }
+   "tamanhos": {}
   }
  ],
  "avulso": {
@@ -1076,73 +926,27 @@
   ]
  },
  "topEstoque": {
-  "Annecy": {
-   "P": 2,
-   "M": 2
-  },
-  "Cannes": {
-   "P": 1,
-   "M": 2,
-   "G": 1
-  },
-  "Colmar": {
-   "P": 1,
-   "M": 2,
-   "G": 3
-  },
-  "Lille": {
-   "P": 2,
-   "M": 2
-  },
-  "Lyon": {
-   "P": 2,
-   "M": 5,
-   "G": 3,
-   "GG": 2
-  },
-  "Montpellier": {
-   "P": 2,
-   "M": 3
-  },
-  "Paris": {
-   "M": 3
-  },
   "Provença": {
-   "P": 3,
-   "M": 2
-  },
-  "Carcassonne": {
-   "M": 4,
    "P": 2
   },
-  "Toulouse": {
-   "P": 2,
-   "M": 2,
-   "G": 1
+  "Colmar": {
+   "G": 1,
+   "M": 1
   },
-  "Dijon": {
-   "P": 3,
-   "M": 3
+  "Orléans": {
+   "M": 2
   },
   "Reims": {
    "M": 2
   },
-  "Orléans": {
-   "P": 3,
-   "M": 3
-  },
-  "Metz": {
-   "P": 4,
-   "M": 4,
-   "G": 1
-  },
-  "Bordeaux": {
-   "M": 3,
-   "G": 2
-  },
   "Cannes Rosa": {
-   "P": 3,
-   "M": 2
+   "P": 1
+  },
+  "Annecy": {
+   "M": 1
+  },
+  "Dijon": {
+   "P": 1
   }
  }
 }
