@@ -100,7 +100,9 @@
    "img": "p/ibiza-marinho.jpg",
    "preco": 246.42,
    "de": 289.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "G": 1
+   }
   },
   {
    "slug": "ibiza-preto",
@@ -110,7 +112,9 @@
    "img": "p/ibiza-preto.jpg",
    "preco": 246.42,
    "de": 289.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1
+   }
   },
   {
    "slug": "ibiza-verde",
