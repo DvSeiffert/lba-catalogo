@@ -522,7 +522,9 @@
    "img": "p/cannes.jpg",
    "preco": 315,
    "tamanhos": {
-    "G": 1
+    "G": 2,
+    "P": 1,
+    "M": 2
    }
   },
   {
@@ -871,8 +873,8 @@
    "img": "p/carcassonne-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 1,
-    "M": 1
+    "P": 2,
+    "M": 3
    }
   },
   {
@@ -882,7 +884,10 @@
    "kind": "Conjunto calça",
    "img": "p/carcassonne-calca.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1,
+    "M": 1
+   }
   },
   {
    "slug": "toulouse-short",
@@ -984,7 +989,10 @@
    "kind": "Conjunto short",
    "img": "p/metz-short.jpg",
    "preco": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 2,
+    "M": 2
+   }
   },
   {
    "slug": "metz-calca",
@@ -994,7 +1002,9 @@
    "img": "p/metz-calca.jpg",
    "preco": 315,
    "tamanhos": {
-    "P": 1
+    "P": 2,
+    "M": 2,
+    "G": 1
    }
   },
   {
@@ -1005,7 +1015,8 @@
    "img": "p/cannes-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 1
+    "P": 3,
+    "M": 3
    }
   },
   {
