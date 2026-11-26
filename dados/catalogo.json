@@ -656,7 +656,10 @@
    "kind": "Regata",
    "img": "p/regata-lua.jpg",
    "preco": 129.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 4,
+    "G": 1
+   }
   },
   {
    "slug": "short-com-bolso",
@@ -710,7 +713,12 @@
    "kind": "Top",
    "img": "p/top-high.jpg",
    "preco": 129.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 2,
+    "M": 3,
+    "G": 1,
+    "GG": 1
+   }
   },
   {
    "slug": "top-alca-dupla",
@@ -728,7 +736,11 @@
    "kind": "Vestido",
    "img": "p/vestido-beach.jpg",
    "preco": 179.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 5,
+    "M": 4,
+    "G": 2
+   }
   },
   {
    "slug": "nice",
