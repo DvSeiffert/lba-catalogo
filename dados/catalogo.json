@@ -731,7 +731,9 @@
    "kind": "Macaquinho",
    "img": "p/nice.jpg",
    "preco": 289.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1
+   }
   },
   {
    "slug": "nantes",
@@ -740,7 +742,9 @@
    "kind": "Macaquinho",
    "img": "p/nantes.jpg",
    "preco": 289.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1
+   }
   },
   {
    "slug": "limoges",
@@ -776,7 +780,9 @@
    "kind": "Conjunto short",
    "img": "p/toulouse-short.jpg",
    "preco": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1
+   }
   },
   {
    "slug": "dijon-short",
@@ -898,7 +904,9 @@
    "kind": "Macaquinho",
    "img": "p/estrasburgo-curto.jpg",
    "preco": 289.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1
+   }
   }
  ],
  "avulso": {
@@ -949,6 +957,9 @@
   },
   "Dijon": {
    "P": 1
+  },
+  "Toulouse": {
+   "M": 1
   }
  }
 }
