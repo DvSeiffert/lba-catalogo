@@ -507,7 +507,9 @@
    "kind": "Conjunto calça",
    "img": "p/cannes.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "G": 1
+   }
   },
   {
    "slug": "colmar-calca",
@@ -585,7 +587,9 @@
    "kind": "Conjunto calça",
    "img": "p/montpellier-calca.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1
+   }
   },
   {
    "slug": "montpellier-short",
@@ -896,7 +900,9 @@
    "kind": "Conjunto calça",
    "img": "p/metz-calca.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1
+   }
   },
   {
    "slug": "cannes-short",
@@ -980,6 +986,15 @@
    "P": 1
   },
   "Toulouse": {
+   "M": 1
+  },
+  "Cannes": {
+   "M": 1
+  },
+  "Metz": {
+   "P": 1
+  },
+  "Montpellier": {
    "M": 1
   }
  }
