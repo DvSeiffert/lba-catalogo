@@ -665,8 +665,9 @@
    "img": "p/calca-flare.jpg",
    "preco": 199.9,
    "tamanhos": {
-    "P": 1,
-    "GG": 1
+    "P": 2,
+    "GG": 2,
+    "M": 1
    }
   },
   {
