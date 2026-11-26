@@ -564,7 +564,9 @@
    "kind": "Conjunto calça",
    "img": "p/lyon-calca.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "GG": 1
+   }
   },
   {
    "slug": "lyon-short",
@@ -573,7 +575,9 @@
    "kind": "Conjunto short",
    "img": "p/lyon-short.jpg",
    "preco": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "G": 1
+   }
   },
   {
    "slug": "marselha",
@@ -795,7 +799,10 @@
    "kind": "Conjunto short",
    "img": "p/carcassonne-short.jpg",
    "preco": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1,
+    "M": 1
+   }
   },
   {
    "slug": "carcassonne-calca",
@@ -1015,6 +1022,14 @@
   },
   "Lille": {
    "P": 1
+  },
+  "Carcassonne": {
+   "P": 1,
+   "M": 1
+  },
+  "Lyon": {
+   "G": 1,
+   "GG": 1
   }
  }
 }
