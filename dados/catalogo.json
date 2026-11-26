@@ -72,7 +72,10 @@
    "kind": "Corta-vento",
    "img": "p/granada-mwf05wy1.jpg",
    "preco": 215,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1,
+    "G": 1
+   }
   },
   {
    "slug": "ibiza-azul",
