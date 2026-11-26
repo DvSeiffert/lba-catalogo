@@ -138,7 +138,9 @@
    "img": "p/leon.jpg",
    "preco": 267.75,
    "de": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1
+   }
   },
   {
    "slug": "madri",
