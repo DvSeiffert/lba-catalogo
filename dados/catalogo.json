@@ -639,7 +639,10 @@
    "kind": "Calça",
    "img": "p/calca-flare.jpg",
    "preco": 199.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1,
+    "GG": 1
+   }
   },
   {
    "slug": "jaqueta-slim",
@@ -648,7 +651,12 @@
    "kind": "Jaqueta",
    "img": "p/jaqueta-slim.jpg",
    "preco": 259.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 2,
+    "M": 3,
+    "G": 2,
+    "GG": 2
+   }
   },
   {
    "slug": "legging-cos-reto",
@@ -657,7 +665,11 @@
    "kind": "Legging",
    "img": "p/legging-cos-reto.jpg",
    "preco": 169.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1,
+    "M": 3,
+    "G": 2
+   }
   },
   {
    "slug": "macacao-flare",
@@ -666,7 +678,11 @@
    "kind": "Macacão",
    "img": "p/macacao-flare.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 4,
+    "G": 2,
+    "P": 1
+   }
   },
   {
    "slug": "regata-lua",
@@ -687,7 +703,11 @@
    "kind": "Short",
    "img": "p/short-com-bolso.jpg",
    "preco": 149.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 2,
+    "M": 5,
+    "G": 2
+   }
   },
   {
    "slug": "short-cos-estreito",
@@ -696,7 +716,11 @@
    "kind": "Short",
    "img": "p/short-cos-estreito.jpg",
    "preco": 109.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 4,
+    "M": 5,
+    "G": 2
+   }
   },
   {
    "slug": "short-saia-beach",
@@ -705,7 +729,10 @@
    "kind": "Short-saia",
    "img": "p/short-saia-beach.jpg",
    "preco": 159.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 5,
+    "M": 2
+   }
   },
   {
    "slug": "top-alca-vazada",
@@ -714,7 +741,11 @@
    "kind": "Top",
    "img": "p/top-alca-vazada.jpg",
    "preco": 139.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 2,
+    "M": 5,
+    "G": 2
+   }
   },
   {
    "slug": "top-costas-nuas",
@@ -723,7 +754,11 @@
    "kind": "Top",
    "img": "p/top-costas-nuas.jpg",
    "preco": 139.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "G": 2,
+    "P": 2,
+    "M": 5
+   }
   },
   {
    "slug": "top-high",
@@ -746,7 +781,11 @@
    "kind": "Top",
    "img": "p/top-alca-dupla.jpg",
    "preco": 129.9,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 2,
+    "M": 3,
+    "G": 2
+   }
   },
   {
    "slug": "vestido-beach",
