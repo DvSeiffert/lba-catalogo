@@ -551,7 +551,9 @@
    "kind": "Conjunto calça",
    "img": "p/lille.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1
+   }
   },
   {
    "slug": "lyon-calca",
@@ -609,7 +611,9 @@
    "kind": "Conjunto calça",
    "img": "p/paris.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1
+   }
   },
   {
    "slug": "provenca",
@@ -924,7 +928,9 @@
    "kind": "Conjunto calça",
    "img": "p/bordeaux-calca.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1
+   }
   },
   {
    "slug": "estrasburgo-curto",
@@ -998,6 +1004,15 @@
   },
   "Montpellier": {
    "M": 1
+  },
+  "Bordeaux": {
+   "M": 1
+  },
+  "Paris": {
+   "M": 1
+  },
+  "Lille": {
+   "P": 1
   }
  }
 }
