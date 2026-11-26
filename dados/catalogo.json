@@ -1039,7 +1039,8 @@
    "img": "p/estrasburgo-curto.jpg",
    "preco": 289.9,
    "tamanhos": {
-    "P": 1
+    "P": 1,
+    "M": 1
    }
   }
  ],
