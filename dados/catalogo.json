@@ -510,7 +510,8 @@
    "img": "p/annecy.jpg",
    "preco": 285,
    "tamanhos": {
-    "M": 1
+    "M": 1,
+    "P": 1
    }
   },
   {
@@ -532,7 +533,9 @@
    "img": "p/colmar-calca.jpg",
    "preco": 315,
    "tamanhos": {
-    "M": 1
+    "M": 1,
+    "P": 1,
+    "G": 2
    }
   },
   {
@@ -543,7 +546,7 @@
    "img": "p/colmar-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "M": 1
+    "M": 2
    }
   },
   {
@@ -563,7 +566,8 @@
    "img": "p/lille.jpg",
    "preco": 315,
    "tamanhos": {
-    "P": 1
+    "P": 2,
+    "M": 2
    }
   },
   {
@@ -574,7 +578,9 @@
    "img": "p/lyon-calca.jpg",
    "preco": 315,
    "tamanhos": {
-    "GG": 1
+    "GG": 1,
+    "M": 2,
+    "G": 1
    }
   },
   {
@@ -585,7 +591,10 @@
    "img": "p/lyon-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "G": 1
+    "G": 2,
+    "P": 2,
+    "M": 3,
+    "GG": 1
    }
   },
   {
@@ -620,7 +629,10 @@
    "kind": "Conjunto short",
    "img": "p/montpellier-short.jpg",
    "preco": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 2,
+    "M": 2
+   }
   },
   {
    "slug": "paris",
@@ -630,7 +642,7 @@
    "img": "p/paris.jpg",
    "preco": 315,
    "tamanhos": {
-    "M": 1
+    "M": 3
    }
   },
   {
@@ -641,7 +653,8 @@
    "img": "p/provenca.jpg",
    "preco": 315,
    "tamanhos": {
-    "P": 1
+    "P": 2,
+    "M": 1
    }
   },
   {
@@ -889,7 +902,8 @@
    "img": "p/dijon-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 1
+    "P": 3,
+    "M": 3
    }
   },
   {
@@ -900,7 +914,8 @@
    "img": "p/provenca-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "P": 1
+    "P": 1,
+    "M": 1
    }
   },
   {
@@ -910,7 +925,10 @@
    "kind": "Conjunto calça",
    "img": "p/annecy-calca.jpg",
    "preco": 315,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 1,
+    "M": 1
+   }
   },
   {
    "slug": "reims-short",
@@ -942,7 +960,8 @@
    "img": "p/orleans-short.jpg",
    "preco": 285,
    "tamanhos": {
-    "M": 1
+    "M": 1,
+    "P": 1
    }
   },
   {
@@ -953,7 +972,8 @@
    "img": "p/orleans-calca.jpg",
    "preco": 315,
    "tamanhos": {
-    "M": 1
+    "M": 3,
+    "P": 2
    }
   },
   {
@@ -995,7 +1015,8 @@
    "img": "p/bordeaux-calca.jpg",
    "preco": 315,
    "tamanhos": {
-    "M": 1
+    "M": 3,
+    "G": 2
    }
   },
   {
