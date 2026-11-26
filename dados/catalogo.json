@@ -373,7 +373,9 @@
    "img": "p/luca-mwf3q557.jpg",
    "preco": 242.25,
    "de": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1
+   }
   },
   {
    "slug": "milao-it",
@@ -428,7 +430,10 @@
    "img": "p/siena.jpg",
    "preco": 242.25,
    "de": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "P": 2,
+    "M": 1
+   }
   },
   {
    "slug": "trento-amarelo",
@@ -493,7 +498,9 @@
    "img": "p/verona.jpg",
    "preco": 242.25,
    "de": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "G": 1
+   }
   },
   {
    "slug": "annecy",
