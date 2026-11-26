@@ -211,7 +211,9 @@
    "img": "p/ronda.jpg",
    "preco": 242.25,
    "de": 285,
-   "tamanhos": {}
+   "tamanhos": {
+    "M": 1
+   }
   },
   {
    "slug": "sevilha",
